@@ -1,0 +1,8 @@
+node_modules/
+dist/
+data/
+test-results/
+*.log
+.env
+.browsers/
+.test-data/
