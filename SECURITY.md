@@ -1,0 +1,33 @@
+# Security policy
+
+SOURCEWATCH is intended for a single user on a trusted machine, bound to loopback. Do not expose the API through port forwarding, a reverse proxy, a LAN bind, or public hosting. There is no user authentication or authorization model.
+
+## Reporting
+
+Do not include sensitive capture contents, tokens, or exploitable details in a public issue. If the published repository provides a private security advisory channel, use it. Until such a channel exists, arrange a private report with the repository maintainer before sharing sensitive details. This project does not advertise a response-time guarantee or a completed independent security audit.
+
+## Controls
+
+- Only standard-port HTTP(S) URLs without embedded credentials are accepted.
+- Loopback, private, link-local, metadata, reserved, and other non-public IP ranges are rejected, including mapped and normalized address forms.
+- DNS answers are validated and the chosen address is pinned for the actual socket. Redirect destinations and browser subresources are checked too.
+- Isolated Chromium contexts use intercepted requests, blocked service workers/WebSockets/downloads, and an application-owned deny-all proxy to prevent direct browser network fallback.
+- Only GET/HEAD requests are forwarded. Browser cookies and authorization headers are not forwarded; response `Set-Cookie` headers are excluded.
+- Request, byte, time, page-height, and concurrency limits constrain resource usage.
+- Local Host/Origin checks and a content security policy protect the UI boundary. Captured HTML is downloaded as text rather than rendered inside the application.
+- Artifact paths use generated UUIDs and an explicit filename allowlist. The offline verifier rejects unsafe paths and symlinks.
+- Export rechecks stored hashes before packaging evidence. Capture rows reject updates/deletes through database triggers.
+
+## Remaining risks
+
+Remote HTML still executes JavaScript in Chromium during rendering. Keep Node.js, Chromium, and dependencies updated. Browser isolation is not a substitute for an operating-system sandbox, and this release has not had an independent penetration test. Some sites make requests that are blocked or depend on third-party scripts; review capture warnings and results.
+
+Captured files may contain personal information, secret query parameters, malicious scripts, copyrighted material, or misleading content. Data is not encrypted at rest. Review exports before redistribution. Do not open untrusted HTML files directly in a privileged browser; use a text editor or the preserved screenshot. Run a trusted verifier rather than executing arbitrary JavaScript from someone else's evidence bundle.
+
+Local timestamps come from the machine clock. Hashes and chains cannot prove authenticity, authorship, publication time, completeness, or independently certified observation time. A person controlling all files can recompute a consistent history. Retain the manifest hash separately if later replacement detection matters. This is not a signed archive or trusted timestamping service.
+
+The scheduler runs only while the process runs. There is no automatic retention or secure erase facility. Archive only what you need, choose reasonable intervals, and stop the service before backing up or deliberately removing its data directory.
+
+### Additional resource bounds
+
+Production transport permits at most six simultaneous resource requests inside the single active capture. All resource streams share a 32 MiB byte budget; individual responses are limited to 8 MiB. Responses compressed despite an identity-encoding request are rejected to prevent decompression bombs. Rendered HTML is limited to 16 MiB after serialization. Screenshot width is limited to 4096px and total area to 32 million pixels, in addition to the 18,000px height limit. The 45-second deadline begins after browser startup (startup itself has a 10-second timeout). These bounds do not replace OS-level memory/CPU isolation: hostile page scripts can still consume resources before measurement.

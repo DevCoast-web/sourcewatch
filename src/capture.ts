@@ -1,3 +1,4 @@
+import { createBarrier } from "./barrier.js";
 import { chromium } from "playwright";
 import { safeFetch, parsePublicUrl, type FetchResult } from "./network.js";
 export type Captured = {
@@ -28,21 +29,48 @@ export async function capture(
 ): Promise<Captured> {
   if (!options.fixtureUrl) parsePublicUrl(url);
   const fetcher = options.fetcher || safeFetch;
-  const browser = await chromium.launch({
-    headless: true,
-    timeout: 10000,
-    args: [
-      "--disable-quic",
-      "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
-      "--disable-background-networking",
-    ],
-    proxy: { server: "http://127.0.0.1:9", bypass: "<-loopback>" },
-  });
-  const context = await browser.newContext({
-    viewport: { width: 1365, height: 900 },
-    serviceWorkers: "block",
-    acceptDownloads: false,
-  });
+  const barrier = await createBarrier();
+  const browser = await chromium
+    .launch({
+      headless: true,
+      timeout: 10000,
+      args: [
+        "--disable-quic",
+        "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
+        "--disable-background-networking",
+      ],
+      proxy: { server: barrier.url, bypass: "<-loopback>" },
+    })
+    .catch(async (e) => {
+      await barrier.close();
+      throw e;
+    });
+  let closing: Promise<void> | undefined;
+  const close = () => (closing ??= browser.close().catch(() => {}));
+  const dispose = async () => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([
+        close(),
+        new Promise<void>((resolve) => {
+          timer = setTimeout(resolve, 2000);
+        }),
+      ]);
+    } finally {
+      if (timer) clearTimeout(timer);
+      await barrier.close();
+    }
+  };
+  const context = await browser
+    .newContext({
+      viewport: { width: 1365, height: 900 },
+      serviceWorkers: "block",
+      acceptDownloads: false,
+    })
+    .catch(async (e) => {
+      await dispose();
+      throw e;
+    });
   const warnings: string[] = [];
   let count = 0;
   let bytes = 0;
@@ -60,11 +88,16 @@ export async function capture(
     if (next) next();
     else active--;
   };
+  let rejectDeadline: (e: Error) => void = () => {};
+  const expired = new Promise<never>((_resolve, reject) => {
+    rejectDeadline = reject;
+  });
   const deadline = setTimeout(() => {
     controller.abort();
-    void browser.close();
+    void close();
+    rejectDeadline(new Error("Capture deadline exceeded; browser closed"));
   }, options.totalTimeoutMs ?? 45000);
-  try {
+  const work = async () => {
     await context.routeWebSocket("**/*", (socket) => socket.close());
     await context.route("**/*", async (route) => {
       const req = route.request();
@@ -134,6 +167,8 @@ export async function capture(
       !/text\/html|application\/xhtml/i.test(main.headers["content-type"] || "")
     )
       throw new Error("Only HTML pages can be captured");
+    if (!/^https?:/.test(page.url()))
+      throw new Error("Final document must use HTTP(S)");
     const html = await page.content();
     if (Buffer.byteLength(html) > 16 * 1024 * 1024)
       throw new Error("Rendered HTML exceeds 16 MiB");
@@ -237,10 +272,12 @@ export async function capture(
       warnings: warnings.slice(0, 50),
       ignoredSelectors: selectors,
     };
+  };
+  try {
+    return await Promise.race([work(), expired]);
   } finally {
     controller.abort();
     clearTimeout(deadline);
-    await context.close().catch(() => {});
-    await browser.close();
+    await dispose();
   }
 }

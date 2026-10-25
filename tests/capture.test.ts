@@ -138,19 +138,69 @@ test("navigation deadline rejects a delayed document", async () => {
   );
 });
 
-test('total capture deadline closes Chromium before a delayed transport completes',async()=>{
- const started=Date.now();
- await assert.rejects(capture(fixtureUrl,[],{fixtureUrl,settleMs:0,totalTimeoutMs:50,navigationTimeoutMs:1000,fetcher:async()=>{await new Promise(r=>setTimeout(r,300));return html('Late document');}}),/closed|Target|Navigation failed/i);
- assert(Date.now()-started<5000,'Total deadline must return promptly, including browser cleanup');
+test("total capture deadline closes Chromium before a delayed transport completes", async () => {
+  const started = Date.now();
+  let transportStarted = false;
+  await assert.rejects(
+    capture(fixtureUrl, [], {
+      fixtureUrl,
+      settleMs: 0,
+      totalTimeoutMs: 300,
+      navigationTimeoutMs: 1000,
+      fetcher: async () => {
+        transportStarted = true;
+        await new Promise((r) => setTimeout(r, 1000));
+        return html("Late document");
+      },
+    }),
+    /closed|Target|Navigation failed/i,
+  );
+  assert(transportStarted, "Deadline interrupts an active transport");
+  assert(
+    Date.now() - started < 5000,
+    "Total deadline must return promptly, including browser cleanup",
+  );
 });
 
-test('subresource capture limits active transports to six and stops transport at 150 requests',async()=>{
- let active=0,peak=0,calls=0;
- const document=html('<h1>Resource limit fixture</h1>'+Array.from({length:180},(_,i)=>`<img src="/pixel-${i}.png" width="1" height="1">`).join(''));
- const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=','base64');
- const result=await capture(fixtureUrl,[],{fixtureUrl,settleMs:1500,fetcher:async(url)=>{
-  calls++;active++;peak=Math.max(peak,active);
-  try{await new Promise(r=>setTimeout(r,20));return url===fixtureUrl?document:{status:200,headers:{'content-type':'image/png'},body:png};}finally{active--;}
- }});
- assert(peak<=6,`Peak transports was ${peak}`);assert(peak>1,'Fixture exercised concurrent transports');assert.equal(calls,150);assert(result.warnings.some(w=>w.includes('150-request limit reached')));assert.match(result.text,/Resource limit fixture/);
+test("subresource capture limits active transports to six and stops transport at 150 requests", async () => {
+  let active = 0,
+    peak = 0,
+    calls = 0;
+  const document = html(
+    "<h1>Resource limit fixture</h1>" +
+      Array.from(
+        { length: 180 },
+        (_, i) => `<img src="/pixel-${i}.png" width="1" height="1">`,
+      ).join(""),
+  );
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=",
+    "base64",
+  );
+  const result = await capture(fixtureUrl, [], {
+    fixtureUrl,
+    settleMs: 1500,
+    fetcher: async (url) => {
+      calls++;
+      active++;
+      peak = Math.max(peak, active);
+      try {
+        await new Promise((r) => setTimeout(r, 20));
+        return url === fixtureUrl
+          ? document
+          : {
+              status: 200,
+              headers: { "content-type": "image/png" },
+              body: png,
+            };
+      } finally {
+        active--;
+      }
+    },
+  });
+  assert(peak <= 6, `Peak transports was ${peak}`);
+  assert(peak > 1, "Fixture exercised concurrent transports");
+  assert.equal(calls, 150);
+  assert(result.warnings.some((w) => w.includes("150-request limit reached")));
+  assert.match(result.text, /Resource limit fixture/);
 });

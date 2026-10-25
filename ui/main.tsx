@@ -546,7 +546,7 @@ function App() {
                   {source.description && (
                     <p className="source-description">{source.description}</p>
                   )}
-                  {source.archived && (
+                  {!!source.archived && (
                     <p className="capture-error">
                       Archived source. Restore it in Edit source to resume
                       captures.
