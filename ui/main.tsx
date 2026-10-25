@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
+import {
+  Inbox,
+  ResearchNotes,
+  VisualComparison,
+  StructureComparison,
+  type InboxEvent,
+} from "./research.js";
 type Source = {
   id: string;
   name: string;
@@ -88,10 +95,42 @@ function App() {
     [searchText, setSearchText] = useState(""),
     [searchResults, setSearchResults] = useState<any[]>([]),
     [captureMatches, setCaptureMatches] = useState<Capture[] | null>(null);
+  const [researchOpen, setResearchOpen] = useState(false),
+    [unread, setUnread] = useState(0),
+    [focusCapture, setFocusCapture] = useState<{
+      sourceId: string;
+      after: string;
+      before: string;
+    } | null>(null);
+  function openUpdate(event: InboxEvent) {
+    setShowArchived(true);
+    setSelected(event.sourceId);
+    setResearchOpen(false);
+    if (event.captureId)
+      setFocusCapture({
+        sourceId: event.sourceId,
+        after: event.captureId,
+        before: event.beforeId || "",
+      });
+    else setTab("history");
+  }
+  useEffect(() => {
+    if (
+      focusCapture &&
+      selected === focusCapture.sourceId &&
+      history.some((c) => c.id === focusCapture.after)
+    ) {
+      setAfter(focusCapture.after);
+      setBefore(focusCapture.before);
+      setTab(focusCapture.before ? "changes" : "inspect");
+      setFocusCapture(null);
+    }
+  }, [focusCapture, history, selected]);
   const source = sources.find((s) => s.id === selected);
   const collections = [...new Set(sources.map((s) => s.collection))].sort();
   useEffect(() => {
-    if (!showAdd && !exportHash && !settings && !globalSearch) return;
+    if (!showAdd && !exportHash && !settings && !globalSearch && !researchOpen)
+      return;
     const previous = document.activeElement as HTMLElement | null;
     const modal = document.querySelector(
       ".overlay:last-of-type .modal",
@@ -109,6 +148,7 @@ function App() {
         setExportHash("");
         setSettings(null);
         setGlobalSearch(false);
+        setResearchOpen(false);
       }
       if (e.key === "Tab") {
         const all = nodes(),
@@ -128,10 +168,13 @@ function App() {
       document.removeEventListener("keydown", key);
       previous?.focus();
     };
-  }, [showAdd, !!exportHash, !!settings, globalSearch]);
+  }, [showAdd, !!exportHash, !!settings, globalSearch, researchOpen]);
   async function refresh() {
     const rows = await api("/sources" + (showArchived ? "?archived=true" : ""));
     setSources(rows);
+    api("/status")
+      .then((s) => setUnread(s.unread || 0))
+      .catch(() => {});
     setSelected((prev) => prev || rows[0]?.id || "");
   }
   async function refreshHistory(id: string) {
@@ -145,7 +188,10 @@ function App() {
     const timer = setInterval(() => {
       refresh().catch(() => {});
       api("/status")
-        .then((s) => setBusy(s.busy))
+        .then((s) => {
+          setBusy(s.busy);
+          setUnread(s.unread || 0);
+        })
         .catch(() => {});
     }, 5000);
     return () => clearInterval(timer);
@@ -272,6 +318,14 @@ function App() {
         <div className="local">
           <i /> LOCAL WORKSPACE<span>No accounts. Your data stays here.</span>
         </div>
+        <button
+          className="inbox-button"
+          data-count={unread}
+          aria-label={`Change inbox (${unread} unread)`}
+          onClick={() => setResearchOpen(true)}
+        >
+          Inbox {unread > 0 ? `(${unread})` : ""}
+        </button>
         <button
           className="search-button"
           aria-label="Search captures"
@@ -673,9 +727,35 @@ function App() {
                                   >
                                     Inline
                                   </button>
+                                  <button
+                                    className={
+                                      mode === "visual" ? "chosen" : ""
+                                    }
+                                    onClick={() => setMode("visual")}
+                                  >
+                                    Screenshots
+                                  </button>
+                                  <button
+                                    className={
+                                      mode === "structure" ? "chosen" : ""
+                                    }
+                                    onClick={() => setMode("structure")}
+                                  >
+                                    HTML structure
+                                  </button>
                                 </div>
                               </div>
-                              {mode === "side" ? (
+                              {mode === "visual" ? (
+                                <VisualComparison
+                                  before={before}
+                                  after={after}
+                                />
+                              ) : mode === "structure" ? (
+                                <StructureComparison
+                                  before={before}
+                                  after={after}
+                                />
+                              ) : mode === "side" ? (
                                 <div className="diff-grid">
                                   <div>
                                     <div className="diff-label">
@@ -884,6 +964,7 @@ function App() {
                             {detail.ignoredSelectors.join(", ") || "None"}
                           </dd>
                         </dl>
+                        <ResearchNotes captureId={after} />
                         {detail.warnings.length > 0 && (
                           <details>
                             <summary>
@@ -937,7 +1018,7 @@ function App() {
           <footer>
             SOURCEWATCH{" "}
             <span>Local observations. Portable evidence. Open source.</span>
-            <span>v1.0</span>
+            <span>v1.1</span>
           </footer>
         </main>
       </div>
@@ -1143,6 +1224,11 @@ function App() {
                   await api("/settings", {
                     method: "PATCH",
                     body: JSON.stringify({
+                      maxScreenshotHeight: Number(
+                        new FormData(e.currentTarget).get(
+                          "maxScreenshotHeight",
+                        ),
+                      ),
                       settleMs: Number(
                         new FormData(e.currentTarget).get("settleMs"),
                       ),
@@ -1170,9 +1256,26 @@ function App() {
                 Wait after the document loads to let dynamic content render.
                 Range: 0–5000 milliseconds.
               </p>
+              <label>
+                Maximum screenshot height (pixels)
+                <input
+                  name="maxScreenshotHeight"
+                  type="number"
+                  min="1000"
+                  max="200000"
+                  step="1000"
+                  defaultValue={settings.maxScreenshotHeight ?? 100000}
+                  required
+                />
+              </label>
+              <p className="screenshot-setting-note">
+                Default 100,000px; configurable up to 200,000px. A separate
+                160-million-pixel area limit and 4,096px width limit bound
+                memory use.
+              </p>
               <p>
                 Capture limits: 45 seconds, 150 requests, 8 MiB per response, 32
-                MiB total, 18,000px screenshot height. One capture at a time.
+                MiB total. One capture at a time.
               </p>
               <p className="small muted">
                 Data is stored in the local data directory. No automatic
@@ -1251,6 +1354,17 @@ function App() {
             ))}
           </section>
         </div>
+      )}
+      {researchOpen && (
+        <Inbox
+          onClose={() => setResearchOpen(false)}
+          onOpen={openUpdate}
+          onChanged={() => {
+            api("/status")
+              .then((s) => setUnread(s.unread || 0))
+              .catch(() => {});
+          }}
+        />
       )}
     </>
   );

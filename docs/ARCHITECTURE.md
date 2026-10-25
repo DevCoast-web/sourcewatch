@@ -37,7 +37,7 @@ The API binds to `127.0.0.1`, validates the Host header, rejects foreign Origin 
 
 A 15-second timer chooses a due, unpaused, unarchived source while no capture is running. Intervals use the last attempt, including failures. Missed executions are not backfilled while the process is stopped. There is one capture slot; concurrent manual requests receive a conflict response.
 
-Comparison works on retained normalized text, with line-level additions/deletions and word-level inline differences. Replacements appear as removed plus added text. Outbound links are compared as sets and page-title changes are reported explicitly. There is no screenshot pixel diff or structural DOM diff.
+Comparison works on retained normalized text, with line-level additions/deletions and word-level inline differences. Replacements appear as removed plus added text. Outbound links are compared as sets and page-title changes are reported explicitly. The additional HTML structure view compares bounded element outlines with selected semantic attributes. Screenshot review overlays saved images; it does not compute a pixel-difference score.
 
 ## Portable evidence
 
@@ -48,6 +48,12 @@ External site assets are not packaged separately. The bundle preserves evidence 
 
 ### Additional resource bounds
 
-Production transport permits at most six simultaneous resource requests inside the single active capture. All resource streams share a 32 MiB byte budget; individual responses are limited to 8 MiB. Responses compressed despite an identity-encoding request are rejected to prevent decompression bombs. Rendered HTML is limited to 16 MiB after serialization. Screenshot width is limited to 4096px and total area to 32 million pixels, in addition to the 18,000px height limit. The 45-second deadline begins after browser startup (startup itself has a 10-second timeout). These bounds do not replace OS-level memory/CPU isolation: hostile page scripts can still consume resources before measurement.
+Production transport permits at most six simultaneous resource requests inside the single active capture. All resource streams share a 32 MiB byte budget; individual responses are limited to 8 MiB. Responses compressed despite an identity-encoding request are rejected to prevent decompression bombs. Rendered HTML is limited to 16 MiB after serialization. Screenshot width is limited to 4096px and total area to 160 million pixels. Screenshot height defaults to 100,000px and is configurable from 1,000 to 200,000px. The 45-second deadline begins after browser startup (startup itself has a 10-second timeout). These bounds do not replace OS-level memory/CPU isolation: hostile page scripts can still consume resources before measurement.
 
 Capture persistence uses `BEGIN IMMEDIATE` through the chain read, file publication, and database insert, so writers serialize when using the same SQLite database. A database rollback can leave an unreferenced capture directory if a process fails after rename; it does not overwrite prior observations.
+
+## Research layer
+
+`src/research.ts` adds independent `research_annotations` and `research_events` tables with foreign keys to existing sources/captures. Capture success records one changed event only when subsequent text/title/links differ; initial and unchanged captures do not create alerts. Failures create failure notices. `readAt` provides local triage state. Notes are editable, not original evidence or immutable audit entries. Source-history export includes notes only for included captures and hashes the supplemental JSON in the manifest.
+
+`src/structure.ts` parses inert HTML through parse5 into bounded element outlines; it never executes scripts or fetches remote assets. `ui/research.tsx` provides inbox, notes, screenshot overlay, and structure views. Overlay clips are drawn using static CSS classes, preserving the dashboard CSP without inline-style exceptions.

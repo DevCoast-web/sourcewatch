@@ -1,11 +1,15 @@
 # Next steps
 
-The remaining publication step requires GitHub repository-creation access. This build session had no `gh` CLI, the connector lacked repository creation, and the browser required sign-in. No public remote or release was created.
+SOURCEWATCH 1.1 is a locally implemented and tested release candidate in its dedicated `sourcewatch` repository. Publication remains blocked: this session had no GitHub CLI, the authenticated connector lacked repository creation, and the browser required sign-in. No GitHub remote repository or public release was created. Do not reuse an unrelated repository.
 
-1. Confirm the final build handoff's checks pass. From this directory run `npm run lint`, `npm run typecheck`, `npm run build`, `npm test`, and `npm audit --audit-level=moderate` if any check remains pending.
-2. Review `git status --short` and commit the final release candidate if not already committed. Do not add generated databases or node_modules.
-3. Install/authenticate GitHub CLI, then run `gh repo create sourcewatch --public --source=. --remote=origin --push` from this dedicated repository.
-4. Inspect the actual hosted CI run using `gh run list`; resolve any failure before tagging.
-5. Follow [docs/RELEASE.md](docs/RELEASE.md) to create `v1.0.0` and attach the actual archive/checksum artifacts after all gates pass.
+The candidate test run reported 32 tests: 31 passed, zero failed, one Windows symlink test skipped. The Windows start script was exercised through Command Prompt on isolated port 3212, served version 1.1.0 with working status/settings and HTTP 200, and was stopped afterward. Setup script checks were static at this checkpoint; double-click launch was not tested. See the final handoff for any later checks.
 
-To run locally now: `npm ci`, `npx playwright install chromium`, `npm run build`, `npm start`, then open http://127.0.0.1:3210.
+1. Review the final handoff and run any pending release gates: `npm run lint`, `npm run typecheck`, `npm run build`, `npm test`, and `npm audit --audit-level=moderate`.
+2. Confirm release packaging produced `../sourcewatch-v1.1.0.zip` and `../sourcewatch-v1.1.0.sha256`, review the contents, and verify the checksum. These are packaging targets until the actual files exist.
+3. Review `git status --short` and commit the final candidate if necessary. Exclude generated databases, personal captures, node_modules, and installed browsers.
+4. Install/authenticate GitHub CLI, then run `gh repo create sourcewatch --public --source=. --remote=origin --push` from this dedicated repository.
+5. Inspect hosted CI with `gh run list`; resolve any failure before tagging. Follow [docs/RELEASE.md](docs/RELEASE.md) to create `v1.1.0` and attach the verified archive/checksum after all gates pass.
+
+To set up Windows: run `setup-sourcewatch.cmd`, then `start-sourcewatch.cmd`. Setup installs dependencies and project-local Chromium and builds the UI. After source updates, rerun setup or `npm.cmd run build` before launching so an existing UI build does not remain stale. Open the printed local address, normally http://127.0.0.1:3210.
+
+External email alerts, WARC/WACZ interoperability, full archival replay, and multi-user hosting are not implemented. See [docs/ROLLOUT.md](docs/ROLLOUT.md) for the staged scope.

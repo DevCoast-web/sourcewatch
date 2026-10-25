@@ -116,9 +116,9 @@ test("over-height pages are rejected before allocating a full-page screenshot", 
     capture(
       fixtureUrl,
       [],
-      options(html('<div style="height:19000px">Tall fixture</div>')),
+      options(html('<div style="height:200001px">Tall fixture</div>')),
     ),
-    /18,000px screenshot limit/,
+    /screenshot height limit/,
   );
 });
 
@@ -203,4 +203,34 @@ test("subresource capture limits active transports to six and stops transport at
   assert.equal(calls, 150);
   assert(result.warnings.some((w) => w.includes("150-request limit reached")));
   assert.match(result.text, /Resource limit fixture/);
+});
+
+test("full-page screenshots preserve pages taller than the former 18000px limit", async () => {
+  const result = await capture(
+    fixtureUrl,
+    [],
+    options(html('<div style="height:25000px">Long research document</div>')),
+  );
+  assert.equal(
+    result.screenshot.subarray(0, 8).toString("hex"),
+    "89504e470d0a1a0a",
+  );
+  assert.equal(result.screenshot.toString("ascii", 12, 16), "IHDR");
+  assert(
+    result.screenshot.readUInt32BE(20) >= 25000,
+    "Saved PNG must contain the complete tall page",
+  );
+  assert.match(result.text, /Long research document/);
+});
+
+test("configured screenshot height limit rejects larger pages", async () => {
+  await assert.rejects(
+    capture(fixtureUrl, [], {
+      ...options(
+        html('<div style="height:5000px">Configured limit fixture</div>'),
+      ),
+      maxScreenshotHeight: 4000,
+    }),
+    /screenshot height limit/,
+  );
 });

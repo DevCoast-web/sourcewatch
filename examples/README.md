@@ -11,3 +11,5 @@ node scripts/verify.mjs /path/to/extracted-fixture --expect HASH_FROM_fixture-ma
 `fixture-verification.json` records the successful standalone verifier result. The separately stored manifest fingerprint is `fixture-manifest.sha256`. Changing any artifact causes verification to fail. Checksums and local timestamps do not independently establish authenticity or publication time.
 
 `public-evidence.zip`, when present, is an actual production-transport capture of https://example.com/. It is a single observation, not a changing fixture. Its verification result and separately retained manifest fingerprint are alongside it.
+
+`research-evidence.zip` is a real 1.1 integration-test export of two changed fixture captures with researcher notes/tags. The supplemental `research-notes.json` is labeled editable research commentary, hashed by the export manifest, and kept separate from immutable capture metadata. `research-verification.json` and `research-manifest.sha256` record its successful standalone verification.

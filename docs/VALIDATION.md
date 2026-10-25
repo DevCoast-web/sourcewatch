@@ -1,4 +1,13 @@
-# Local validation
+# 1.1.0 research workspace validation
+
+- Production build, ESLint and TypeScript checks passed. Dependency audit reported zero vulnerabilities.
+- Full test suite: 32 tests, 31 passed, 0 failed, 1 Windows symlink privilege skip. This includes the original workflow and the new real Chromium research workspace test.
+- The research test opens the exact change from the inbox, operates screenshot overlay controls under the unchanged CSP, renders HTML structure differences, saves notes/tags without changing original metadata, searches notes, exports checksummed annotations, verifies the intact ZIP as a separate process, detects modified annotations, and confirms persistence after restarting the app. A 390px viewport has no horizontal overflow.
+- Default screenshot height is now 100,000px, adjustable up to 200,000px, with a separate 160-million-pixel area bound. Automated test saved an actual 25,000px page; an additional real Chromium smoke saved a 1365×90016 PNG in approximately 3.4 seconds. These were test fixtures, not claims about external websites.
+- Windows launcher executed through Command Prompt, served HTTP200 plus version1.1.0/settings100000 on an isolated local test port, and was stopped afterward. No PowerShell execution-policy change, global environment change, or administrator privilege was used. Double-click Explorer interaction was not tested.
+- No public GitHub repository, hosted CI run, email/webhook delivery, WARC/WACZ interoperability, complete offline archival replay, or multi-user deployment is claimed.
+
+# Local validation — 1.0 baseline
 
 Executed on Windows with Node.js 24.22.1 and Playwright Chromium. This is local validation, not a hosted CI or independent security audit.
 

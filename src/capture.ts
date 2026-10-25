@@ -19,6 +19,7 @@ export type CaptureOptions = {
   fetcher?: typeof safeFetch;
   fixtureUrl?: string;
   settleMs?: number;
+  maxScreenshotHeight?: number;
   navigationTimeoutMs?: number;
   totalTimeoutMs?: number;
 };
@@ -234,16 +235,18 @@ export async function capture(
     const height = await page.evaluate(
       () => document.documentElement.scrollHeight,
     );
-    if (height > 18000)
-      throw new Error("Page exceeds the 18,000px screenshot limit");
+    if (height > (options.maxScreenshotHeight ?? 100000))
+      throw new Error(
+        `Page exceeds the ${(options.maxScreenshotHeight ?? 100000).toLocaleString("en-US")}px screenshot height limit. Adjust the maximum height in Application settings.`,
+      );
     const width = await page.evaluate(
       () => document.documentElement.scrollWidth,
     );
-    if (width > 4096 || width * height > 32000000)
+    if (width > 4096 || width * height > 160000000)
       throw new Error("Page exceeds screenshot width or pixel limit");
     const screenshot = await page.screenshot({
       fullPage: true,
-      timeout: 10000,
+      timeout: 30000,
       animations: "disabled",
     });
     return {

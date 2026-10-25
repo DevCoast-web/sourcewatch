@@ -1,6 +1,6 @@
 {
   "name": "sourcewatch",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -21,6 +21,7 @@
     "fastify": "^5.6.0",
     "fflate": "^0.8.2",
     "ipaddr.js": "^2.2.0",
+    "parse5": "^8.0.1",
     "playwright": "^1.56.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

@@ -7,6 +7,8 @@ import { Store } from "./storage.js";
 import { capture, type CaptureOptions } from "./capture.js";
 import { parsePublicUrl } from "./network.js";
 import { compare } from "./compare.js";
+import { createResearch } from "./research.js";
+import { compareStructure } from "./structure.js";
 import { nextDue } from "./scheduler.js";
 import { exportBundle } from "./export.js";
 export async function createApp(
@@ -19,6 +21,7 @@ export async function createApp(
   const store = new Store(
     options.root || resolve(process.env.SOURCEWATCH_DATA || "data"),
   );
+  const research = createResearch(store);
   const app = Fastify({ logger: !options.testMode, bodyLimit: 16384 });
   let busy = false;
   app.addHook("onRequest", async (req, reply) => {
@@ -65,6 +68,7 @@ export async function createApp(
     busy = true;
     store.attempt(id, null);
     try {
+      const previous = store.history(id).at(-1);
       const result = store.save(
         s,
         await capture(s.url, s.selectors, {
@@ -73,15 +77,29 @@ export async function createApp(
         }),
       );
       store.attempt(id, null);
+      try {
+        research.recordSuccess(previous, result);
+      } catch (e) {
+        app.log.error({ err: e }, "Could not update change inbox");
+      }
       return result;
     } catch (e) {
       store.attempt(id, (e as Error).message);
+      try {
+        research.recordFailure(id, (e as Error).message);
+      } catch (inboxError) {
+        app.log.error({ err: inboxError }, "Could not record failure in inbox");
+      }
       throw e;
     } finally {
       busy = false;
     }
   }
-  app.get("/api/status", async () => ({ busy, version: "1.0.0" }));
+  app.get("/api/status", async () => ({
+    busy,
+    version: "1.1.0",
+    unread: research.unreadCount(),
+  }));
   app.get<{ Querystring: { archived?: string } }>("/api/sources", async (req) =>
     store.sources(req.query.archived === "true").map((s) => {
       const h = store.history(s.id);
@@ -119,18 +137,16 @@ export async function createApp(
       throw new Error(
         "Invalid source settings (interval: 0 or 5–525600 minutes; at most 20 CSS selectors)",
       );
-    return reply
-      .code(201)
-      .send(
-        store.add({
-          url: b.url,
-          name,
-          description,
-          collection,
-          intervalMinutes,
-          selectors,
-        }),
-      );
+    return reply.code(201).send(
+      store.add({
+        url: b.url,
+        name,
+        description,
+        collection,
+        intervalMinutes,
+        selectors,
+      }),
+    );
   });
   app.patch<{ Params: { id: string } }>("/api/sources/:id", async (req) => {
     const current = source(req.params.id),
@@ -193,7 +209,8 @@ export async function createApp(
       maxRequests: 150,
       maxResponseMiB: 8,
       maxTotalMiB: 32,
-      maxScreenshotHeight: 18000,
+      maxScreenshotHeight: store.settings().maxScreenshotHeight,
+      maxScreenshotPixels: 160000000,
       concurrency: 1,
     },
   }));
@@ -201,7 +218,13 @@ export async function createApp(
     const n = (req.body as any)?.settleMs;
     if (!Number.isInteger(n) || n < 0 || n > 5000)
       throw new Error("Render settle time must be 0–5000 milliseconds");
-    store.setSettings(n);
+    const height = (req.body as any)?.maxScreenshotHeight;
+    if (
+      height !== undefined &&
+      (!Number.isInteger(height) || height < 1000 || height > 200000)
+    )
+      throw new Error("Maximum screenshot height must be 1000–200000 pixels");
+    store.setSettings(n, height);
     return store.settings();
   });
   app.get<{ Querystring: { q?: string } }>("/api/search", async (req) => {
@@ -212,7 +235,10 @@ export async function createApp(
       for (const r of store.history(s.id).reverse()) {
         const text = store.file(r.id, "text.txt").toString();
         const at = text.toLowerCase().indexOf(q);
-        if (at >= 0 || r.title.toLowerCase().includes(q))
+        const annotation = research.annotation(r.id);
+        const noteText = annotation.note + " " + annotation.tags.join(" ");
+        const noteAt = noteText.toLowerCase().indexOf(q);
+        if (at >= 0 || r.title.toLowerCase().includes(q) || noteAt >= 0)
           results.push({
             id: r.id,
             sourceId: s.id,
@@ -220,7 +246,11 @@ export async function createApp(
             archived: s.archived,
             title: r.title,
             observedAt: r.observedAt,
-            snippet: text.slice(Math.max(0, at - 50), Math.max(0, at) + 180),
+            snippet:
+              noteAt >= 0 && at < 0
+                ? "Research notes: " +
+                  noteText.slice(Math.max(0, noteAt - 30), noteAt + 180)
+                : text.slice(Math.max(0, at - 50), Math.max(0, at) + 180),
           });
         if (results.length >= 100) return results;
       }
@@ -241,6 +271,13 @@ export async function createApp(
           (r) =>
             !q ||
             r.title.toLowerCase().includes(q) ||
+            (
+              research.annotation(r.id).note +
+              " " +
+              research.annotation(r.id).tags.join(" ")
+            )
+              .toLowerCase()
+              .includes(q) ||
             store.file(r.id, "text.txt").toString().toLowerCase().includes(q),
         )
         .reverse();
@@ -272,6 +309,58 @@ export async function createApp(
               : "text/plain; charset=utf-8",
         )
         .send(store.file(req.params.id, n));
+    },
+  );
+  app.get<{ Querystring: { unread?: string } }>(
+    "/api/research/events",
+    async (req) =>
+      research
+        .listEvents(req.query.unread === "true")
+        .slice(0, 500)
+        .map((e) => ({
+          ...e,
+          sourceName: store.source(e.sourceId)?.name || "Archived source",
+        })),
+  );
+  app.patch<{ Params: { id: string } }>(
+    "/api/research/events/:id",
+    async (req) => research.markRead(req.params.id),
+  );
+  app.get<{ Params: { id: string } }>(
+    "/api/captures/:id/annotation",
+    async (req) => research.annotation(req.params.id),
+  );
+  app.put<{ Params: { id: string } }>(
+    "/api/captures/:id/annotation",
+    { bodyLimit: 65536 },
+    async (req) => research.saveAnnotation(req.params.id, req.body as any),
+  );
+  app.get<{ Params: { id: string } }>(
+    "/api/captures/:id/annotation/export",
+    async (req, reply) =>
+      reply
+        .header(
+          "Content-Disposition",
+          'attachment; filename="research-notes.json"',
+        )
+        .send({
+          type: "researcher-annotation",
+          description:
+            "Editable researcher notes; separate from original captured evidence.",
+          ...research.annotation(req.params.id),
+        }),
+  );
+  app.get<{ Querystring: { before: string; after: string } }>(
+    "/api/compare/structure",
+    async (req) => {
+      const a = record(req.query.before),
+        b = record(req.query.after);
+      if (a.sourceId !== b.sourceId)
+        throw new Error("Choose two captures from the same source");
+      return compareStructure(
+        store.file(a.id, "page.html").toString(),
+        store.file(b.id, "page.html").toString(),
+      );
     },
   );
   app.get<{ Querystring: { before: string; after: string } }>(
@@ -307,6 +396,7 @@ export async function createApp(
         store,
         req.params.id,
         req.query.ids?.split(",").filter(Boolean),
+        store.history(req.params.id).map((r) => research.annotation(r.id)),
       );
       return reply
         .header(
@@ -336,7 +426,7 @@ export async function createApp(
     clearInterval(timer);
     store.close();
   });
-  return { app, store, runCapture, runScheduled };
+  return { app, store, research, runCapture, runScheduled };
 }
 if (
   process.argv[1] &&

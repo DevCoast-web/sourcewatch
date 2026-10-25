@@ -5,6 +5,12 @@ export function exportBundle(
   store: Store,
   sourceId: string,
   selectedIds?: string[],
+  annotations: Array<{
+    captureId: string;
+    note: string;
+    tags: string[];
+    updatedAt: string | null;
+  }> = [],
 ) {
   let history = store.history(sourceId);
   if (selectedIds?.length) {
@@ -43,6 +49,27 @@ export function exportBundle(
       files[`captures/${record.id}/${name}`] = data;
     }
     previous = chainHash;
+  }
+  const includedNotes = annotations.filter(
+    (a) =>
+      history.some((r) => r.id === a.captureId) && (a.note || a.tags.length),
+  );
+  if (includedNotes.length) {
+    const notes = Buffer.from(
+      JSON.stringify(
+        {
+          type: "researcher-annotations",
+          description:
+            "Editable researcher notes and tags at export time. These are not part of the original capture hash chain.",
+          annotations: includedNotes,
+        },
+        null,
+        2,
+      ),
+    );
+    if (total + notes.length > 256 * 1024 * 1024)
+      throw new Error("Export exceeds 256 MiB");
+    files["research-notes.json"] = notes;
   }
   files["verify.mjs"] = readFileSync(
     new URL("../scripts/verify.mjs", import.meta.url),

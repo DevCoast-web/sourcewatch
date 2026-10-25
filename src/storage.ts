@@ -137,9 +137,21 @@ export class Store {
     const r = this.db
       .prepare("SELECT value FROM settings WHERE key=?")
       .get("settleMs") as any;
-    return { settleMs: r ? Number(r.value) : 1200 };
+    const height = this.db
+      .prepare("SELECT value FROM settings WHERE key=?")
+      .get("maxScreenshotHeight") as any;
+    return {
+      settleMs: r ? Number(r.value) : 1200,
+      maxScreenshotHeight: height ? Number(height.value) : 100000,
+    };
   }
-  setSettings(settleMs: number) {
+  setSettings(settleMs: number, maxScreenshotHeight?: number) {
+    if (maxScreenshotHeight !== undefined)
+      this.db
+        .prepare(
+          "INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        )
+        .run("maxScreenshotHeight", String(maxScreenshotHeight));
     this.db
       .prepare(
         "INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
