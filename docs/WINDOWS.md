@@ -51,4 +51,4 @@ The scripts themselves do not modify execution policy, firewall settings, startu
 
 ## Validation checkpoint
 
-The 1.1 candidate launcher was run through `cmd.exe /c start-sourcewatch.cmd` using isolated port 3212. The service reported version 1.1.0; status/settings and HTTP 200 were checked, then the service was stopped. This does not establish double-click behavior. Setup script validation was static at this checkpoint; consult the final handoff for any later executed checks.
+The 1.1 candidate launcher was run through `cmd.exe /c start-sourcewatch.cmd` using isolated port 3212. The service reported version 1.1.0; status/settings and HTTP 200 were checked, then the service was stopped. This does not establish double-click behavior. The setup script was subsequently executed from a fresh source ZIP extraction: npm dependencies and Chromium installed and the production build passed.

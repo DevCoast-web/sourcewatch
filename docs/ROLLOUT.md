@@ -17,7 +17,7 @@ Accept the pilot when a researcher can:
 5. Export evidence, independently verify an intact bundle, and detect a deliberately changed artifact.
 6. Archive or pause an unwanted source without losing its retained history.
 
-The candidate test run reported 32 tests: 31 passed, none failed, and one Windows symlink test skipped. The research UI test exercised notes/tags and notes export verification, rejection of tampered notes, HTML structure and screenshot comparison, height settings persisted across restart, and no mobile overflow. The launcher was exercised through `cmd.exe /c start-sourcewatch.cmd` on isolated port 3212: version 1.1.0, status/settings, and HTTP 200 were checked, then it was stopped. Setup was statically checked at this checkpoint; neither a setup execution nor a double-click test is claimed here.
+The candidate test run reported 32 tests: 31 passed, none failed, and one Windows symlink test skipped. The research UI test exercised notes/tags and notes export verification, rejection of tampered notes, HTML structure and screenshot comparison, height settings persisted across restart, and no mobile overflow. The launcher was exercised through `cmd.exe /c start-sourcewatch.cmd` on isolated port 3212: version 1.1.0, status/settings, and HTTP 200 were checked, then it was stopped. The setup script subsequently completed from a fresh source extraction, including dependency installation, Chromium download and build; the clean copy again passed 31 tests with one Windows privilege skip. Explorer double-click interaction was not tested.
 
 Continue running automated build, lint, type-check, capture/comparison/export/verifier tests and real desktop/mobile UI checks. Exercise the Windows launchers from Command Prompt and separately by double-clicking before claiming both paths were tested. Check failures as well as successes: missing dependencies, old Node, capture rejection, and occupied ports. Record actual commands and outcomes.
 
@@ -36,4 +36,3 @@ Shared hosting is optional future scope. It requires a separate review of authen
 ## Publication gate
 
 A rollout plan is not a release. Publish only after documented checks pass and the actual repository/release is created. Review [RELEASE.md](RELEASE.md) and the final handoff for the current publication state, exact artifacts, and any outstanding authentication/tool restrictions.
-

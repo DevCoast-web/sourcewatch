@@ -7,6 +7,10 @@
 - Windows launcher executed through Command Prompt, served HTTP200 plus version1.1.0/settings100000 on an isolated local test port, and was stopped afterward. No PowerShell execution-policy change, global environment change, or administrator privilege was used. Double-click Explorer interaction was not tested.
 - No public GitHub repository, hosted CI run, email/webhook delivery, WARC/WACZ interoperability, complete offline archival replay, or multi-user deployment is claimed.
 
+## Fresh 1.1 Windows installation
+
+The source ZIP was extracted to an independent directory. `cmd.exe /d /c "setup-sourcewatch.cmd < nul"` completed: 186 npm packages installed, Chromium downloaded to that copy, and TypeScript/Vite build passed. ESLint and all 32 tests ran against the clean copy (31 pass, zero fail, one Windows symlink skip). Its start script served version 1.1.0, HTTP200 and the 100,000px default on isolated port3213; it was stopped afterward. The input redirection only bypassed the final interactive pause for automated execution. Explorer double-click interaction was not tested.
+
 # Local validation — 1.0 baseline
 
 Executed on Windows with Node.js 24.22.1 and Playwright Chromium. This is local validation, not a hosted CI or independent security audit.
