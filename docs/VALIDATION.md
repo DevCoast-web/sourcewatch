@@ -15,3 +15,10 @@ Executed on Windows with Node.js 24.22.1 and Playwright Chromium. This is local 
 - Security tests cover private/reserved/mapped/obfuscated address rejection, mixed public/private DNS answers, private redirects and subresources, unsafe Host/Origin headers, traversal paths, externally retained manifest mismatch, modified chain metadata, unexpected files, append-only SQL triggers, unchanged but unique observations, and SQLite persistence after reopen.
 
 Limits: no external penetration test, multi-user hosting review, complete adversarial JavaScript memory isolation, or hosted Linux CI run was performed. Semantic HTML structure diff, pixel diff, notifications, an OS background service, and automatic retention are not implemented. Public publication is blocked by missing repository-creation authentication/tooling; see RELEASE.md.
+## Fresh release extraction
+
+The committed source ZIP was extracted into a separate clean directory. `npm ci` installed 184 packages, production build and lint passed, and `npm test` again reported 18 passed, 0 failed, 1 Windows symlink privilege skip. Browser binaries from the previously verified Chromium installation were reused through `PLAYWRIGHT_BROWSERS_PATH`.
+
+The extracted application's actual `npm start` server was launched on loopback port 3211. Its production HTTP API registered https://example.com, captured HTTP 200 with zero warnings, exported a 40,246-byte ZIP, and the ZIP's bundled verifier returned `ok: true`, one capture, no errors. The smoke server was stopped afterward.
+
+The source archive passed Python `zipfile.testzip()` and a filename audit excluding node_modules, runtime data, installed browsers, Git internals, and test scratch directories. PNG dimensions were checked from file headers: comparison 1536×1261, inspector 1536×1685, mobile 390×1498. Original SVG assets declare icon 64×64 and wordmark 720×120.

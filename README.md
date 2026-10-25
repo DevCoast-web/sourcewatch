@@ -1,5 +1,7 @@
 # SOURCEWATCH
 
+![SOURCEWATCH wordmark](docs/brand/wordmark.svg)
+
 **The internet changes. Keep the receipts.**
 
 A local-first research workstation for capturing public webpages, comparing revisions, and exporting independently verifiable evidence packages. No accounts, API keys, paid services, or cloud storage are required.

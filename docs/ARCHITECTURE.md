@@ -7,6 +7,8 @@ SOURCEWATCH uses one local Node.js 24 process, a Fastify HTTP API, a Vite-built 
 | Module | Responsibility |
 | --- | --- |
 | `src/network.ts` | URL normalization, public-address classification, DNS validation, address-pinned HTTP(S) requests, response limits |
+| `src/barrier.ts` | Owned deny-all Chromium fallback proxy |
+| `src/scheduler.ts` | Select eligible sources from persisted attempt times |
 | `src/capture.ts` | Isolated browser lifecycle, interception of requests, bounded rendering, HTML/text/link extraction, screenshot |
 | `src/storage.ts` | SQLite schema, source settings, append-only capture rows, artifact writes, SHA-256 chain |
 | `src/compare.ts` | Bounded line/word diffs and outbound link set changes |

@@ -39,12 +39,12 @@ gh run list
 
 Review the actual GitHub Actions run and resolve failures before the release. If the repository already exists, inspect its ownership and contents, then configure its verified URL as `origin` rather than creating another repository or overwriting an unrelated remote.
 
-After local checks and hosted CI pass, publish a tag and attach the packaged source archive and checksum manifest. The archive is prepared beside the repository in `../sourcewatch-v1.0.0.zip`; use the actual checksum filename from the artifact handoff:
+After local checks and hosted CI pass, publish a tag and attach the packaged source archive and checksum manifest. The archive is prepared beside the repository in `../sourcewatch-v1.0.0.zip`; its checksum file is `../sourcewatch-v1.0.0.sha256`:
 
 ```sh
 git tag -a v1.0.0 -m "SOURCEWATCH v1.0.0"
 git push origin v1.0.0
-gh release create v1.0.0 ../sourcewatch-v1.0.0.zip --title "SOURCEWATCH v1.0.0" --generate-notes
+gh release create v1.0.0 ../sourcewatch-v1.0.0.zip ../sourcewatch-v1.0.0.sha256 --title "SOURCEWATCH v1.0.0" --generate-notes
 ```
 
-Attach the separately supplied checksum manifest with `gh release upload v1.0.0 /path/to/actual-checksum-file`. Verify its filename and contents before uploading. Do not include local databases, personal captures, installed browsers, or node_modules in a release package. Publication commands are documented recovery steps; they have not been executed here.
+Verify the supplied checksum before uploading. Do not include local databases, personal captures, installed browsers, or node_modules in a release package. Publication commands are documented recovery steps; they have not been executed here.
