@@ -195,6 +195,7 @@ export class Store {
     const id = randomUUID();
     this.db.exec("BEGIN IMMEDIATE");
     let staging: string | undefined;
+    let published = false;
     try {
       const history = this.history(source.id);
       const files: Record<string, Buffer> = {
@@ -235,6 +236,7 @@ export class Store {
         { flag: "wx" },
       );
       renameSync(staging, join(this.root, "captures", id));
+      published = true;
       this.db
         .prepare("INSERT INTO captures(id,sourceId,metadata) VALUES(?,?,?)")
         .run(id, source.id, JSON.stringify(record));
@@ -243,6 +245,11 @@ export class Store {
     } catch (e) {
       this.db.exec("ROLLBACK");
       if (staging) rmSync(staging, { recursive: true, force: true });
+      if (published && !this.get(id))
+        rmSync(join(this.root, "captures", id), {
+          recursive: true,
+          force: true,
+        });
       throw e;
     }
   }

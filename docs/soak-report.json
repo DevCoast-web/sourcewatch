@@ -1,0 +1,25 @@
+{
+  "kind": "accelerated-fixture-endurance",
+  "startedAt": "2026-10-28T16:52:42.877Z",
+  "finishedAt": "2026-10-28T16:53:11.168Z",
+  "elapsedMs": 28291,
+  "plannedCycles": 12,
+  "completedCycles": 12,
+  "captures": 11,
+  "failureEvents": 1,
+  "changeEvents": 5,
+  "peakControllerRssBytes": 236040192,
+  "controllerRssScope": "Node.js harness process only; excludes Chromium child processes",
+  "assertions": [
+    "Historical inspector remained on the first capture after scheduled polling",
+    "Unsaved notes draft survived scheduled polling",
+    "Twelve scheduled cycles produced eleven captures and one HTTP 403 failure",
+    "Unchanged comparison text ignored dynamic clocks while preserving original HTML",
+    "Capture chain hashes and predecessor links verified",
+    "Intermittent status, search, and export requests succeeded",
+    "Final ZIP passed its standalone offline verifier",
+    "Capture failure cleared after a later successful capture",
+    "All eleven captures and settings survived shutdown and database reopen"
+  ],
+  "ok": true
+}

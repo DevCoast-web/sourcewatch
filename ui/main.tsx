@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { VERSION } from "../src/version.js";
+import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
 import {
@@ -126,6 +127,31 @@ function App() {
       setFocusCapture(null);
     }
   }, [focusCapture, history, selected]);
+  const selectedRef = useRef(selected),
+    archivedRef = useRef(showArchived),
+    afterRef = useRef(after),
+    beforeRef = useRef(before);
+  selectedRef.current = selected;
+  archivedRef.current = showArchived;
+  afterRef.current = after;
+  beforeRef.current = before;
+  const followLatest = useRef<string | null>(null);
+  const sourceRequest = useRef(0),
+    historyRequest = useRef(0),
+    lastHistorySource = useRef("");
+  const [serverVersion, setServerVersion] = useState("");
+  function updateStatus(status: {
+    busy: boolean;
+    unread?: number;
+    version: string;
+  }) {
+    setBusy(status.busy);
+    setUnread(status.unread || 0);
+    setServerVersion(status.version);
+  }
+  const [comparisonError, setComparisonError] = useState(""),
+    [detailError, setDetailError] = useState(""),
+    [detailRetry, setDetailRetry] = useState(0);
   const source = sources.find((s) => s.id === selected);
   const collections = [...new Set(sources.map((s) => s.collection))].sort();
   useEffect(() => {
@@ -170,79 +196,109 @@ function App() {
     };
   }, [showAdd, !!exportHash, !!settings, globalSearch, researchOpen]);
   async function refresh() {
-    const rows = await api("/sources" + (showArchived ? "?archived=true" : ""));
+    const request = ++sourceRequest.current;
+    const rows = await api(
+      "/sources" + (archivedRef.current ? "?archived=true" : ""),
+    );
+    if (request !== sourceRequest.current) return;
     setSources(rows);
     api("/status")
-      .then((s) => setUnread(s.unread || 0))
+      .then(updateStatus)
       .catch(() => {});
-    setSelected((prev) => prev || rows[0]?.id || "");
+    setSelected((prev) =>
+      rows.some((s: Source) => s.id === prev) ? prev : rows[0]?.id || "",
+    );
   }
-  async function refreshHistory(id: string) {
+  async function refreshHistory(id: string, preferLatest = false) {
+    const request = ++historyRequest.current;
+    const selectLatest = preferLatest || followLatest.current === id;
     const rows = await api(`/sources/${id}/captures`);
+    if (request !== historyRequest.current || selectedRef.current !== id)
+      return;
     setHistory(rows);
-    setAfter(rows[0]?.id || "");
-    setBefore(rows[1]?.id || "");
+    setAfter(
+      !selectLatest && rows.some((c: Capture) => c.id === afterRef.current)
+        ? afterRef.current
+        : rows[0]?.id || "",
+    );
+    setBefore(
+      !selectLatest && rows.some((c: Capture) => c.id === beforeRef.current)
+        ? beforeRef.current
+        : rows[1]?.id || "",
+    );
   }
   useEffect(() => {
     refresh().catch((e) => setError(e.message));
     const timer = setInterval(() => {
       refresh().catch(() => {});
       api("/status")
-        .then((s) => {
-          setBusy(s.busy);
-          setUnread(s.unread || 0);
-        })
+        .then(updateStatus)
         .catch(() => {});
     }, 5000);
     return () => clearInterval(timer);
   }, [showArchived]);
   useEffect(() => {
-    setComparison(null);
-    setDetail(null);
-    setCaptureQuery("");
-    setCaptureMatches(null);
+    if (lastHistorySource.current !== selected) {
+      lastHistorySource.current = selected;
+      setHistory([]);
+      setBefore("");
+      setAfter("");
+      setComparison(null);
+      setDetail(null);
+      setCaptureQuery("");
+      setCaptureMatches(null);
+    }
     if (selected) refreshHistory(selected).catch((e) => setError(e.message));
     else setHistory([]);
   }, [selected, source?.captureCount]);
   useEffect(() => {
     let live = true;
     setComparison(null);
+    setComparisonError("");
     if (before && after && before !== after)
       api(`/compare?before=${before}&after=${after}`)
         .then((c) => {
           if (live) setComparison(c);
         })
-        .catch((e) => setError(e.message));
+        .catch((e) => {
+          if (live) setComparisonError(e.message);
+        });
     return () => {
       live = false;
     };
   }, [before, after]);
   useEffect(() => {
     let live = true;
+    setDetail(null);
+    setDetailError("");
     if (after)
       api(`/captures/${after}`)
         .then((c) => {
           if (live) setDetail(c);
         })
-        .catch((e) => setError(e.message));
+        .catch((e) => {
+          if (live) setDetailError(e.message);
+        });
     return () => {
       live = false;
     };
-  }, [after]);
+  }, [after, detailRetry]);
   async function captureNow() {
     if (!source) return;
+    followLatest.current = source.id;
     setBusy(true);
     setError("");
     setNotice("Rendering the page and preserving artifacts…");
     try {
       await api(`/sources/${source.id}/capture`, { method: "POST" });
       await refresh();
-      await refreshHistory(source.id);
+      await refreshHistory(source.id, true);
       setNotice("Capture preserved. The receipt is in your local history.");
     } catch (e) {
       setError((e as Error).message);
       setNotice("");
     } finally {
+      if (followLatest.current === source.id) followLatest.current = null;
       setBusy(false);
     }
   }
@@ -451,9 +507,19 @@ function App() {
               <i /> Local-first. Independently verifiable.
             </div>
           </div>
+          {serverVersion && serverVersion !== VERSION && (
+            <div role="alert" className="alert error">
+              <span>
+                Restart SOURCEWATCH to load this update. The browser interface
+                is {VERSION}, but the running service is {serverVersion}. Stop
+                the old terminal server, run start-sourcewatch.cmd, then refresh
+                this page.
+              </span>
+            </div>
+          )}
           {error && (
             <div role="alert" className="alert error">
-              {error}
+              <span>{error}</span>
               <button onClick={() => setError("")} aria-label="Dismiss error">
                 ×
               </button>
@@ -461,7 +527,7 @@ function App() {
           )}
           {notice && (
             <div role="status" className="alert">
-              {notice}
+              <span>{notice}</span>
               <button onClick={() => setNotice("")} aria-label="Dismiss notice">
                 ×
               </button>
@@ -689,10 +755,54 @@ function App() {
                               </select>
                             </label>
                           </div>
+                          <div className="research-view-controls">
+                            <button
+                              className={mode === "side" ? "chosen" : ""}
+                              onClick={() => setMode("side")}
+                            >
+                              Side by side
+                            </button>
+                            <button
+                              className={mode === "inline" ? "chosen" : ""}
+                              onClick={() => setMode("inline")}
+                            >
+                              Inline
+                            </button>
+                            <button
+                              className={mode === "visual" ? "chosen" : ""}
+                              onClick={() => setMode("visual")}
+                            >
+                              Screenshots
+                            </button>
+                            <button
+                              className={mode === "structure" ? "chosen" : ""}
+                              onClick={() => setMode("structure")}
+                            >
+                              HTML structure
+                            </button>
+                          </div>
+                          <div className="export-selection">
+                            <button
+                              onClick={() => exportEvidence([before, after])}
+                            >
+                              ↓ Export compared versions
+                            </button>
+                            <span>
+                              Includes earlier chain records needed for
+                              independent verification.
+                            </span>
+                          </div>
                           {before === after ? (
                             <div className="empty">
                               Choose two different captures.
                             </div>
+                          ) : mode === "visual" ? (
+                            <VisualComparison before={before} after={after} />
+                          ) : mode === "structure" ? (
+                            <StructureComparison
+                              before={before}
+                              after={after}
+                            />
                           ) : comparison ? (
                             <>
                               {comparison.titleChanged && (
@@ -710,52 +820,11 @@ function App() {
                                   <b className="deletion">
                                     −{comparison.removed} lines
                                   </b>
-                                  {!comparison.changed && "No changes detected"}
+                                  {!comparison.changed &&
+                                    "No text, title, or outbound-link changes"}
                                 </span>
-                                <div className="segmented">
-                                  <button
-                                    className={mode === "side" ? "chosen" : ""}
-                                    onClick={() => setMode("side")}
-                                  >
-                                    Side by side
-                                  </button>
-                                  <button
-                                    className={
-                                      mode === "inline" ? "chosen" : ""
-                                    }
-                                    onClick={() => setMode("inline")}
-                                  >
-                                    Inline
-                                  </button>
-                                  <button
-                                    className={
-                                      mode === "visual" ? "chosen" : ""
-                                    }
-                                    onClick={() => setMode("visual")}
-                                  >
-                                    Screenshots
-                                  </button>
-                                  <button
-                                    className={
-                                      mode === "structure" ? "chosen" : ""
-                                    }
-                                    onClick={() => setMode("structure")}
-                                  >
-                                    HTML structure
-                                  </button>
-                                </div>
                               </div>
-                              {mode === "visual" ? (
-                                <VisualComparison
-                                  before={before}
-                                  after={after}
-                                />
-                              ) : mode === "structure" ? (
-                                <StructureComparison
-                                  before={before}
-                                  after={after}
-                                />
-                              ) : mode === "side" ? (
+                              {mode === "side" ? (
                                 <div className="diff-grid">
                                   <div>
                                     <div className="diff-label">
@@ -807,19 +876,7 @@ function App() {
                                   )}
                                 </pre>
                               )}
-                              <div className="export-selection">
-                                <button
-                                  onClick={() =>
-                                    exportEvidence([before, after])
-                                  }
-                                >
-                                  ↓ Export compared versions
-                                </button>
-                                <span>
-                                  Includes earlier chain records needed for
-                                  independent verification.
-                                </span>
-                              </div>
+
                               <div className="link-changes">
                                 <h3>Outbound links</h3>
                                 {!comparison.linksAdded.length &&
@@ -850,7 +907,12 @@ function App() {
                               </p>
                             </>
                           ) : (
-                            <div className="empty">Loading comparison…</div>
+                            <div
+                              className="empty"
+                              role={comparisonError ? "alert" : undefined}
+                            >
+                              {comparisonError || "Loading comparison…"}
+                            </div>
                           )}
                         </>
                       )}
@@ -870,7 +932,8 @@ function App() {
                                 const rows = await api(
                                   `/sources/${selected}/captures?q=${encodeURIComponent(captureQuery)}`,
                                 );
-                                setCaptureMatches(rows);
+                                if (selectedRef.current === selected)
+                                  setCaptureMatches(rows);
                               } catch (e) {
                                 setError((e as Error).message);
                               }
@@ -964,7 +1027,7 @@ function App() {
                             {detail.ignoredSelectors.join(", ") || "None"}
                           </dd>
                         </dl>
-                        <ResearchNotes captureId={after} />
+                        <ResearchNotes key={after} captureId={after} />
                         {detail.warnings.length > 0 && (
                           <details>
                             <summary>
@@ -995,7 +1058,14 @@ function App() {
                       </div>
                     ) : (
                       <div className="empty">
-                        Capture a page to inspect its artifacts.
+                        {after
+                          ? detailError || "Loading capture…"
+                          : "Capture a page to inspect its artifacts."}
+                        {detailError && (
+                          <button onClick={() => setDetailRetry((n) => n + 1)}>
+                            Retry capture details
+                          </button>
+                        )}
                       </div>
                     ))}
                 </>
@@ -1018,7 +1088,7 @@ function App() {
           <footer>
             SOURCEWATCH{" "}
             <span>Local observations. Portable evidence. Open source.</span>
-            <span>v1.1</span>
+            <span>v{serverVersion || VERSION}</span>
           </footer>
         </main>
       </div>
@@ -1217,6 +1287,11 @@ function App() {
             </button>
             <div className="eyebrow">LOCAL WORKSPACE</div>
             <h2 id="settings-title">Application settings</h2>
+            {error && (
+              <p role="alert" className="capture-error">
+                {error}
+              </p>
+            )}
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -1235,6 +1310,7 @@ function App() {
                     }),
                   });
                   setSettings(null);
+                  setError("");
                   setNotice("Settings saved locally.");
                 } catch (e) {
                   setError((e as Error).message);
@@ -1303,6 +1379,11 @@ function App() {
               ×
             </button>
             <h2 id="search-title">Search preserved text</h2>
+            {error && (
+              <p role="alert" className="capture-error">
+                {error}
+              </p>
+            )}
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
@@ -1338,12 +1419,12 @@ function App() {
                   if (r.archived) setShowArchived(true);
                   setSelected(r.sourceId);
                   setGlobalSearch(false);
-                  setTab("history");
-                  setNotice(
-                    "Open the matching receipt from " +
-                      date(r.observedAt) +
-                      " in revision history.",
-                  );
+                  setFocusCapture({
+                    sourceId: r.sourceId,
+                    after: r.id,
+                    before: "",
+                  });
+                  setTab("inspect");
                 }}
               >
                 <strong>

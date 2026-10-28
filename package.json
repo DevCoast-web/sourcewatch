@@ -1,6 +1,6 @@
 {
   "name": "sourcewatch",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -13,7 +13,9 @@
     "test": "tsx --test tests/*.test.ts",
     "verify": "node scripts/verify.mjs",
     "lint": "eslint src ui tests scripts vite.config.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:audit": "tsx --test tests/audit-*.test.ts",
+    "test:soak": "tsx scripts/soak.ts"
   },
   "dependencies": {
     "@fastify/static": "10.1.7",

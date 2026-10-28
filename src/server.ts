@@ -1,3 +1,4 @@
+import { VERSION } from "./version.js";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import { resolve } from "node:path";
@@ -24,6 +25,8 @@ export async function createApp(
   const research = createResearch(store);
   const app = Fastify({ logger: !options.testMode, bodyLimit: 16384 });
   let busy = false;
+  let closing = false;
+  let captureDrained: Promise<void> | undefined;
   app.addHook("onRequest", async (req, reply) => {
     const host = req.headers.host || "";
     if (!/^(127\.0\.0\.1|localhost)(:\d+)?$/.test(host))
@@ -57,6 +60,10 @@ export async function createApp(
     return r;
   };
   async function runCapture(id: string) {
+    if (closing)
+      throw Object.assign(new Error("Service is shutting down"), {
+        statusCode: 503,
+      });
     if (busy)
       throw Object.assign(
         new Error("Another capture is running. Please retry shortly."),
@@ -66,8 +73,12 @@ export async function createApp(
     if (s.archived)
       throw new Error("Restore this archived source before capturing");
     busy = true;
-    store.attempt(id, null);
+    let finishCapture: () => void = () => {};
+    captureDrained = new Promise<void>((resolve) => {
+      finishCapture = resolve;
+    });
     try {
+      store.attempt(id, null);
       const previous = store.history(id).at(-1);
       const result = store.save(
         s,
@@ -93,11 +104,13 @@ export async function createApp(
       throw e;
     } finally {
       busy = false;
+      finishCapture();
+      captureDrained = undefined;
     }
   }
   app.get("/api/status", async () => ({
     busy,
-    version: "1.1.0",
+    version: VERSION,
     unread: research.unreadCount(),
   }));
   app.get<{ Querystring: { archived?: string } }>("/api/sources", async (req) =>
@@ -155,13 +168,12 @@ export async function createApp(
     if (b.paused !== undefined) {
       if (typeof b.paused !== "boolean")
         throw new Error("paused must be boolean");
-      store.pause(current.id, b.paused);
     }
     if (b.archived !== undefined) {
       if (typeof b.archived !== "boolean")
         throw new Error("archived must be boolean");
-      store.archive(current.id, b.archived);
     }
+    let updated: Parameters<Store["update"]>[1] | undefined;
     if (
       [
         "name",
@@ -171,7 +183,7 @@ export async function createApp(
         "selectors",
       ].some((k) => b[k] !== undefined)
     ) {
-      const updated = {
+      updated = {
         name: b.name ?? current.name,
         description: b.description ?? current.description,
         collection: b.collection ?? current.collection,
@@ -198,7 +210,16 @@ export async function createApp(
         )
       )
         throw new Error("Invalid source settings");
-      store.update(current.id, updated);
+    }
+    store.db.exec("BEGIN IMMEDIATE");
+    try {
+      if (updated) store.update(current.id, updated);
+      if (b.archived !== undefined) store.archive(current.id, b.archived);
+      if (b.paused !== undefined) store.pause(current.id, b.paused);
+      store.db.exec("COMMIT");
+    } catch (e) {
+      store.db.exec("ROLLBACK");
+      throw e;
     }
     return source(current.id);
   });
@@ -411,7 +432,7 @@ export async function createApp(
   const dist = resolve("dist");
   if (existsSync(dist)) await app.register(fastifyStatic, { root: dist });
   const runScheduled = async () => {
-    if (busy) return;
+    if (busy || closing) return;
     const due = nextDue(store.sources());
     if (due)
       try {
@@ -422,6 +443,11 @@ export async function createApp(
   };
   const timer = setInterval(() => void runScheduled(), 15000);
   timer.unref();
+  app.addHook("preClose", async () => {
+    closing = true;
+    clearInterval(timer);
+    await captureDrained;
+  });
   app.addHook("onClose", async () => {
     clearInterval(timer);
     store.close();

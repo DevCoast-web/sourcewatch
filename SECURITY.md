@@ -20,7 +20,7 @@ Do not include sensitive capture contents, tokens, or exploitable details in a p
 
 ## Remaining risks
 
-Remote HTML still executes JavaScript in Chromium during rendering. Keep Node.js, Chromium, and dependencies updated. Browser isolation is not a substitute for an operating-system sandbox, and this release has not had an independent penetration test. Some sites make requests that are blocked or depend on third-party scripts; review capture warnings and results.
+Remote HTML still executes JavaScript in Chromium during rendering. Keep Node.js, Chromium, and dependencies updated. Playwright Chromium is launched with its operating-system sandbox disabled by default. Fresh contexts, request interception, and the deny-all proxy are application controls, not OS isolation. A sandbox-enabled Chromium launch could not run under this managed Windows execution environment. Use an isolated VM for hostile or untrusted pages; this release has not had an independent penetration test. Some sites make requests that are blocked or depend on third-party scripts; review capture warnings and results.
 
 Captured files may contain personal information, secret query parameters, malicious scripts, copyrighted material, or misleading content. Data is not encrypted at rest. Review exports before redistribution. Do not open untrusted HTML files directly in a privileged browser; use a text editor or the preserved screenshot. Run a trusted verifier rather than executing arbitrary JavaScript from someone else's evidence bundle.
 
@@ -31,3 +31,7 @@ The scheduler runs only while the process runs. There is no automatic retention 
 ### Additional resource bounds
 
 Production transport permits at most six simultaneous resource requests inside the single active capture. All resource streams share a 32 MiB byte budget; individual responses are limited to 8 MiB. Responses compressed despite an identity-encoding request are rejected to prevent decompression bombs. Rendered HTML is limited to 16 MiB after serialization. Screenshot width is limited to 4096px and total area to 160 million pixels. Screenshot height defaults to 100,000px and is configurable from 1,000 to 200,000px. The 45-second deadline begins after browser startup (startup itself has a 10-second timeout). These bounds do not replace OS-level memory/CPU isolation: hostile page scripts can still consume resources before measurement.
+
+## Audit checkpoint — 1.1.1
+
+The local engineering audit added regression coverage for network address pinning, credential exclusion, shared byte budgets, compressed-response rejection, request deadlines, atomic source updates, shutdown during capture, storage failure cleanup, selected export prefixes, schema migration, verifier junction handling, and stale/failed UI requests. See [docs/AUDIT.md](docs/AUDIT.md) for scope and pending checks. Chromium UI behavior was validated; Firefox and Edge launch restrictions prevented completed UI passes. No cross-browser pass or independent security certification is claimed.

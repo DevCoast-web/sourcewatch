@@ -108,3 +108,10 @@ The [example bundles](examples/README.md) contain real exports from the integrat
 - Windows setup/launch scripts. Existing data and original capture hashes are preserved by additive research-table migrations.
 
 See the [staged rollout](docs/ROLLOUT.md). Full WARC/WACZ compatibility, archival replay, external notifications, and multi-user hosting remain future work.
+
+## 1.1.1 audit patch
+
+The local 1.1.1 candidate fixes stale capture/annotation UI state, makes source setting updates atomic, waits for an active capture during shutdown, and cleans up artifacts after failed database commits. Regression tests expand coverage of transport limits, migration, selected exports, and delayed/failed UI requests. Validation completed with 54 passing tests, zero failures, and two Windows skips (56 total), passing build/lint/type checks, zero dependency-audit vulnerabilities, and an accelerated 12-cycle soak. The soak took 28,291ms and is not a twelve-hour test. See [audit scope and limitations](docs/AUDIT.md) for details and remaining release steps. Publication remains blocked.
+
+Playwright Chromium's OS sandbox is disabled by default. Browser contexts and the network proxy are application controls, not OS isolation. A sandbox-enabled launch could not run under the managed Windows execution environment; use an isolated VM when examining hostile pages. Chromium was validated; Firefox/Edge UI passes were not completed because of launch restrictions.
+

@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.1 — Audit patch candidate
+
+- Prevent stale capture metadata and annotations from following a newly selected capture; disable note saving until its annotation has loaded and surface unsaved-note state.
+- Keep screenshot/structure inspection available when text comparison fails and improve delayed/failed request handling.
+- Validate source updates before applying them and commit their changes in a transaction.
+- Drain active captures before closing storage on shutdown; reject new captures while closing.
+- Remove newly published artifacts when a capture database commit fails.
+- Expand deterministic backend/network/UI audit coverage and document disabled Chromium OS sandbox and uncompleted Firefox/Edge validation.
+
+Local audit candidate, not a published release. Final suite, dependency audit, and accelerated soak results are recorded in the handoff; no twelve-hour soak or fresh 1.1.1 installation is implied.
+
 ## 1.1.0 — Research workspace
 
 Local change/failure inbox, editable capture notes/tags and note search, checksummed annotation exports, screenshot overlay slider, bounded inert HTML structure comparison, Windows .cmd setup/launchers, and default screenshot height raised to 100,000px with configurable limits. Existing capture chains remain unchanged. Local release candidate; public publication remains pending.
@@ -9,4 +20,3 @@ Local change/failure inbox, editable capture notes/tags and note search, checksu
 Initial local-first implementation: Playwright rendered-page capture, SQLite source/history storage, text and outbound-link comparison, responsive React dashboard, editable source metadata, archive/restore, collections and local scheduling, global text search, local settings, explicit title changes, append-only hash-linked capture metadata, full-source and selected-history ZIP evidence export with chain ancestors, and standalone offline verification.
 
 This entry describes the source tree, not a claim of publication. See README and SECURITY for limits, the release handoff for executed checks, and repository tags/releases for actual publication status.
-

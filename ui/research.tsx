@@ -142,15 +142,24 @@ export function ResearchNotes({ captureId }: { captureId: string }) {
     [tags, setTags] = useState(""),
     [saved, setSaved] = useState(""),
     [error, setError] = useState(""),
-    [loading, setLoading] = useState(true);
+    [loading, setLoading] = useState(true),
+    [loaded, setLoaded] = useState(false),
+    [retry, setRetry] = useState(0),
+    [saving, setSaving] = useState(false),
+    [dirty, setDirty] = useState(false);
   useEffect(() => {
     let live = true;
     setLoading(true);
+    setLoaded(false);
+    setDirty(false);
+    setNote("");
+    setTags("");
     setError("");
     setSaved("");
     request(`/captures/${captureId}/annotation`)
       .then((a) => {
         if (live) {
+          setLoaded(true);
           setNote(a.note);
           setTags(a.tags.join(", "));
           setLoading(false);
@@ -165,9 +174,11 @@ export function ResearchNotes({ captureId }: { captureId: string }) {
     return () => {
       live = false;
     };
-  }, [captureId]);
+  }, [captureId, retry]);
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (!loaded || saving) return;
+    setSaving(true);
     setError("");
     try {
       const result = await request(`/captures/${captureId}/annotation`, {
@@ -182,8 +193,11 @@ export function ResearchNotes({ captureId }: { captureId: string }) {
       });
       setTags(result.tags.join(", "));
       setSaved("Notes saved locally.");
+      setDirty(false);
     } catch (e) {
       setError((e as Error).message);
+    } finally {
+      setSaving(false);
     }
   }
   return (
@@ -204,10 +218,11 @@ export function ResearchNotes({ captureId }: { captureId: string }) {
             onChange={(e) => {
               setNote(e.target.value);
               setSaved("");
+              setDirty(true);
             }}
             maxLength={10000}
             rows={4}
-            disabled={loading}
+            disabled={loading || !loaded || saving}
           />
         </label>
         <label>
@@ -218,23 +233,34 @@ export function ResearchNotes({ captureId }: { captureId: string }) {
             onChange={(e) => {
               setTags(e.target.value);
               setSaved("");
+              setDirty(true);
             }}
-            disabled={loading}
+            disabled={loading || !loaded || saving}
           />
         </label>
         <div className="notes-actions">
-          <button className="primary" disabled={loading}>
-            Save notes
+          <button className="primary" disabled={loading || !loaded || saving}>
+            {saving ? "Saving notes…" : "Save notes"}
           </button>
           <a href={`/api/captures/${captureId}/annotation/export`}>
             ↓ Export notes JSON
           </a>
         </div>
         {saved && <p role="status">{saved}</p>}
+        {dirty && !saving && (
+          <p role="status">Unsaved changes. Save before changing captures.</p>
+        )}
         {error && (
-          <p role="alert" className="capture-error">
-            {error}
-          </p>
+          <div>
+            <p role="alert" className="capture-error">
+              {error}
+            </p>
+            {!loaded && (
+              <button type="button" onClick={() => setRetry((n) => n + 1)}>
+                Retry loading notes
+              </button>
+            )}
+          </div>
         )}
       </form>
     </section>

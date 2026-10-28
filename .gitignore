@@ -6,3 +6,4 @@ test-results/
 .env
 .browsers/
 .test-data/
+work/
