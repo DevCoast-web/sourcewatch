@@ -30,3 +30,7 @@ This entry describes the source tree, not a claim of publication. See README and
 Added a shared versioned workspace, persistent Markdown vault/backlinks/history, editable JSON Canvas, an entity/relationship database and separate network graph, evidence-reviewed hypotheses, investigations, attachments and local PDF previews. Added workspace/Markdown/graph exports and standalone workspace verification, property views, clip import, declarative navigation extensions, audio recording and loopback CLI. Browser tests exercise actual persisted edits, conflicts and generated export bytes.
 
 This is a dedicated feature-branch preview. Full master expansion and Module J acceptance remain partial; automatic sync, advanced editor/plugin/base parity, complete mobile/offline behavior and advanced graph analysis are unfinished. See the feature matrix and validation report.
+
+## 2.0.0-alpha.2 — Global Graph audit and implementation
+
+Added a derived live ecosystem index and discoverable Global Graph workspace, force-worker/Canvas renderer, category/hub styling, typed stored edges, global/local/investigation perspectives, cluster navigation, record inspector and revision-checked investigation layouts. Added a memory-only labeled 10k/12k demo and actual SQLite index/browser performance benchmarks. Retained the existing Network and editable Canvas. Audit and limits: docs/GLOBAL_GRAPH_AUDIT.md.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "release": "2.0.0-alpha.1",
+  "release": "2.0.0-alpha.2",
   "source": "User master/network directives and Module J",
   "fullParity": false,
   "features": [
@@ -188,16 +188,21 @@
       "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
       "implementationFiles": [
         "src/intelligence.ts",
-        "ui/intelligence.tsx"
+        "ui/intelligence.tsx",
+        "src/ecosystem.ts",
+        "ui/ecosystem.tsx",
+        "ui/ecosystem-force.ts",
+        "ui/ecosystem.worker.ts"
       ],
-      "actualBehavior": "Global/local bounded graph with notes/records, pan/zoom, search, categories/status, paths, boards and SVG export.",
+      "actualBehavior": "Dedicated live ecosystem Global Graph; force worker/Canvas renderer; typed references across eligible record categories; global/local/investigation perspectives, hub sizing, category styling, cluster navigation, record inspection and saved investigation layouts.",
       "automatedCoverage": [
-        "tests/intelligence.test.ts"
+        "tests/intelligence.test.ts",
+        "tests/ecosystem.test.ts"
       ],
       "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
-      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
-      "knownDifferences": "Community detection, full display settings parity and all note-link/date filters are incomplete.",
-      "outstandingDependencies": "Community detection, full display settings parity and all note-link/date filters are incomplete."
+      "result": "Full 102-test regression passed (99 pass / 3 privilege skips), followed by 16 passing targeted checks.",
+      "knownDifferences": "Bounded topological neighborhoods and force sampling; no claim of full Obsidian parity. See GLOBAL_GRAPH_AUDIT.md for tested scope and safety ceilings.",
+      "outstandingDependencies": "Cross-browser/mobile hardware acceptance and richer force/community controls remain pending."
     },
     {
       "id": "12",

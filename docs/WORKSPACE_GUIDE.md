@@ -69,3 +69,9 @@ The verifier uses Node built-ins and checks missing, changed, unexpected and uns
 Each attachment is limited to 8 MiB; workspace attachments have a 512 MiB budget. Portable workspace exports are limited to 128 MiB and reject oversized object/history payloads before ZIP creation. Canvas validation limits a document to 4 MiB, 2,000 cards and 5,000 edges. PDF previews cap documents at 500 pages and render one bounded page at a time. Global/local graph queries and paths are bounded; the benchmark is a backend 10,000-entity/12,000-relationship test, not proof of simultaneously rendering 22,000 items in a browser.
 
 Missing items include automatic sync and encrypted conflict reconciliation, full mobile/offline support, native executable plugin compatibility, live hosted publishing, complete advanced editor and `.base` parity, advanced community analysis and some graph filters, full attachment/file interop and drag-editable kanban. These are tracked in the matrix rather than represented as completed functionality.
+
+## Global Graph
+
+The new dashboard **Global Graph** button opens a separate live ecosystem view; it does not replace the original Database & network or Canvas. Select a record to inspect its stored data and known links. Use **Focus selected cluster** after collapsing clusters to expand and zoom into its records. Local Network uses the selected record and depth control. Investigation Network loads saved investigation references; save a layout after arranging nodes, or open its editable investigation canvas for evidence and annotations.
+
+The **Demonstration dataset** checkbox supplies a visibly synthetic 10,000-node/12,000-link map without writing it to the real database. This is useful when your own vault is new. See [Global Graph audit](GLOBAL_GRAPH_AUDIT.md) for the actual local dataset audit, automatic-index behavior, benchmarks and explicit navigation/resource limits.

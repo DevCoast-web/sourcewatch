@@ -1,0 +1,11 @@
+{
+  "synthetic": true,
+  "nodes": 10000,
+  "edges": 12000,
+  "renderer": "Canvas 2D; spatial-grid force worker",
+  "searchMs": 97,
+  "lastDrawMs": 51.6,
+  "databaseWrites": 0,
+  "allNodesRendered": true,
+  "fullBrowserWorkflowPassed": true
+}

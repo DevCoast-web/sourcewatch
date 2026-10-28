@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "storedNodes": 10000,
+  "storedLinks": 12000,
+  "indexedNodes": 10000,
+  "indexedLinks": 12000,
+  "clusters": 51,
+  "seedMs": 7402,
+  "indexMs": 483,
+  "forcePreparationMs": 46,
+  "twentyForceStepsMs": 350,
+  "rssMiB": 172,
+  "productionWrites": 0
+}

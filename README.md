@@ -136,3 +136,7 @@ This is a **feature-branch alpha**, not full completion of the expansion directi
 ![Actual persistent canvas browser test](docs/screenshots/canvas.png)
 
 [Actual intelligence network](docs/screenshots/intelligence-network.png)
+
+## Global Graph (2.0.0-alpha.2)
+
+Use **Global Graph** on the dashboard to see the indexed research ecosystem, or change its perspective to Local Network or Investigation Network. The graph automatically reflects saved data, distinguishes hyperlink/citation/annotation/reviewed links, and retains context during record inspection. A clearly labeled **Demonstration dataset** supplies 10,000 synthetic nodes and 12,000 links without inserting research records. See [implementation audit](docs/GLOBAL_GRAPH_AUDIT.md) for dataset counts, browser verification, benchmarks and limits.

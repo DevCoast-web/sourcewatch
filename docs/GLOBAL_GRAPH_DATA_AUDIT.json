@@ -1,0 +1,15 @@
+{
+  "readOnly": true,
+  "database": "local SourceWatch data directory (no titles or URLs exported)",
+  "indexed": 2,
+  "entities": 0,
+  "links": 1,
+  "orphans": 0,
+  "clusters": 1,
+  "excluded": 1,
+  "excludedByReason": {
+    "configuration:vault": 1
+  },
+  "unresolvedReferences": 0,
+  "truncated": false
+}
