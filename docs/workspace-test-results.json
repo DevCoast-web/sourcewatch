@@ -1,0 +1,23 @@
+{
+  "release": "2.0.0-alpha.1",
+  "environment": "Windows; Node.js 24; Playwright Chromium",
+  "sourceCommit": "9fab96a",
+  "install": "npm ci passed in fresh extracted source directory",
+  "lint": "passed",
+  "buildAndTypecheck": "passed",
+  "tests": {
+    "total": 98,
+    "passed": 95,
+    "failed": 0,
+    "skipped": 3,
+    "skipReason": "Windows symlink/junction privilege unavailable"
+  },
+  "durationMs": 76234,
+  "browserInstallation": "Reused existing project-local Chromium; no fresh browser download claimed",
+  "audit": {
+    "command": "npm audit --audit-level=moderate",
+    "vulnerabilities": 0
+  },
+  "fullParity": false,
+  "report": "WORKSPACE_VALIDATION.md"
+}

@@ -5,16 +5,20 @@ Validated locally on Windows with Node.js 24 and real Playwright Chromium. This 
 ## Results
 
 - Production build, TypeScript and ESLint passed.
-- Full regression checkpoint: **97 tests, 94 passed, 0 failed, 3 skipped**. Skips concern Windows symlink/junction privileges. The full suite retains the original capture/compare/export/offline-verification workflow, tall-page/tiled fallback, DNS/private-network restrictions, request races and storage failure checks.
-- A subsequently added integrated browser journey passed separately: entity lookup → documented network neighborhood → add to canvas → embed another entity, linked note and attachment → draw hypothesis → propose review → explicitly review preserved evidence → restart service → restore canvas → export references and relationship metadata.
+- Final fresh-source validation: **98 tests, 95 passed, 0 failed, 3 skipped**. Skips concern Windows symlink/junction privileges. The full suite retains the original capture/compare/export/offline-verification workflow, tall-page/tiled fallback, DNS/private-network restrictions, request races and storage failure checks.
+- The integrated browser journey passed in the final suite: entity lookup → documented network neighborhood → add to canvas → embed another entity, linked note and attachment → draw hypothesis → propose review → explicitly review preserved evidence → restart service → restore canvas → export references and relationship metadata.
 - Follow-up workspace/tools tests passed, including missing/modified/unexpected-file verification, revision export, actual CLI requests and importable repository samples.
 - PDF browser test passed with the bundled worker, actual rendered pixels and extracted text, and no external requests.
 - Audio browser test passed using actual Chromium MediaRecorder and a synthetic microphone, saving nonempty bytes and a SHA-256 attachment record. Physical microphones and iPhone hardware remain untested.
 - `npm audit --audit-level=moderate`: **0 vulnerabilities** at this checkpoint. This does not guarantee absence of vulnerabilities.
 
+## Clean-source package validation
+
+A source ZIP from commit 9fab96a was extracted into a new isolated directory. A normal `npm ci` installed dependencies, then lint, production build/TypeScript and the complete 98-test suite passed. The existing project-local Chromium installation was reused via PLAYWRIGHT_BROWSERS_PATH; a new browser download and Explorer double-click were not tested. An initial offline-cache-only install failed because one cached package was absent; the ordinary documented installation succeeded. Final documentation-only updates do not change the tested application code.
+
 ## What the browser tests actually exercise
 
-`canvas-ui.test.ts` creates and moves real cards, resizes/alines selections, draws labeled hypothetical connections, embeds/removes references, runs undo/redo and read-only controls, checks saved records, revision conflicts, generated export bytes and mobile width. The managed Windows browser cancels native disk downloads; the test observes the actual application-generated Blob bytes and native download intent instead of claiming that OS file saving passed.
+`canvas-ui.test.ts` creates and moves real cards, resizes/aligns selections, draws labeled hypothetical connections, embeds/removes references, runs undo/redo and read-only controls, checks saved records, revision conflicts, generated export bytes and mobile width. The managed Windows browser cancels native disk downloads; the test observes the actual application-generated Blob bytes and native download intent instead of claiming that OS file saving passed.
 
 `vault.test.ts` exercises Markdown editing, escaped reading, links/backlinks, history restore, import, reload persistence, slash insertions and slides. Engine tests cover note composer atomic rollback, merge provenance and independent revisions.
 
