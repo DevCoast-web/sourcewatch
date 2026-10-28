@@ -266,6 +266,57 @@ export function ResearchNotes({ captureId }: { captureId: string }) {
     </section>
   );
 }
+type VisualRecord = {
+  id: string;
+  files: Record<string, string>;
+  screenshotInfo?: import("../src/capture.js").ScreenshotInfo;
+};
+export function PreservedScreenshot({
+  record,
+  label = "Preserved screenshot",
+}: {
+  record: VisualRecord;
+  label?: string;
+}) {
+  const info = record.screenshotInfo;
+  const tiles = info
+    ? info.tiles
+    : Object.hasOwn(record.files, "screenshot.png")
+      ? [{ file: "screenshot.png", width: undefined, height: undefined }]
+      : [];
+  return (
+    <div className="preserved-screenshot">
+      {info && !info.complete && (
+        <p role="status" className="visual-warning">
+          Visual capture incomplete: {info.reason || "Screenshot unavailable"}.
+          HTML and readable text remain available.
+        </p>
+      )}
+      {tiles.map((tile, index) => (
+        <a
+          key={tile.file}
+          href={"/api/captures/" + record.id + "/files/" + tile.file}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img
+            className={info ? "screenshot-tile" : "capture-image"}
+            loading={index === 0 ? "eager" : "lazy"}
+            src={"/api/captures/" + record.id + "/files/" + tile.file}
+            alt={
+              info
+                ? label + " · tile " + (index + 1) + " of " + tiles.length
+                : label
+            }
+            width={tile.width}
+            height={tile.height}
+          />
+        </a>
+      ))}
+      {!tiles.length && !info && <p>Screenshot unavailable.</p>}
+    </div>
+  );
+}
 export function VisualComparison({
   before,
   after,
@@ -274,43 +325,82 @@ export function VisualComparison({
   after: string;
 }) {
   const [reveal, setReveal] = useState(50);
+  const [records, setRecords] = useState<VisualRecord[] | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let live = true;
+    setRecords(null);
+    setError("");
+    Promise.all(
+      [before, after].map((id) =>
+        request("/captures/" + id + "/files/metadata.json"),
+      ),
+    )
+      .then((rows) => {
+        if (live) setRecords(rows);
+      })
+      .catch((e) => {
+        if (live) setError(e.message);
+      });
+    return () => {
+      live = false;
+    };
+  }, [before, after]);
   return (
     <section className="visual-comparison">
       <h3>Screenshot comparison</h3>
       <p className="small muted">
-        Slide between actual preserved screenshots, aligned at the top and
-        normalized to the same width. This is a visual review tool, not an
-        automated pixel diff.
+        Slide between actual preserved screenshots or ordered tiles, aligned at
+        the top and normalized to the same width. This is a visual review tool,
+        not an automated pixel diff.
       </p>
-      <label>
-        Earlier screenshot reveal: {reveal}%
-        <input
-          type="range"
-          aria-label="Earlier screenshot reveal"
-          min="0"
-          max="100"
-          value={reveal}
-          onChange={(e) => setReveal(Number(e.target.value))}
-        />
-      </label>
-      <div className="visual-labels">
-        <span>Earlier</span>
-        <span>Later</span>
-      </div>
-      <div className="visual-stack">
-        <div className={`visual-canvas reveal-${reveal}`}>
-          <img
-            src={`/api/captures/${after}/files/screenshot.png`}
-            alt="Later preserved screenshot"
-          />
-          <div className="visual-before">
-            <img
-              src={`/api/captures/${before}/files/screenshot.png`}
-              alt="Earlier preserved screenshot"
+      {error ? (
+        <p role="alert">{error}</p>
+      ) : !records ? (
+        <p>Loading preserved screenshots…</p>
+      ) : (
+        <>
+          {records.some(
+            (r) => r.screenshotInfo && !r.screenshotInfo.complete,
+          ) && (
+            <p role="status">
+              At least one visual capture is incomplete. Compare preserved text
+              for coverage.
+            </p>
+          )}
+          <label>
+            Earlier screenshot reveal: {reveal}%
+            <input
+              type="range"
+              aria-label="Earlier screenshot reveal"
+              min="0"
+              max="100"
+              value={reveal}
+              onChange={(e) => setReveal(Number(e.target.value))}
             />
+          </label>
+          <div className="visual-labels">
+            <span>Earlier</span>
+            <span>Later</span>
           </div>
-        </div>
-      </div>
+          <div className="visual-stack">
+            <div className={"visual-canvas reveal-" + reveal}>
+              <div className="visual-after">
+                <PreservedScreenshot
+                  record={records[1]}
+                  label="Later preserved screenshot"
+                />
+              </div>
+              <div className="visual-before">
+                <PreservedScreenshot
+                  record={records[0]}
+                  label="Earlier preserved screenshot"
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }

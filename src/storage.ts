@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
-import type { Captured } from "./capture.js";
+import type { Captured, ScreenshotInfo } from "./capture.js";
 export const sha256 = (value: string | Uint8Array) =>
   createHash("sha256").update(value).digest("hex");
 export type Source = {
@@ -43,6 +43,7 @@ export type RecordData = {
   warnings: string[];
   ignoredSelectors: string[];
   files: Record<string, string>;
+  screenshotInfo?: ScreenshotInfo;
   previousHash: string | null;
   chainHash: string;
 };
@@ -140,12 +141,37 @@ export class Store {
     const height = this.db
       .prepare("SELECT value FROM settings WHERE key=?")
       .get("maxScreenshotHeight") as any;
+    const mode = this.db
+      .prepare("SELECT value FROM settings WHERE key=?")
+      .get("screenshotMode") as { value: string } | undefined;
+    const fallback = this.db
+      .prepare("SELECT value FROM settings WHERE key=?")
+      .get("preserveTextOnScreenshotFailure") as { value: string } | undefined;
     return {
+      screenshotMode: (mode?.value === "tiled" ? "tiled" : "single") as
+        "single" | "tiled",
+      preserveTextOnScreenshotFailure: fallback?.value !== "false",
       settleMs: r ? Number(r.value) : 1200,
       maxScreenshotHeight: height ? Number(height.value) : 100000,
     };
   }
-  setSettings(settleMs: number, maxScreenshotHeight?: number) {
+  setSettings(
+    settleMs: number,
+    maxScreenshotHeight?: number,
+    screenshotMode?: "single" | "tiled",
+    preserveTextOnScreenshotFailure?: boolean,
+  ) {
+    for (const [key, value] of Object.entries({
+      screenshotMode,
+      preserveTextOnScreenshotFailure,
+    })) {
+      if (value !== undefined)
+        this.db
+          .prepare(
+            "INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+          )
+          .run(key, String(value));
+    }
     if (maxScreenshotHeight !== undefined)
       this.db
         .prepare(
@@ -174,9 +200,11 @@ export class Store {
   file(id: string, name: string): Buffer {
     if (
       !/^[0-9a-f-]{36}$/.test(id) ||
-      !["page.html", "text.txt", "screenshot.png", "metadata.json"].includes(
+      !/^(page\.html|text\.txt|screenshot\.png|metadata\.json|screenshot-\d{4}\.png)$/.test(
         name,
-      )
+      ) ||
+      (name !== "metadata.json" &&
+        !Object.hasOwn(this.get(id)?.files || {}, name))
     )
       throw new Error("Invalid artifact");
     return readFileSync(join(this.root, "captures", id, name));
@@ -201,7 +229,9 @@ export class Store {
       const files: Record<string, Buffer> = {
         "page.html": Buffer.from(c.html),
         "text.txt": Buffer.from(c.text),
-        "screenshot.png": c.screenshot,
+        ...(c.screenshotInfo
+          ? c.screenshotTiles || {}
+          : { "screenshot.png": c.screenshot }),
       };
       const base = {
         version: 1 as const,
@@ -220,6 +250,7 @@ export class Store {
         links: c.links,
         warnings: c.warnings,
         ignoredSelectors: c.ignoredSelectors,
+        ...(c.screenshotInfo ? { screenshotInfo: c.screenshotInfo } : {}),
         files: Object.fromEntries(
           Object.entries(files).map(([n, b]) => [n, sha256(b)]),
         ),

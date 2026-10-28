@@ -36,3 +36,9 @@ Shared hosting is optional future scope. It requires a separate review of authen
 ## Publication gate
 
 A rollout plan is not a release. Publish only after documented checks pass and the actual repository/release is created. Review [RELEASE.md](RELEASE.md) and the final handoff for the current publication state, exact artifacts, and any outstanding authentication/tool restrictions.
+
+## 1.2.0 local candidate
+
+The next local candidate implements typed research connections, explicit labeled edges with evidence citations, backlinks/search/type filters, graph/list navigation, and separate JSON research-context export. It also adds bounded tiled screenshots and HTML/text fallback with explicit incomplete coverage. A 210,000px fixture produced 26 tiles; The full local suite completed 64 tests: 62 passed, zero failed, and two Windows symlink/junction permission cases skipped. Build, lint, and type checking passed; npm audit --audit-level=low reported zero vulnerabilities. Tiled settings controls and research export regression checks also passed. An independent clean source copy installed dependencies, built, and passed the same 62 tests with two skips, using the existing Chromium installation. See [1.2 validation](VALIDATION-1.2.md) for scope and environment limits. No external adoption or public release is claimed.
+
+Pilot acceptance additionally requires exact cited-capture navigation, graph edits leaving capture hashes unchanged, honest distinction between user assertions and verified artifacts, and usable fallback when screenshot limits are reached. Tiling remains bounded and does not add full archival replay, WARC/WACZ compatibility, or infinite-scroll guarantees. The original reference review is in [RESEARCH_DESIGN.md](RESEARCH_DESIGN.md).

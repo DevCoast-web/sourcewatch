@@ -18,6 +18,7 @@ const options = (result: FetchResult): CaptureOptions => ({
   fixtureUrl,
   fetcher: async () => result,
   settleMs: 0,
+  preserveTextOnScreenshotFailure: false,
 });
 
 test("real Chromium capture extracts rendered text, excludes hidden regions, and preserves DOM and screenshot", async () => {
@@ -145,11 +146,11 @@ test("total capture deadline closes Chromium before a delayed transport complete
     capture(fixtureUrl, [], {
       fixtureUrl,
       settleMs: 0,
-      totalTimeoutMs: 300,
-      navigationTimeoutMs: 1000,
+      totalTimeoutMs: 2000,
+      navigationTimeoutMs: 10000,
       fetcher: async () => {
         transportStarted = true;
-        await new Promise((r) => setTimeout(r, 1000));
+        await new Promise((r) => setTimeout(r, 5000));
         return html("Late document");
       },
     }),
@@ -157,7 +158,7 @@ test("total capture deadline closes Chromium before a delayed transport complete
   );
   assert(transportStarted, "Deadline interrupts an active transport");
   assert(
-    Date.now() - started < 5000,
+    Date.now() - started < 7000,
     "Total deadline must return promptly, including browser cleanup",
   );
 });

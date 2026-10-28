@@ -1,3 +1,4 @@
+import { KnowledgeWorkspace } from "./knowledge.js";
 import { VERSION } from "../src/version.js";
 import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
@@ -5,6 +6,7 @@ import "./style.css";
 import {
   Inbox,
   ResearchNotes,
+  PreservedScreenshot,
   VisualComparison,
   StructureComparison,
   type InboxEvent,
@@ -35,6 +37,8 @@ type Capture = {
   ignoredSelectors: string[];
   text?: string;
   headers: Record<string, string>;
+  files: Record<string, string>;
+  screenshotInfo?: import("../src/capture.js").ScreenshotInfo;
 };
 type Part = { value: string; added?: boolean; removed?: boolean };
 type Comparison = {
@@ -96,6 +100,7 @@ function App() {
     [searchText, setSearchText] = useState(""),
     [searchResults, setSearchResults] = useState<any[]>([]),
     [captureMatches, setCaptureMatches] = useState<Capture[] | null>(null);
+  const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false),
     [unread, setUnread] = useState(0),
     [focusCapture, setFocusCapture] = useState<{
@@ -155,7 +160,14 @@ function App() {
   const source = sources.find((s) => s.id === selected);
   const collections = [...new Set(sources.map((s) => s.collection))].sort();
   useEffect(() => {
-    if (!showAdd && !exportHash && !settings && !globalSearch && !researchOpen)
+    if (
+      !showAdd &&
+      !exportHash &&
+      !settings &&
+      !globalSearch &&
+      !researchOpen &&
+      !knowledgeOpen
+    )
       return;
     const previous = document.activeElement as HTMLElement | null;
     const modal = document.querySelector(
@@ -175,6 +187,7 @@ function App() {
         setSettings(null);
         setGlobalSearch(false);
         setResearchOpen(false);
+        setKnowledgeOpen(false);
       }
       if (e.key === "Tab") {
         const all = nodes(),
@@ -194,7 +207,14 @@ function App() {
       document.removeEventListener("keydown", key);
       previous?.focus();
     };
-  }, [showAdd, !!exportHash, !!settings, globalSearch, researchOpen]);
+  }, [
+    showAdd,
+    !!exportHash,
+    !!settings,
+    globalSearch,
+    researchOpen,
+    knowledgeOpen,
+  ]);
   async function refresh() {
     const request = ++sourceRequest.current;
     const rows = await api(
@@ -290,10 +310,16 @@ function App() {
     setError("");
     setNotice("Rendering the page and preserving artifacts…");
     try {
-      await api(`/sources/${source.id}/capture`, { method: "POST" });
+      const captured = await api(`/sources/${source.id}/capture`, {
+        method: "POST",
+      });
       await refresh();
       await refreshHistory(source.id, true);
-      setNotice("Capture preserved. The receipt is in your local history.");
+      setNotice(
+        captured.screenshotInfo && !captured.screenshotInfo.complete
+          ? "HTML and text preserved. Visual capture is incomplete; inspect the coverage warning."
+          : "Capture preserved. The receipt is in your local history.",
+      );
     } catch (e) {
       setError((e as Error).message);
       setNotice("");
@@ -381,6 +407,9 @@ function App() {
           onClick={() => setResearchOpen(true)}
         >
           Inbox {unread > 0 ? `(${unread})` : ""}
+        </button>
+        <button onClick={() => setKnowledgeOpen(true)}>
+          Research connections
         </button>
         <button
           className="search-button"
@@ -677,6 +706,13 @@ function App() {
                       Last capture failed: {source.error}
                     </p>
                   )}
+                  {source.latest?.screenshotInfo &&
+                    !source.latest.screenshotInfo.complete && (
+                      <p role="status" className="visual-warning">
+                        Latest capture: HTML and text preserved; visual coverage
+                        is incomplete. Inspect the capture for details.
+                      </p>
+                    )}
                   <div className="tabs">
                     <button
                       className={tab === "changes" ? "current" : ""}
@@ -967,7 +1003,11 @@ function App() {
                               {c.id.slice(0, 8)}
                             </small>
                           </span>
-                          <span className="tag">Preserved ↗</span>
+                          <span className="tag">
+                            {c.screenshotInfo && !c.screenshotInfo.complete
+                              ? "Visual incomplete ↗"
+                              : "Preserved ↗"}
+                          </span>
                         </button>
                       ))}
                       {!history.length && (
@@ -999,21 +1039,18 @@ function App() {
                           ↓ Export evidence through this capture
                         </button>
                         <div className="artifact-links">
-                          {[
-                            "screenshot.png",
-                            "text.txt",
-                            "page.html",
-                            "metadata.json",
-                          ].map((n) => (
-                            <a
-                              key={n}
-                              href={`/api/captures/${after}/files/${n}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              ↓ {n}
-                            </a>
-                          ))}
+                          {[...Object.keys(detail.files), "metadata.json"].map(
+                            (n) => (
+                              <a
+                                key={n}
+                                href={`/api/captures/${after}/files/${n}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                ↓ {n}
+                              </a>
+                            ),
+                          )}
                         </div>
                         <dl>
                           <dt>Observed locally</dt>
@@ -1044,17 +1081,10 @@ function App() {
                           <summary>Readable text</summary>
                           <pre>{detail.text}</pre>
                         </details>
-                        <a
-                          href={`/api/captures/${after}/files/screenshot.png`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <img
-                            className="capture-image"
-                            src={`/api/captures/${after}/files/screenshot.png`}
-                            alt={`Full-page capture of ${detail.title}`}
-                          />
-                        </a>
+                        <PreservedScreenshot
+                          record={detail}
+                          label={"Full-page capture of " + detail.title}
+                        />
                       </div>
                     ) : (
                       <div className="empty">
@@ -1299,6 +1329,13 @@ function App() {
                   await api("/settings", {
                     method: "PATCH",
                     body: JSON.stringify({
+                      screenshotMode: new FormData(e.currentTarget).get(
+                        "screenshotMode",
+                      ),
+                      preserveTextOnScreenshotFailure:
+                        new FormData(e.currentTarget).get(
+                          "preserveTextOnScreenshotFailure",
+                        ) === "on",
                       maxScreenshotHeight: Number(
                         new FormData(e.currentTarget).get(
                           "maxScreenshotHeight",
@@ -1344,6 +1381,34 @@ function App() {
                   required
                 />
               </label>
+              <label>
+                Screenshot format
+                <select
+                  aria-label="Screenshot format"
+                  name="screenshotMode"
+                  defaultValue={settings.screenshotMode || "single"}
+                >
+                  <option value="single">Single full-page PNG</option>
+                  <option value="tiled">Tiled images for long pages</option>
+                </select>
+              </label>
+              <label className="fallback-option">
+                <input
+                  type="checkbox"
+                  name="preserveTextOnScreenshotFailure"
+                  defaultChecked={
+                    settings.preserveTextOnScreenshotFailure !== false
+                  }
+                />{" "}
+                Preserve HTML and text if screenshots fail
+              </label>
+              <p className="small muted">
+                Tiled mode captures up to 64 ordered images of 8,192px each
+                (524,288px total), with a 64 MiB image budget. It bypasses the
+                single-image height and area limits. Incomplete visual coverage
+                is explicitly recorded. Infinite scrolling and off-screen lazy
+                content are not automatically loaded.
+              </p>
               <p className="screenshot-setting-note">
                 Default 100,000px; configurable up to 200,000px. A separate
                 160-million-pixel area limit and 4,096px width limit bound
@@ -1435,6 +1500,19 @@ function App() {
             ))}
           </section>
         </div>
+      )}
+      {knowledgeOpen && (
+        <KnowledgeWorkspace
+          onClose={() => setKnowledgeOpen(false)}
+          onOpenSource={(sourceId, captureId) => {
+            setKnowledgeOpen(false);
+            setShowArchived(true);
+            setSelected(sourceId);
+            if (captureId)
+              setFocusCapture({ sourceId, after: captureId, before: "" });
+            else setTab("history");
+          }}
+        />
       )}
       {researchOpen && (
         <Inbox

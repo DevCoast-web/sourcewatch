@@ -35,3 +35,9 @@ Production transport permits at most six simultaneous resource requests inside t
 ## Audit checkpoint — 1.1.1
 
 The local engineering audit added regression coverage for network address pinning, credential exclusion, shared byte budgets, compressed-response rejection, request deadlines, atomic source updates, shutdown during capture, storage failure cleanup, selected export prefixes, schema migration, verifier junction handling, and stale/failed UI requests. See [docs/AUDIT.md](docs/AUDIT.md) for scope and pending checks. Chromium UI behavior was validated; Firefox and Edge launch restrictions prevented completed UI passes. No cross-browser pass or independent security certification is claimed.
+
+## 1.2.0 screenshot and knowledge limits
+
+Screenshot failure now defaults to preserving HTML/text with explicit incomplete metadata; Settings can require strict screenshot success instead. Tiled mode is bounded to 64 tiles of up to 8,192px height, 64 MiB image bytes, 25 seconds of screenshot work, and five seconds per tile, within the overall 45-second capture deadline. Partial tiles can remain as evidence with an incomplete reason. These limits do not provide OS isolation or guarantee infinite-scroll/lazy-loading completeness. Existing single-image bounds remain applicable in single-image mode.
+
+Research connections contain editable user assertions, not verified facts or immutable evidence. Source/capture citations aid provenance; they do not certify a relationship. JSON graph exports are separate research context. Avoid sensitive personal material and review exports before sharing. Node/relationship and displayed-graph limits constrain normal UI work; they do not replace an operating-system sandbox. The documented disabled Chromium OS sandbox and recommendation to use an isolated VM remain unchanged.

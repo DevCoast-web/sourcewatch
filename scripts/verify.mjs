@@ -62,6 +62,42 @@ export function verify(directory, expected) {
         if (manifest.files[path] !== digest || hash(read(path)) !== digest)
           errors.push(`ARTIFACT MISMATCH: ${path}`);
       }
+      if (record.screenshotInfo) {
+        const info = record.screenshotInfo;
+        if (
+          !["tiled", "none"].includes(info.mode) ||
+          !Array.isArray(info.tiles) ||
+          info.tiles.length > 64 ||
+          !Number.isInteger(info.width) ||
+          !Number.isInteger(info.height) ||
+          info.width < 1 ||
+          info.height < 1 ||
+          typeof info.complete !== "boolean"
+        )
+          throw new Error("Invalid visual capture descriptor");
+        let y = 0;
+        for (const [index, tile] of info.tiles.entries()) {
+          const expectedName =
+            "screenshot-" + String(index + 1).padStart(4, "0") + ".png";
+          if (
+            tile.file !== expectedName ||
+            tile.y !== y ||
+            tile.width !== info.width ||
+            !Number.isInteger(tile.height) ||
+            tile.height < 1 ||
+            tile.height > 8192 ||
+            !record.files[tile.file]
+          )
+            throw new Error("Invalid or missing screenshot tile");
+          y += tile.height;
+        }
+        if (
+          y > info.height ||
+          (info.complete && (info.mode !== "tiled" || y !== info.height)) ||
+          (info.mode === "none" && info.tiles.length)
+        )
+          throw new Error("Inconsistent visual coverage");
+      }
       previous = chainHash;
     } catch (e) {
       errors.push(`INVALID CAPTURE ${id}: ${e.message}`);

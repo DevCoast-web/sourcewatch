@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 — Connections and tall-page candidate
+
+Typed research nodes, explicit labeled relationships, source/capture citations, exact evidence navigation, searchable graph/list views, backlinks, and separate JSON context export. Optional bounded tiled screenshots and default HTML/text fallback preserve usable observations when screenshots fail; incomplete/partial coverage is explicit and retained tiles are checksummed/exported/verifiable. Existing capture chains and single-image inspection remain compatible. A real 210,000px fixture produced 26 tiles. Full integration checks are underway; no fresh-install or public-release claim.
+
 ## 1.1.1 — Audit patch candidate
 
 - Prevent stale capture metadata and annotations from following a newly selected capture; disable note saving until its annotation has loaded and surface unsaved-note state.

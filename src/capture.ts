@@ -1,10 +1,20 @@
 import { createBarrier } from "./barrier.js";
 import { chromium } from "playwright";
 import { safeFetch, parsePublicUrl, type FetchResult } from "./network.js";
+export type ScreenshotInfo = {
+  mode: "tiled" | "none";
+  width: number;
+  height: number;
+  complete: boolean;
+  reason?: string;
+  tiles: Array<{ file: string; y: number; width: number; height: number }>;
+};
 export type Captured = {
   html: string;
   text: string;
   screenshot: Buffer;
+  screenshotInfo?: ScreenshotInfo;
+  screenshotTiles?: Record<string, Buffer>;
   title: string;
   description: string;
   finalUrl: string;
@@ -20,6 +30,8 @@ export type CaptureOptions = {
   fixtureUrl?: string;
   settleMs?: number;
   maxScreenshotHeight?: number;
+  screenshotMode?: "single" | "tiled";
+  preserveTextOnScreenshotFailure?: boolean;
   navigationTimeoutMs?: number;
   totalTimeoutMs?: number;
 };
@@ -235,24 +247,86 @@ export async function capture(
     const height = await page.evaluate(
       () => document.documentElement.scrollHeight,
     );
-    if (height > (options.maxScreenshotHeight ?? 100000))
-      throw new Error(
-        `Page exceeds the ${(options.maxScreenshotHeight ?? 100000).toLocaleString("en-US")}px screenshot height limit. Adjust the maximum height in Application settings.`,
-      );
     const width = await page.evaluate(
       () => document.documentElement.scrollWidth,
     );
-    if (width > 4096 || width * height > 160000000)
-      throw new Error("Page exceeds screenshot width or pixel limit");
-    const screenshot = await page.screenshot({
-      fullPage: true,
-      timeout: 30000,
-      animations: "disabled",
-    });
+    let screenshot = Buffer.alloc(0) as Buffer;
+    let screenshotInfo: ScreenshotInfo | undefined;
+    const screenshotTiles: Record<string, Buffer> = {};
+    try {
+      if (width > 4096)
+        throw new Error("Page exceeds 4096px screenshot width limit");
+      if (options.screenshotMode === "tiled") {
+        if (height > 524288)
+          throw new Error("Page exceeds 524288px tiled screenshot limit");
+        screenshotInfo = {
+          mode: "tiled",
+          width,
+          height,
+          complete: false,
+          tiles: [],
+        };
+        const tileStarted = Date.now();
+        let screenshotBytes = 0;
+        for (let y = 0; y < height; y += 8192) {
+          const remaining = 25000 - (Date.now() - tileStarted);
+          if (remaining < 100)
+            throw new Error("Tiled screenshot time budget reached");
+          const tileHeight = Math.min(8192, height - y);
+          const file =
+            "screenshot-" +
+            String(screenshotInfo.tiles.length + 1).padStart(4, "0") +
+            ".png";
+          const tile = await page.screenshot({
+            fullPage: true,
+            clip: { x: 0, y, width, height: tileHeight },
+            timeout: Math.min(5000, remaining),
+            animations: "disabled",
+          });
+          screenshotBytes += tile.length;
+          if (screenshotBytes > 64 * 1024 * 1024)
+            throw new Error("64 MiB screenshot byte budget reached");
+          screenshotTiles[file] = tile;
+          screenshotInfo.tiles.push({ file, y, width, height: tileHeight });
+        }
+        screenshotInfo.complete = true;
+      } else {
+        if (height > (options.maxScreenshotHeight ?? 100000))
+          throw new Error(
+            "Page exceeds the " +
+              (options.maxScreenshotHeight ?? 100000).toLocaleString("en-US") +
+              "px screenshot height limit. Adjust the maximum height in Application settings or choose tiled screenshots.",
+          );
+        if (width * height > 160000000)
+          throw new Error("Page exceeds screenshot width or pixel limit");
+        screenshot = await page.screenshot({
+          fullPage: true,
+          timeout: 25000,
+          animations: "disabled",
+        });
+      }
+    } catch (error) {
+      if (options.preserveTextOnScreenshotFailure === false) throw error;
+      const reason = (error as Error).message.split("\n")[0];
+      screenshotInfo ??= {
+        mode: "none",
+        width,
+        height,
+        complete: false,
+        tiles: [],
+      };
+      screenshotInfo.reason = reason;
+      warnings.push(
+        "Visual capture incomplete: " +
+          reason +
+          ". HTML and readable text were preserved.",
+      );
+    }
     return {
       ...result,
       html,
       screenshot,
+      ...(screenshotInfo ? { screenshotInfo, screenshotTiles } : {}),
       finalUrl: page.url(),
       status: main.status,
       headers: Object.fromEntries(

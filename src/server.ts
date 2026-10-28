@@ -1,3 +1,8 @@
+import {
+  createKnowledge,
+  type KnowledgeNodeInput,
+  type KnowledgeEdgeInput,
+} from "./knowledge.js";
 import { VERSION } from "./version.js";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
@@ -23,6 +28,7 @@ export async function createApp(
     options.root || resolve(process.env.SOURCEWATCH_DATA || "data"),
   );
   const research = createResearch(store);
+  const knowledge = createKnowledge(store);
   const app = Fastify({ logger: !options.testMode, bodyLimit: 16384 });
   let busy = false;
   let closing = false;
@@ -232,6 +238,9 @@ export async function createApp(
       maxTotalMiB: 32,
       maxScreenshotHeight: store.settings().maxScreenshotHeight,
       maxScreenshotPixels: 160000000,
+      maxTiledHeight: 524288,
+      tileHeight: 8192,
+      maxScreenshotMiB: 64,
       concurrency: 1,
     },
   }));
@@ -245,7 +254,13 @@ export async function createApp(
       (!Number.isInteger(height) || height < 1000 || height > 200000)
     )
       throw new Error("Maximum screenshot height must be 1000–200000 pixels");
-    store.setSettings(n, height);
+    const mode = (req.body as any)?.screenshotMode;
+    const fallback = (req.body as any)?.preserveTextOnScreenshotFailure;
+    if (mode !== undefined && !["single", "tiled"].includes(mode))
+      throw new Error("Invalid screenshot mode");
+    if (fallback !== undefined && typeof fallback !== "boolean")
+      throw new Error("Invalid screenshot fallback");
+    store.setSettings(n, height, mode, fallback);
     return store.settings();
   });
   app.get<{ Querystring: { q?: string } }>("/api/search", async (req) => {
@@ -311,19 +326,15 @@ export async function createApp(
   app.get<{ Params: { id: string; name: string } }>(
     "/api/captures/:id/files/:name",
     async (req, reply) => {
-      record(req.params.id);
+      const captureRecord = record(req.params.id);
       const n = req.params.name;
-      if (
-        !["screenshot.png", "page.html", "text.txt", "metadata.json"].includes(
-          n,
-        )
-      )
+      if (n !== "metadata.json" && !Object.hasOwn(captureRecord.files, n))
         return reply.code(404).send({ error: "Artifact not found" });
       if (n === "page.html")
         reply.header("Content-Disposition", 'attachment; filename="page.html"');
       return reply
         .type(
-          n === "screenshot.png"
+          n.endsWith(".png")
             ? "image/png"
             : n === "metadata.json"
               ? "application/json"
@@ -428,6 +439,35 @@ export async function createApp(
         .type("application/zip")
         .send(bundle.zip);
     },
+  );
+  app.get("/api/knowledge", async () => knowledge.list());
+  app.post("/api/knowledge/nodes", { bodyLimit: 131072 }, async (req, reply) =>
+    reply.code(201).send(knowledge.saveNode(req.body as KnowledgeNodeInput)),
+  );
+  app.put<{ Params: { id: string } }>(
+    "/api/knowledge/nodes/:id",
+    { bodyLimit: 131072 },
+    async (req) =>
+      knowledge.saveNode(req.body as KnowledgeNodeInput, req.params.id),
+  );
+  app.delete<{ Params: { id: string } }>(
+    "/api/knowledge/nodes/:id",
+    async (req) => knowledge.deleteNode(req.params.id),
+  );
+  app.post("/api/knowledge/edges", async (req, reply) =>
+    reply.code(201).send(knowledge.addEdge(req.body as KnowledgeEdgeInput)),
+  );
+  app.delete<{ Params: { id: string } }>(
+    "/api/knowledge/edges/:id",
+    async (req) => knowledge.deleteEdge(req.params.id),
+  );
+  app.get("/api/knowledge/export", async (_req, reply) =>
+    reply
+      .header(
+        "Content-Disposition",
+        'attachment; filename="sourcewatch-research.json"',
+      )
+      .send(knowledge.export()),
   );
   const dist = resolve("dist");
   if (existsSync(dist)) await app.register(fastifyStatic, { root: dist });

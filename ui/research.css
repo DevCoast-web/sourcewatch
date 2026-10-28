@@ -509,3 +509,36 @@
   z-index: 1;
   background: white;
 }
+
+.preserved-screenshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.preserved-screenshot a {
+  display: block;
+}
+.visual-after {
+  grid-area: 1/1;
+  align-self: start;
+  min-width: 0;
+}
+.visual-warning {
+  padding: 12px;
+  background: #fff4d7;
+  color: #654c16;
+}
+.fallback-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fallback-option input {
+  width: auto;
+}
+
+.visual-stack .capture-image {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
