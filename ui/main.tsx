@@ -101,7 +101,14 @@ function App() {
     [searchText, setSearchText] = useState(""),
     [searchResults, setSearchResults] = useState<any[]>([]),
     [captureMatches, setCaptureMatches] = useState<Capture[] | null>(null);
-  const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [workspaceOpen, setWorkspaceOpen] = useState(
+    new URLSearchParams(location.search).get("workspace") === "graph",
+  );
+  const [workspaceView, setWorkspaceView] = useState(
+    new URLSearchParams(location.search).get("workspace") === "graph"
+      ? "graph"
+      : "vault",
+  );
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false),
     [unread, setUnread] = useState(0),
@@ -411,8 +418,19 @@ function App() {
           Inbox {unread > 0 ? `(${unread})` : ""}
         </button>
         <button
+          onClick={() => {
+            setWorkspaceView("graph");
+            setWorkspaceOpen(true);
+          }}
+        >
+          Global Graph
+        </button>
+        <button
           className="workspace-launcher"
-          onClick={() => setWorkspaceOpen(true)}
+          onClick={() => {
+            setWorkspaceView("vault");
+            setWorkspaceOpen(true);
+          }}
         >
           Workspace
         </button>
@@ -1511,6 +1529,7 @@ function App() {
       )}
       {workspaceOpen && (
         <IntegratedWorkspace
+          initialView={workspaceView}
           onClose={() => setWorkspaceOpen(false)}
           onOpenSource={(sourceId, captureId) => {
             setWorkspaceOpen(false);

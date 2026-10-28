@@ -1,3 +1,4 @@
+import { GlobalGraph } from "./ecosystem.js";
 import React, { useEffect, useRef, useState } from "react";
 import { VaultView } from "./vault.js";
 import { CanvasView } from "./canvas.js";
@@ -7,11 +8,13 @@ import "./workspace.css";
 export function IntegratedWorkspace({
   onClose,
   onOpenSource,
+  initialView = "vault",
 }: {
+  initialView?: string;
   onClose: () => void;
   onOpenSource: (sourceId: string, captureId?: string) => void;
 }) {
-  const [view, setView] = useState("vault"),
+  const [view, setView] = useState(initialView),
     [activeRef, setActiveRef] = useState(""),
     [addRef, setAddRef] = useState(""),
     [palette, setPalette] = useState(false),
@@ -109,6 +112,7 @@ export function IntegratedWorkspace({
     setView("canvas");
   }
   const commands = [
+    { title: "Open Global Graph", action: "graph" },
     { title: "Open Markdown vault", action: "vault" },
     { title: "Open visual canvas", action: "canvas" },
     { title: "Open entity database and network", action: "intelligence" },
@@ -152,6 +156,7 @@ export function IntegratedWorkspace({
         </header>
         <nav className="sw-nav" aria-label="Workspace sections">
           {[
+            ["graph", "Global Graph"],
             ["vault", "Notes & vault"],
             ["canvas", "Canvas"],
             ["intelligence", "Database & network"],
@@ -217,6 +222,9 @@ export function IntegratedWorkspace({
         </div>
         {error && <p role="alert">{error}</p>}
         <main className="sw-content">
+          <div hidden={view !== "graph"}>
+            <GlobalGraph active={view === "graph"} onOpenReference={open} />
+          </div>
           <div hidden={view !== "vault"}>
             <VaultView
               initialRef={activeRef}

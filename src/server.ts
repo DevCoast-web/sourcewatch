@@ -1,3 +1,4 @@
+import { registerEcosystemRoutes } from "./ecosystem.js";
 import { registerWorkspaceBridge } from "./workspace-bridge.js";
 import { WorkspaceStore } from "./workspace-store.js";
 import {
@@ -481,6 +482,7 @@ export async function createApp(
       )
       .send(knowledge.export()),
   );
+  registerEcosystemRoutes(app, workspace);
   registerWorkspaceRoutes(app, store, workspace);
   registerWorkspaceExtraRoutes(app, workspace);
   registerVaultRoutes(app, store, workspace);

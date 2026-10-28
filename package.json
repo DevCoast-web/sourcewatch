@@ -1,6 +1,6 @@
 {
   "name": "sourcewatch",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "private": true,
   "type": "module",
   "engines": {
@@ -18,7 +18,8 @@
     "test:soak": "tsx scripts/soak.ts",
     "cli": "tsx scripts/sourcewatch-cli.ts",
     "test:workspace": "tsx --test --test-concurrency=2 tests/workspace*.test.ts tests/vault.test.ts tests/canvas*.test.ts tests/intelligence.test.ts",
-    "benchmark:network": "tsx scripts/benchmark-network.ts"
+    "benchmark:network": "tsx scripts/benchmark-network.ts",
+    "benchmark:global-graph": "tsx scripts/benchmark-global-graph.ts"
   },
   "dependencies": {
     "@fastify/static": "10.1.7",
