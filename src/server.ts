@@ -1,3 +1,13 @@
+import { registerWorkspaceBridge } from "./workspace-bridge.js";
+import { WorkspaceStore } from "./workspace-store.js";
+import {
+  registerWorkspaceRoutes,
+  recordWorkspaceChange,
+} from "./workspace-routes.js";
+import { registerWorkspaceExtraRoutes } from "./workspace-extras.js";
+import { registerVaultRoutes } from "./vault-routes.js";
+import { registerCanvasRoutes } from "./canvas-routes.js";
+import { registerIntelligenceRoutes } from "./intelligence-routes.js";
 import {
   createKnowledge,
   type KnowledgeNodeInput,
@@ -29,6 +39,7 @@ export async function createApp(
   );
   const research = createResearch(store);
   const knowledge = createKnowledge(store);
+  const workspace = new WorkspaceStore(store);
   const app = Fastify({ logger: !options.testMode, bodyLimit: 16384 });
   let busy = false;
   let closing = false;
@@ -45,7 +56,7 @@ export async function createApp(
       .header("X-Frame-Options", "DENY")
       .header(
         "Content-Security-Policy",
-        "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'",
+        "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; worker-src 'self'; frame-src 'self'; media-src 'self' blob:; frame-ancestors 'none'; object-src 'none'; base-uri 'none'",
       );
   });
   app.setErrorHandler((e: any, _req, reply) =>
@@ -96,6 +107,7 @@ export async function createApp(
       store.attempt(id, null);
       try {
         research.recordSuccess(previous, result);
+        recordWorkspaceChange(workspace, previous, result);
       } catch (e) {
         app.log.error({ err: e }, "Could not update change inbox");
       }
@@ -469,6 +481,12 @@ export async function createApp(
       )
       .send(knowledge.export()),
   );
+  registerWorkspaceRoutes(app, store, workspace);
+  registerWorkspaceExtraRoutes(app, workspace);
+  registerVaultRoutes(app, store, workspace);
+  registerCanvasRoutes(app, store, workspace);
+  registerIntelligenceRoutes(app, store, workspace);
+  registerWorkspaceBridge(app, store, workspace);
   const dist = resolve("dist");
   if (existsSync(dist)) await app.register(fastifyStatic, { root: dist });
   const runScheduled = async () => {
@@ -492,7 +510,7 @@ export async function createApp(
     clearInterval(timer);
     store.close();
   });
-  return { app, store, research, runCapture, runScheduled };
+  return { app, store, research, workspace, runCapture, runScheduled };
 }
 if (
   process.argv[1] &&

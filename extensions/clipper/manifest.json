@@ -1,0 +1,1 @@
+{"manifest_version":3,"name":"SourceWatch Local Clipper","version":"0.1.0","description":"Export selected text and page metadata to a local SourceWatch clip file. No remote service.","permissions":["activeTab","scripting"],"action":{"default_popup":"popup.html"}}

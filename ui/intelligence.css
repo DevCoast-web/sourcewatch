@@ -1,0 +1,126 @@
+.intelligence {
+  padding: 20px;
+  max-width: 1600px;
+  margin: auto;
+}
+.intelligence .intel-nav,
+.intel-controls,
+.intel-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.intel-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+}
+.intel-panel {
+  border: 1px solid #cbd7ce;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fff;
+  min-width: 0;
+}
+.intel-form label {
+  display: block;
+  margin: 10px 0;
+}
+.intel-form input,
+.intel-form textarea,
+.intel-form select {
+  width: 100%;
+  padding: 8px;
+}
+.intel-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.intel-table td,
+.intel-table th {
+  text-align: left;
+  padding: 9px;
+  border-bottom: 1px solid #dde5de;
+  overflow-wrap: anywhere;
+}
+.intel-network {
+  width: 100%;
+  height: 540px;
+  touch-action: none;
+  background: #f3f6f0;
+  border: 1px solid #cbd7ce;
+}
+.intel-network text {
+  font-size: 12px;
+  pointer-events: none;
+}
+.intel-network .selected {
+  stroke: #b34525;
+  stroke-width: 4;
+}
+.intel-network line {
+  stroke: #7b8c84;
+  cursor: pointer;
+  stroke-width: 3;
+}
+.intel-network line.verified {
+  stroke: #217048;
+}
+.intel-network line.hypothesis {
+  stroke-dasharray: 7 5;
+}
+.intel-network line.disputed {
+  stroke: #b33e39;
+  stroke-dasharray: 3 4;
+}
+.intel-network circle {
+  fill: #e2ead8;
+  stroke: #3b6153;
+  stroke-width: 2;
+  cursor: pointer;
+}
+.intel-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 6px 0;
+}
+.intel-subtle {
+  font-size: 12px;
+  color: #5c6e66;
+}
+.intel-error {
+  color: #a22b24;
+  white-space: pre-wrap;
+}
+.intel-code {
+  max-height: 400px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.intel-badge {
+  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #eef1e7;
+  font-size: 12px;
+}
+.intel-panel a {
+  margin-right: 8px;
+}
+@media (max-width: 800px) {
+  .intel-grid {
+    grid-template-columns: 1fr;
+  }
+  .intelligence {
+    padding: 10px;
+  }
+  .intel-network {
+    height: 380px;
+  }
+  .intel-table {
+    font-size: 12px;
+  }
+}

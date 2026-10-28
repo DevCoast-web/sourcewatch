@@ -1,0 +1,332 @@
+.vault-workspace {
+  padding: 24px;
+  min-width: 0;
+}
+.vault-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.vault-title h1 {
+  margin: 8px 0;
+}
+.vault-title p {
+  max-width: 680px;
+  color: #627269;
+}
+.vault-actions,
+.vault-document-toolbar,
+.vault-small-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.vault-actions {
+  align-content: flex-start;
+}
+.vault-export,
+.vault-import {
+  display: block;
+  background: white;
+  border: 1px solid #d6ded7;
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-weight: 600;
+}
+.vault-import input {
+  max-width: 200px;
+  display: block;
+  margin-top: 6px;
+}
+.vault-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+  gap: 16px;
+  margin-top: 18px;
+  align-items: start;
+}
+.vault-explorer,
+.vault-document,
+.vault-context {
+  background: #fff;
+  border: 1px solid #d8e0d9;
+  border-radius: 9px;
+  padding: 15px;
+  min-width: 0;
+}
+.vault-explorer label,
+.vault-document label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 8px 0;
+}
+.vault-workspace input:not([type="checkbox"]),
+.vault-workspace select,
+.vault-workspace textarea {
+  display: block;
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #c9d6cd;
+  border-radius: 5px;
+  background: #fff;
+  color: #243b37;
+  margin-top: 5px;
+}
+.vault-notelist {
+  max-height: 52vh;
+  overflow: auto;
+  margin: 14px 0;
+}
+.vault-notelist > button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.vault-notelist .active {
+  background: #e6f0e7;
+  border-color: #789e85;
+}
+.vault-workspace small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: #66766c;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.vault-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.vault-editor-area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 14px;
+  min-height: 380px;
+}
+.vault-editor-area.mode-split {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.vault-workspace .vault-editor {
+  font-family: Consolas, monospace;
+  resize: vertical;
+  min-height: 450px;
+  line-height: 1.65;
+  tab-size: 2;
+}
+.vault-reading {
+  padding: 12px;
+  line-height: 1.65;
+  border: 1px solid #e5e9e3;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  max-height: 75vh;
+  overflow: auto;
+}
+.vault-reading p {
+  white-space: pre-wrap;
+  margin: 8px 0;
+}
+.vault-reading h1,
+.vault-reading h2,
+.vault-reading h3 {
+  line-height: 1.25;
+  margin: 18px 0 8px;
+}
+.vault-reading pre {
+  overflow: auto;
+  background: #f2f4ef;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+.vault-reading code {
+  font-family: Consolas, monospace;
+  background: #eef2eb;
+  border-radius: 3px;
+}
+.vault-reading blockquote {
+  border-left: 3px solid #86a793;
+  padding-left: 12px;
+  margin-left: 0;
+  color: #526b5c;
+}
+.vault-listitem {
+  padding-left: 15px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.vault-wikilink {
+  display: inline;
+  padding: 0 3px;
+  border: 0;
+  border-bottom: 1px dotted #558a68;
+  border-radius: 0;
+  background: none;
+  color: #2d6d4a;
+  font-weight: inherit;
+}
+.vault-table-scroll {
+  overflow: auto;
+}
+.vault-reading table {
+  border-collapse: collapse;
+}
+.vault-reading td,
+.vault-reading th {
+  border: 1px solid #cdd7cf;
+  padding: 6px;
+}
+.vault-status {
+  padding: 10px 0;
+  color: #536e5e;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.vault-context a,
+.vault-context > button {
+  display: block;
+  max-width: 100%;
+  margin: 7px 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.vault-context h3 {
+  font-size: 13px;
+  margin: 15px 0 7px;
+}
+.vault-context small {
+  max-height: 65px;
+  overflow: hidden;
+}
+.vault-workspace details {
+  border-top: 1px solid #e1e6df;
+  padding: 11px 0;
+}
+.vault-workspace summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.vault-workspace pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 330px;
+  overflow: auto;
+}
+.vault-bookmark {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 6px 0;
+}
+.vault-bookmark > button:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.vault-error {
+  padding: 12px;
+  background: #fff1ef;
+}
+.vault-preview {
+  background: #f1f5ee;
+  padding: 10px;
+}
+.vault-preview h4 {
+  margin: 0;
+}
+.vault-revision {
+  padding: 10px 0;
+  border-bottom: 1px solid #e4e9e0;
+}
+.vault-footnote {
+  font-size: 12px;
+  color: #526b5c;
+}
+@media (max-width: 1200px) {
+  .vault-grid {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+  .vault-context {
+    grid-column: 1/-1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: start;
+  }
+  .vault-context h3 {
+    width: 100%;
+  }
+}
+@media (max-width: 700px) {
+  .vault-workspace {
+    padding: 12px;
+  }
+  .vault-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  .vault-explorer,
+  .vault-document,
+  .vault-context {
+    width: 100%;
+  }
+  .vault-notelist {
+    max-height: 220px;
+  }
+  .vault-meta {
+    grid-template-columns: 1fr;
+  }
+  .vault-editor-area.mode-split {
+    grid-template-columns: 1fr;
+  }
+  .vault-editor-area.mode-split .vault-reading {
+    max-height: 400px;
+  }
+  .vault-title {
+    display: block;
+  }
+  .vault-actions {
+    margin-top: 12px;
+  }
+  .vault-document-toolbar button {
+    padding: 8px;
+  }
+  .vault-reading {
+    max-height: none;
+  }
+}
+.vault-slash {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px;
+  background: #edf3ec;
+  border: 1px solid #adc4b2;
+  border-radius: 6px;
+  margin: 10px 0;
+}
+.vault-slides {
+  margin-top: 18px;
+  border: 1px solid #c4d5c9;
+  padding: 20px;
+  background: #f8faf4;
+  min-height: 420px;
+}
+.vault-slides .vault-reading {
+  min-height: 340px;
+  font-size: 18px;
+}
+.vault-slides .vault-reading h1 {
+  font-size: 2.1em;
+}
+.mode-slides.vault-editor-area {
+  min-height: 0;
+  margin: 0;
+}

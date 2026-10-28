@@ -1,3 +1,4 @@
+import { IntegratedWorkspace } from "./workspace.js";
 import { KnowledgeWorkspace } from "./knowledge.js";
 import { VERSION } from "../src/version.js";
 import React, { useState, useEffect, useRef } from "react";
@@ -100,6 +101,7 @@ function App() {
     [searchText, setSearchText] = useState(""),
     [searchResults, setSearchResults] = useState<any[]>([]),
     [captureMatches, setCaptureMatches] = useState<Capture[] | null>(null);
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false),
     [unread, setUnread] = useState(0),
@@ -407,6 +409,12 @@ function App() {
           onClick={() => setResearchOpen(true)}
         >
           Inbox {unread > 0 ? `(${unread})` : ""}
+        </button>
+        <button
+          className="workspace-launcher"
+          onClick={() => setWorkspaceOpen(true)}
+        >
+          Workspace
         </button>
         <button onClick={() => setKnowledgeOpen(true)}>
           Research connections
@@ -1500,6 +1508,19 @@ function App() {
             ))}
           </section>
         </div>
+      )}
+      {workspaceOpen && (
+        <IntegratedWorkspace
+          onClose={() => setWorkspaceOpen(false)}
+          onOpenSource={(sourceId, captureId) => {
+            setWorkspaceOpen(false);
+            setShowArchived(true);
+            setSelected(sourceId);
+            if (captureId)
+              setFocusCapture({ sourceId, after: captureId, before: "" });
+            else setTab("history");
+          }}
+        />
       )}
       {knowledgeOpen && (
         <KnowledgeWorkspace

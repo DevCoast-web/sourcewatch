@@ -1,0 +1,252 @@
+.canvas-workspace {
+  padding: 24px;
+  min-width: 0;
+  max-width: 100%;
+}
+.canvas-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.canvas-heading h2 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 32px;
+  margin: 10px 0;
+}
+.canvas-heading p {
+  max-width: 650px;
+  color: #60715e;
+  font-size: 13px;
+}
+.canvas-actions,
+.canvas-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.canvas-toolbar {
+  padding: 10px 0;
+  border-top: 1px solid #dbe4d5;
+}
+.canvas-toolbar label {
+  margin: 0;
+  font-size: 11px;
+}
+.canvas-toolbar input,
+.canvas-toolbar select {
+  max-width: 250px;
+}
+.canvas-toolbar > select {
+  max-width: 320px;
+}
+.canvas-toolbar span {
+  font-size: 11px;
+  color: #60715e;
+}
+.canvas-toolbar button[aria-pressed="true"] {
+  background: #e1ecdb;
+  border-color: #477859;
+}
+.canvas-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.canvas-check input {
+  width: auto;
+  margin: 0;
+}
+.canvas-import {
+  font-size: 12px;
+  max-width: 200px;
+}
+.canvas-import input {
+  font-size: 10px;
+  max-width: 200px;
+}
+.canvas-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 16px;
+  align-items: start;
+}
+.canvas-surface-wrap {
+  min-width: 0;
+  border: 1px solid #b4c5ab;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.canvas-surface {
+  display: block;
+  width: 100%;
+  height: 70vh;
+  min-height: 450px;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+}
+.canvas-surface:focus-visible {
+  outline: 3px solid #477859;
+  outline-offset: -3px;
+}
+.canvas-drag-handle {
+  cursor: grab;
+}
+.canvas-resize {
+  fill: #477859;
+  cursor: nwse-resize;
+}
+.canvas-card-header {
+  font: 12px Arial;
+  fill: #365641;
+}
+.canvas-label {
+  font: 13px Arial;
+  fill: #203d30;
+  paint-order: stroke;
+  stroke: #f5f6ef;
+  stroke-width: 4px;
+}
+.canvas-card-content {
+  font-size: 13px;
+  color: #203d30;
+  padding: 12px;
+  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.canvas-card-content h4 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+.canvas-card-content p {
+  font-size: 12px;
+}
+.canvas-card-content img,
+.canvas-card-content video {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.canvas-card-content audio {
+  width: 100%;
+}
+.canvas-card-content iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.canvas-card-content button {
+  font-size: 10px;
+  padding: 5px 8px;
+  margin-top: 10px;
+}
+.canvas-md-heading {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 8px 0;
+}
+.canvas-markdown {
+  line-height: 1.6;
+}
+.canvas-markdown code {
+  background: #e9eddf;
+  padding: 1px 3px;
+}
+.canvas-properties {
+  background: #f6f8f0;
+  border: 1px solid #d5dfcd;
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 75vh;
+  overflow: auto;
+  min-width: 0;
+}
+.canvas-properties h3 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  margin: 5px 0 15px;
+}
+.canvas-properties label {
+  display: block;
+  font-size: 11px;
+  margin: 12px 0;
+}
+.canvas-properties select,
+.canvas-properties input,
+.canvas-properties textarea {
+  max-width: 100%;
+  min-width: 0;
+}
+.canvas-properties p {
+  font-size: 11px;
+  color: #60715e;
+}
+.canvas-properties button {
+  font-size: 11px;
+  margin: 4px 4px 4px 0;
+}
+.canvas-conflict {
+  border: 1px solid #a96737;
+  background: #fff0df;
+  padding: 16px;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.canvas-conflict button {
+  display: block;
+  margin-top: 10px;
+}
+@media (max-width: 800px) {
+  .canvas-workspace {
+    padding: 14px;
+  }
+  .canvas-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .canvas-properties {
+    max-height: none;
+  }
+  .canvas-surface {
+    height: 60vh;
+    min-height: 360px;
+  }
+  .canvas-toolbar input,
+  .canvas-toolbar select,
+  .canvas-toolbar > select {
+    max-width: 100%;
+  }
+  .canvas-toolbar > select {
+    width: 100%;
+  }
+  .canvas-toolbar button {
+    white-space: normal;
+    font-size: 11px;
+  }
+  .canvas-actions {
+    width: 100%;
+  }
+}
+.canvas-base-table {
+  font-size: 10px;
+  width: 100%;
+  border-collapse: collapse;
+}
+.canvas-base-table th,
+.canvas-base-table td {
+  border-bottom: 1px solid #d5dfcd;
+  padding: 3px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.canvas-mini {
+  display: block;
+  width: 100%;
+  height: 130px;
+}
