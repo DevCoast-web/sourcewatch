@@ -126,3 +126,13 @@ By default, screenshot failure preserves HTML/text and records an incomplete res
 The full local suite completed 64 tests: 62 passed, zero failed, and two Windows symlink/junction permission cases skipped. Build, lint, and type checking passed; npm audit --audit-level=low reported zero vulnerabilities. Tiled settings controls and research export regression checks also passed. An independent clean source copy installed dependencies, built, and passed the same 62 tests with two skips, using the existing Chromium installation. See [1.2 validation](docs/VALIDATION-1.2.md) for scope and environment limits. No public release or hosted CI result is claimed. See [research design](docs/RESEARCH_DESIGN.md) and the final handoff for executed checks.
 
 ![Actual research connections workspace using local fixture records](docs/screenshots/connections.png)
+
+## 2.0.0-alpha.1 integrated research workspace
+
+The **Workspace** button opens persistent Markdown notes with backlinks, a manually editable canvas, and a separate entity/relationship database and network graph. Attachments, hypotheses, evidence review, local exports and stable record references connect these views. Existing capture → compare → export → verify functionality remains available.
+
+This is a **feature-branch alpha**, not full completion of the expansion directive or Obsidian parity. See the [workspace guide](docs/WORKSPACE_GUIDE.md), [feature matrix](docs/feature-parity.json) and [validation report](docs/WORKSPACE_VALIDATION.md) for behavior, limits and outstanding work. No cloud service, public repository or hosted publication was created.
+
+![Actual persistent canvas browser test](docs/screenshots/canvas.png)
+
+[Actual intelligence network](docs/screenshots/intelligence-network.png)

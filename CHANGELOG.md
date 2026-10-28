@@ -24,3 +24,9 @@ Local change/failure inbox, editable capture notes/tags and note search, checksu
 Initial local-first implementation: Playwright rendered-page capture, SQLite source/history storage, text and outbound-link comparison, responsive React dashboard, editable source metadata, archive/restore, collections and local scheduling, global text search, local settings, explicit title changes, append-only hash-linked capture metadata, full-source and selected-history ZIP evidence export with chain ancestors, and standalone offline verification.
 
 This entry describes the source tree, not a claim of publication. See README and SECURITY for limits, the release handoff for executed checks, and repository tags/releases for actual publication status.
+
+## 2.0.0-alpha.1 — integrated knowledge preview
+
+Added a shared versioned workspace, persistent Markdown vault/backlinks/history, editable JSON Canvas, an entity/relationship database and separate network graph, evidence-reviewed hypotheses, investigations, attachments and local PDF previews. Added workspace/Markdown/graph exports and standalone workspace verification, property views, clip import, declarative navigation extensions, audio recording and loopback CLI. Browser tests exercise actual persisted edits, conflicts and generated export bytes.
+
+This is a dedicated feature-branch preview. Full master expansion and Module J acceptance remain partial; automatic sync, advanced editor/plugin/base parity, complete mobile/offline behavior and advanced graph analysis are unfinished. See the feature matrix and validation report.

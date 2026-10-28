@@ -1,0 +1,743 @@
+SOURCEWATCH — MASTER EXPANSION DIRECTIVE
+
+Codex Implementation Specification
+
+Full Obsidian Functionality + Evidence-Backed Network Intelligence
+
+Project: SourceWatch
+Status: Existing application — preserve and extend
+Execution: Implement, test, document, and integrate
+Reference platforms: Obsidian and WhoFundedGenocide
+
+⸻
+
+1. PRIMARY OBJECTIVE
+
+Expand SourceWatch into a unified, locally controlled research and intelligence application combining:
+
+1. SourceWatch’s existing monitoring, evidence collection, change detection and archival capabilities.
+2. WhoFundedGenocide-style interactive relationship networks, financial records, investigative databases and evidence traceability.
+3. The full range of Obsidian’s 29 documented core plugin capabilities, plus its fundamental editing, navigation, customization, automation, import/export, browser capture, synchronization and publishing functions.
+
+This is not a request for a simplified Obsidian clone.
+
+The user wants the actual useful capabilities integrated into SourceWatch as working features.
+
+SourceWatch remains the parent application. All new modules must work with its existing evidence records, sources, investigations and data structures.
+
+Governing rules
+
+* Audit the existing SourceWatch codebase before editing.
+* Never replace or discard functioning code unnecessarily.
+* Preserve all existing monitoring, archival, evidence and security functions.
+* Do not create a separate product.
+* Do not touch unrelated projects or repositories.
+* Work in a dedicated development branch.
+* Preserve existing user data, history, settings and project files.
+* Use durable, portable file formats.
+* Prefer local-first and open-source implementations.
+* Do not claim functionality is complete without working tests.
+* Never fabricate evidence, financial transactions or relationships.
+* Avoid copying Obsidian’s proprietary implementation, branding, paid service infrastructure or protected design assets.
+
+⸻
+
+2. COMPLETE OBSIDIAN CORE FEATURE REQUIREMENTS
+
+Implement a functional equivalent of every feature below.
+
+01 — Audio Recorder
+
+Record audio directly into the workspace.
+
+Support microphone permissions, playback, linked audio files, timestamps, recording metadata and attachment to notes or investigations.
+
+02 — Backlinks
+
+Automatically identify every note, record and document referencing the current note.
+
+Display linked references, contextual excerpts and unlinked mentions.
+
+Support navigation to the originating reference.
+
+03 — Bases
+
+Implement database-style views over notes and their properties.
+
+Required capabilities:
+
+* Tables
+* Lists
+* Cards and galleries
+* Kanban boards
+* Map-based record views
+* Filters
+* Sorting
+* Grouping
+* Computed properties and formulas
+* Reusable, saved views
+* Editable record properties
+* Embedded database views within notes and canvases
+
+Preserve compatibility with Obsidian .base files wherever practical, with documented limitations.
+
+04 — Bookmarks
+
+Allow bookmarking files, notes, headings, blocks, searches, canvases, graph views and external URLs.
+
+Support folders, ordering and persistent bookmark collections.
+
+05 — Canvas
+
+Implement a full interactive infinite canvas.
+
+Support:
+
+* Drag-and-drop cards
+* Text and Markdown cards
+* Embedded notes
+* Images and videos
+* Audio files
+* PDF documents
+* External webpage cards
+* Embedded databases
+* Nested canvases
+* Directional and bidirectional connections
+* Connection labels and colors
+* Grouped cards and colored regions
+* Alignment and distribution
+* Snapping
+* Resizing
+* Multiselection
+* Pan and zoom
+* Undo and redo
+* Read-only mode
+* Image export
+* Persistent layouts
+
+Support the open JSON Canvas .canvas format for import and export.
+
+06 — Command Palette
+
+Implement a keyboard-accessible command launcher covering available SourceWatch actions.
+
+Support command search, configurable shortcuts, plugin commands and contextual actions.
+
+07 — Daily Notes
+
+Automatically create and open date-based notes.
+
+Support configurable templates, date formats, folders, navigation and linking daily entries to investigations.
+
+08 — File Explorer
+
+Provide an organized filesystem-style interface.
+
+Support folders, subfolders, drag-and-drop, rename, move, duplicate, delete, search, file creation, context menus and appropriate recovery options.
+
+Maintain stable references when files move or are renamed.
+
+09 — File Recovery
+
+Provide automatic note snapshots and restoration tools.
+
+Support:
+
+* Revision history
+* Recovery after accidental edits or deletions
+* Snapshot comparison
+* Backup restoration
+* Protection from incomplete writes
+* Configurable retention policies
+
+Never confuse synchronization with backup.
+
+10 — Footnotes View
+
+Parse and display footnotes in Markdown documents.
+
+Allow navigation between citations, footnote references and their definitions.
+
+11 — Graph View
+
+Provide both global and local knowledge graphs.
+
+Support:
+
+* Zoomable and pannable graph visualization
+* Nodes representing notes and linked records
+* Bidirectional navigation
+* Filtering by tag, type and relationship
+* Configurable graph depth
+* Node grouping and coloring
+* Search and highlighting
+* Orphaned-node detection
+* Persistent display settings
+* Optional clustering
+* Connection exploration
+
+Integrate knowledge graphs with SourceWatch’s evidence-backed entity graphs while maintaining separate relationship classifications.
+
+12 — Note Composer
+
+Support splitting notes, merging notes, extracting selected content into new notes and reorganizing documents.
+
+Maintain relevant links and metadata during supported operations.
+
+13 — Outgoing Links
+
+Display every link originating from the selected note.
+
+Distinguish internal references, external links and unresolved references.
+
+14 — Outline
+
+Automatically generate a navigable document outline from headings.
+
+Support nested headings, jumping to sections and updates while editing.
+
+15 — Page Preview
+
+Provide hover or focus previews of linked notes and referenced records without requiring navigation away from the active view.
+
+Support usable touch alternatives.
+
+16 — Properties View
+
+Support structured YAML/frontmatter-style metadata.
+
+Include editable properties, custom property types, aliases, tags, dates, numbers, checkboxes and reusable metadata conventions.
+
+Provide a vault-wide property browser.
+
+17 — Publish
+
+Build a SourceWatch publishing system with functionality comparable to Obsidian Publish.
+
+Support:
+
+* Explicit selection of publishable notes
+* Public knowledge-base websites
+* Internal documentation sites
+* Searchable published collections
+* Linked navigation and appropriate graph views
+* Themes
+* Custom domain configuration where hosting supports it
+* Access controls
+* Publication revisions
+* Unpublishing
+* Protection against accidental publication of private records
+
+Publishing must be opt-in and clearly separated from private workspace storage.
+
+Do not claim it is a live hosted service until the required infrastructure exists and is tested.
+
+18 — Quick Switcher
+
+Implement fuzzy search and rapid opening of notes, files, canvases and records.
+
+Support creating notes directly from the switcher.
+
+19 — Random Note
+
+Allow users to open a randomly selected note from the active vault or selected collection.
+
+20 — Search
+
+Implement full-text search with:
+
+* Phrase matching
+* Search operators
+* Folder scoping
+* Tag filters
+* Property filters
+* Date filters
+* File type filters
+* Result previews
+* Saved searches
+* Embedded search results
+
+Extend the same search architecture to SourceWatch evidence and investigations, respecting permission boundaries.
+
+21 — Slash Commands
+
+Allow / commands while editing.
+
+Support formatting, inserting media, headings, tables, links, templates and compatible plugin commands.
+
+22 — Slides
+
+Convert Markdown notes into presentations.
+
+Support slide separators, formatted text, media, code and presentation navigation.
+
+Provide export options appropriate to the installed rendering libraries.
+
+23 — Sync
+
+Implement optional cross-device synchronization.
+
+Requirements:
+
+* Local-first operation
+* Offline editing
+* Reliable synchronization after reconnecting
+* Selective synchronization
+* File and preference synchronization
+* Conflict detection and safe resolution
+* Revision tracking
+* Configurable remote storage
+* Authenticated device access
+* Encryption in transit
+* End-to-end encryption where that capability is explicitly implemented and independently verified
+
+Do not silently upload private evidence.
+
+Keep this optional. A local user must never require a cloud account simply to create or read notes.
+
+24 — Tags View
+
+Provide searchable and navigable tag management.
+
+Support nested tags, tag counts, tag-based navigation, filtering and property integration.
+
+25 — Templates
+
+Implement reusable note templates.
+
+Support customizable destinations, metadata, dates, titles, reusable structures and insertion through commands.
+
+26 — Unique Note Creator
+
+Create uniquely named notes using configurable timestamp patterns or equivalent collision-resistant identifiers.
+
+27 — Web Viewer
+
+Support viewing external websites alongside research notes.
+
+Include appropriate browser security boundaries, external-link controls and the ability to reference the currently viewed page.
+
+28 — Word Count
+
+Show word and character counts for notes and selected text.
+
+Update while editing.
+
+29 — Workspaces
+
+Allow users to save and restore named workspace layouts.
+
+Support:
+
+* Multiple tabs
+* Split panes
+* Sidebars
+* Pinned views
+* Reopenable documents
+* Saved panel arrangements
+* Multiple research contexts
+* Workspace switching
+* Persistent layout state
+
+⸻
+
+3. ADDITIONAL OBSIDIAN APPLICATION FEATURES
+
+The 29 core plugins are not the entire application.
+
+Also implement these cross-cutting capabilities.
+
+A. Complete Markdown editing
+
+* Plain-text Markdown storage
+* Source mode
+* Live Preview editing
+* Reading mode
+* Split editing and reading views
+* Headings, tables and lists
+* Checklists and tasks
+* Code blocks and syntax highlighting
+* Mathematical expressions
+* Mermaid diagram rendering
+* Footnotes
+* Callouts
+* Internal and external links
+* File and media embeds
+* Block references
+* Heading references
+* Aliases
+* Drag-and-drop attachments
+* Automatic link updating when appropriate
+
+B. Knowledge-linking system
+
+Implement:
+
+* [[wikilinks]]
+* Aliased links
+* Heading links
+* Block links
+* Backlinks
+* Outgoing links
+* Unresolved links
+* Unlinked mentions
+* Graph relationships
+* Note transclusion/embedding
+* Link repair and navigation
+* Stable identifiers and safe renaming
+
+These links should work across the knowledge vault, and permit explicit references to SourceWatch records.
+
+C. Vault management
+
+Support multiple independent knowledge vaults.
+
+Include creation, import, export, backup, selection, indexing and configurable attachment storage.
+
+Notes must remain readable outside SourceWatch using ordinary tools.
+
+Prefer Markdown and open formats over proprietary, application-dependent storage.
+
+D. Interface customization
+
+Implement:
+
+* Light and dark themes
+* Accent colors
+* Font and typography settings
+* Configurable keyboard shortcuts
+* Customizable panels and toolbar
+* Optional CSS customization with security restrictions
+* User settings
+* Independent plugin settings
+* Accessible keyboard navigation
+
+Support theme extensions without requiring direct modifications to SourceWatch’s application code.
+
+E. Browser Web Clipper
+
+Implement browser-to-SourceWatch capture functionality inspired by Obsidian Web Clipper.
+
+Support:
+
+* Capture full articles or selected content
+* Highlights and annotations
+* Page titles, URLs and metadata
+* Capture templates
+* Metadata extraction
+* Locally saved Markdown
+* Image and document references
+* Optional preserved snapshots
+* Timestamp and source metadata
+* Direct linking into SourceWatch’s existing evidence records
+
+Where browser integration requires a separate extension, implement and document the necessary companion component.
+
+Do not treat a normal bookmark as equivalent to archived evidence.
+
+F. Importer
+
+Provide importers for Markdown vaults, JSON Canvas files, supported note formats and common structured-data formats.
+
+Prioritize non-destructive migration from Obsidian vaults.
+
+Preserve attachments, file paths, tags, frontmatter and internal links wherever possible.
+
+Generate migration reports listing unsupported features.
+
+G. Maps
+
+Provide location-based views for records with geographic properties.
+
+Support pins, filtering, record previews and navigation to associated notes and entities.
+
+Use documented and appropriately licensed mapping providers or local map resources.
+
+H. Automation and command-line integration
+
+Create a documented SourceWatch CLI or equivalent supported automation interface.
+
+Provide programmatic commands for:
+
+* Vault management
+* Creating and reading notes
+* Searching records
+* Daily notes
+* Managing tags
+* Listing links and backlinks
+* Importing and exporting
+* Opening investigations
+* Accessing evidence metadata
+* Running authorized monitoring operations
+
+Include machine-readable responses and meaningful exit codes.
+
+Avoid arbitrary shell execution through untrusted notes or imported records.
+
+I. Extensible plugin system
+
+Implement an officially documented SourceWatch extension architecture.
+
+Required:
+
+* Extension manifest
+* Stable versioned APIs
+* Lifecycle management
+* Command registration
+* View registration
+* Editor extensions
+* Import/export adapters
+* Optional visualization extensions
+* Plugin settings
+* Permission declarations
+* Error isolation
+* Disable/uninstall support
+* Compatibility and version reporting
+
+Assess whether adapters for selected Obsidian community plugins are feasible.
+
+Do not assume native Obsidian plugins can execute unchanged in SourceWatch.
+
+Do not install arbitrary third-party code automatically. Require explicit authorization and appropriate sandboxing or trust controls.
+
+J. Mobile and offline functionality
+
+Ensure the application is usable on Windows and appropriately adapted for iPhone and iPad.
+
+Use the existing architecture to select a viable desktop/mobile strategy.
+
+Include touch navigation, mobile Canvas interaction, note editing, offline access and safe synchronization.
+
+A responsive UI alone does not establish complete offline mobile functionality.
+
+⸻
+
+4. WHO-FUNDED-GENOCIDE-STYLE INTELLIGENCE MODULES
+
+Retain and implement all previously requested intelligence features.
+
+Entity registry
+
+Support people, companies, public agencies, financial institutions, projects, infrastructure and other extensible entity types.
+
+Provide stable entity IDs, aliases, official identifiers and provenance.
+
+Relationship registry
+
+Support financial, legal, ownership, governance, organizational and documented-association relationships.
+
+Every verified relationship must have supporting evidence.
+
+Distinguish confirmed records, unverified allegations, hypotheses and researcher annotations.
+
+Financial tracking
+
+Support payer, recipient, original amount, original currency, date, filing type, jurisdiction and supporting documents.
+
+Differentiate actual payments, budgets, contracts, pledges, estimates and independent expenditure.
+
+Interactive investigative graph
+
+Implement multiple graph boards, interactive node/edge inspection, searching, filters, relationship styling, link sharing and navigation to underlying records.
+
+Searchable data tables
+
+Provide filters for entity, jurisdiction, date, record type, evidence status and other relevant properties.
+
+Support sorting, pagination and exports.
+
+Evidence verification
+
+Preserve original source links, archived copies, capture timestamps, document identifiers, relevant page references and cryptographic hashes.
+
+Investigative research environment
+
+Support cases, findings, evidence collections, timelines, research notes and report compilation.
+
+Data portability
+
+Support CSV, JSON, Gephi/Cytoscape-compatible formats, downloadable research packages, schema documentation and checksum manifests.
+
+Corrections and auditing
+
+Implement correction requests, review history, append-only audit events, duplicate review and import validation.
+
+SourceWatch monitoring integration
+
+Associate observed source changes with potentially affected entities, relationships, notes, canvases and investigations.
+
+Changes must be reviewable before they alter established factual conclusions.
+
+⸻
+
+5. UNIFIED SOURCEWATCH DATA MODEL
+
+Do not maintain three disconnected databases when a coherent architecture is possible.
+
+Establish durable references connecting:
+
+* Vault
+* Note
+* Document
+* Attachment
+* Source
+* Captured source version
+* Entity
+* Relationship
+* Evidence reference
+* Investigation
+* Canvas
+* Knowledge link
+* Graph board
+* Financial record
+* Monitoring event
+* Research annotation
+* Audit event
+
+Use canonical identifiers, safe schema migrations and clear ownership boundaries.
+
+A knowledge link is not automatically a verified factual relationship.
+
+A manual Canvas connection is not automatically evidence of a real-world association.
+
+A source observation does not automatically establish the accuracy of a claim within that source.
+
+Maintain those distinctions throughout storage, visualization and exports.
+
+⸻
+
+6. DEVELOPMENT ORDER
+
+Implement in the following phases.
+
+Phase 0 — Complete SourceWatch audit
+
+Inspect the repository, architecture, existing features, tests and dependencies. Establish a regression baseline.
+
+Phase 1 — Vault and editor foundation
+
+Implement Markdown editing, file management, properties, notes, attachments, templates and recovery.
+
+Phase 2 — Knowledge-linking foundation
+
+Implement wikilinks, backlinks, outgoing links, search, tags, previews, indexes and graph data.
+
+Phase 3 — Complete visual workspace
+
+Implement Canvas, graph views, saved layouts, nested canvases and all required manipulation controls.
+
+Phase 4 — Bases and research databases
+
+Implement property-driven views, table/list/card/Kanban/map layouts, filtering, formulas and saved queries.
+
+Phase 5 — Investigative intelligence
+
+Implement entities, relationships, financial records, evidence-linked network visualization and investigations.
+
+Phase 6 — Monitoring and preservation integration
+
+Connect new modules to the existing SourceWatch monitoring and evidence history.
+
+Phase 7 — Productivity and customization
+
+Complete daily notes, bookmarks, commands, slides, audio recording, note composition, themes and settings.
+
+Phase 8 — Interoperability and automation
+
+Implement Obsidian import, JSON Canvas, structured exports, browser clipping, CLI and extension architecture.
+
+Phase 9 — Mobile, synchronization and publishing
+
+Implement and validate offline mobile usability, authorized sync and optional publishing infrastructure.
+
+Phase 10 — Full regression and acceptance testing
+
+Test all requirements, perform security and performance validation, document limitations and prepare the finished implementation for review.
+
+Commit changes incrementally. Do not perform destructive migrations without verified backups.
+
+⸻
+
+7. DEFINITION OF COMPLETE
+
+Create a machine-readable feature-parity checklist covering:
+
+* All 29 documented Obsidian core plugins
+* Fundamental Markdown editing and linking
+* Vault and file management
+* Themes and customization
+* Browser clipping
+* Import/export
+* Maps and database views
+* Automation/CLI
+* Plugin infrastructure
+* Mobile and offline functionality
+* Synchronization
+* Publishing
+* SourceWatch integration
+* Network intelligence integration
+
+For each requirement, record:
+
+1. Existing functionality found
+2. Implementation work performed
+3. Actual behavior supported
+4. Automated test coverage
+5. Manual testing instructions
+6. Pass/fail result
+7. Known differences from the reference feature
+8. Outstanding dependencies or limitations
+
+A feature is not complete because a button appears in the interface.
+
+A feature is complete when the described behavior works, persists correctly and passes relevant tests.
+
+Do not describe partial compatibility as full parity.
+
+⸻
+
+8. FINAL DELIVERABLES
+
+Deliver:
+
+* SourceWatch with the new modules integrated
+* Incremental code commits
+* Any required database migrations
+* Functional unit and integration tests
+* Regression test results
+* Obsidian feature-parity matrix
+* Updated architecture documentation
+* Updated user guide
+* Working sample vault
+* Working example Canvas
+* Working example Bases database
+* Working example investigative network
+* Sample preserved evidence references using synthetic records
+* Import/export demonstrations
+* Security and privacy review
+* Performance results
+* Documented incomplete features and dependencies
+
+Do not deploy or publish without authorization.
+
+⸻
+
+FINAL CODEX INSTRUCTION
+
+This is an engineering implementation assignment.
+
+Audit the real SourceWatch codebase, identify reusable components, design the integration architecture, and implement the requested functionality through incremental, tested changes.
+
+Retain SourceWatch’s identity as the evidence and monitoring foundation.
+
+The desired result is a single application containing the capabilities of a full Obsidian-style knowledge workspace and an evidence-backed investigative network intelligence platform.
+
+Do not stop after implementing only Canvas and Graph View.
+
+Do not silently omit any of the 29 core feature categories.
+
+Do not substitute mockups, pseudo-code or implementation plans for working functionality.
+
+Record genuine blockers and unmet requirements accurately.
+
+Begin with Phase 0 and proceed through the implementation sequence, subject to actual repository access, dependencies and test results.

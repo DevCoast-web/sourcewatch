@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "entities": 10000,
+  "relationships": 12000,
+  "seedMs": 14015,
+  "searchMs": 21,
+  "localGraphMs": 116,
+  "pathMs": 420,
+  "searchMatches": 111,
+  "displayedNodes": 5,
+  "displayedEdges": 8,
+  "pathFound": true,
+  "memoryMiB": 94,
+  "note": "Synthetic backend benchmark; concurrent regression suite also running. Browser graph is bounded; this is not simultaneous 22,000-item rendering."
+}

@@ -1,0 +1,339 @@
+CODEX BUILD DIRECTIVE
+
+Project: SourceWatch
+
+Assignment: Evidence-Backed Network Intelligence Expansion
+
+Execution mode: IMPLEMENTATION — not brainstorming or a proposal.
+
+1. Mission
+
+Extend the existing SourceWatch application into a comprehensive, general-purpose investigative intelligence platform capable of collecting, preserving, analyzing, connecting, visualizing, searching and exporting verifiable public records.
+
+Use these websites as FUNCTIONAL references:
+
+* https://whofundedgenocide.com/
+* https://whofundedgenocide.com/map/
+* https://whofundedgenocide.com/global/
+* https://whofundedgenocide.com/j-soc/
+* https://whofundedgenocide.com/manufacturedconsensus/
+
+Reproduce the useful functional capabilities, not their political subject matter, branding, design assets, or unsupported conclusions.
+
+SourceWatch must remain independently useful for any lawful public-record investigation, including corporate ownership, governance, public expenditure, legislation, infrastructure, political finance and institutional relationships.
+
+2. Nonnegotiable Development Rules
+
+1. Inspect the entire existing SourceWatch repository before making modifications.
+2. Identify the current programming languages, frameworks, dependencies, database, storage architecture, monitoring engine, and user interface.
+3. Read project instructions, documentation, existing tests and configuration.
+4. Preserve all functioning SourceWatch features, stored evidence, historical records and configurations.
+5. Run baseline tests and record existing failures before modifications.
+6. Reuse established architecture and dependencies where practical.
+7. Implement additions as modular, maintainable components. Avoid unnecessary rewrites.
+8. Work exclusively within the SourceWatch project.
+9. Do not access, modify, integrate or deploy the Coastal Care or World System Control Map repositories.
+10. Do not publish, deploy, overwrite production data, or transmit private records without explicit authorization.
+11. Develop on a dedicated feature branch when Git is available.
+12. Implement working features, tests and documentation—not placeholder buttons, fake dashboards, or static mockups.
+
+3. Module A — Entity and Relationship Engine
+
+Build a persistent entity registry supporting:
+
+* Individuals
+* Corporations and subsidiaries
+* Government bodies and institutions
+* Nonprofit organizations
+* Political committees
+* Financial institutions
+* Contracts, programs and projects
+* Digital platforms and infrastructure
+* Other extensible entity classifications
+
+Each entity needs a durable ID, type, names, aliases, jurisdiction, applicable official registration IDs, source citations, creation/update timestamps and optional researcher annotations.
+
+Implement typed, directional relationships including:
+
+* Owns / owned by
+* Controls / controlled by
+* Funds / funded by
+* Pays / receives
+* Contracts with
+* Employs / serves as officer or director
+* Registers with
+* Subsidiary of
+* Governs / regulates
+* Documented association
+* Other extensible relationship types
+
+Every relationship must maintain its own ID, supporting evidence, relevant dates, provenance, and status.
+
+Never infer relationships solely from matching names or co-occurrence in documents. Entity matching should offer reviewable suggestions, not silently merge identities.
+
+4. Module B — Financial Relationship Intelligence
+
+Support financial records with:
+
+* Originating entity
+* Receiving entity
+* Amount and original currency
+* Transaction or reporting date
+* Reporting period
+* Transaction category
+* Source document and page
+* Original filing identifier
+* Verification status
+
+Distinguish actual disbursements from contracts, approved spending ceilings, pledges, proposed transfers, revenue figures and third-party estimates.
+
+Preserve missing amounts as missing, not zero.
+
+Do not aggregate unrelated financial categories or different currencies without an explicit, documented conversion methodology.
+
+Allow historical comparison across reporting periods.
+
+5. Module C — Interactive Network Graph
+
+Implement a fully functional, responsive network visualization integrated with the application.
+
+Required interactions:
+
+* Interactive nodes and directional edges
+* Drag-to-pan and scroll/pinch zoom
+* Zoom controls and reset-to-fit
+* Selectable, highlighted nodes and relationships
+* Click-to-open evidence and entity detail panels
+* Relationship labels and adjustable display settings
+* Distinct visual styles for relationship categories and evidence status
+* Amount-sensitive edge thickness where applicable
+* Multiple independent graph boards
+* Cross-board entity search and navigation
+* Configurable directional/hierarchical layouts
+* Search highlighting and filtering
+* Permalink or reproducible saved-view capability
+* Keyboard accessibility and usable mobile navigation
+
+Support large datasets through appropriate rendering, indexing, filtering and progressive loading. Benchmark with at least 10,000 entities and 12,000 relationships.
+
+Do not create visual links where supporting relationship records do not exist.
+
+6. Module D — Research Database Interface
+
+Build a searchable, sortable data interface for all supported entities, records and relationships.
+
+Include:
+
+* Global search
+* Individual dataset search
+* Jurisdiction and source filters
+* Entity-type filters
+* Relationship filters
+* Date and reporting-period filters
+* Evidence-status filters
+* Financial amount/currency filters
+* Sorting and pagination or virtualization
+* Direct navigation between database rows, graph nodes and evidence
+
+Create reusable dataset import adapters for CSV and JSON.
+
+Validate schemas, preserve source metadata, flag duplicates, report malformed records and keep failed imports isolated from accepted records.
+
+Use real imported data when authorized, and clearly identified synthetic fixtures for demonstrations.
+
+7. Module E — Evidence and Provenance System
+
+Integrate the existing SourceWatch evidence-preservation mechanisms with every new entity and relationship.
+
+Where supported by the underlying record, maintain:
+
+* Original document URL
+* Issuing authority
+* Filing or document identifier
+* Publication date
+* Capture timestamp
+* Document/page/section reference
+* Preserved document version
+* SHA-256 content checksum
+* Source availability and verification status
+* Research notes
+* Change history
+
+Provide an evidence-detail interface offering the original source, preserved copy, source metadata and verification information.
+
+A claim must be traceable to its supporting evidence.
+
+Historical versions must remain available. New observations must not silently overwrite historical evidence.
+
+Explicitly distinguish factual records, estimates, interpretations and disputed assertions.
+
+8. Module F — SourceWatch Monitoring Integration
+
+Connect network intelligence to SourceWatch’s actual existing monitoring implementation.
+
+When a monitored source changes:
+
+1. Preserve the new source observation using existing mechanisms.
+2. Detect and display the relevant changes.
+3. Identify potentially affected entity and relationship records.
+4. Generate a reviewable change event.
+5. Permit researcher confirmation before modifying established relationships.
+6. Preserve both the former and current interpretation with their evidence.
+7. Update relevant network views after validation.
+
+Support detection of removed documents, amended filings, modified values and newly discovered relationships.
+
+Do not automatically convert text changes into verified factual conclusions.
+
+9. Module G — Investigative Research Workspace
+
+Provide a dedicated workspace for research cases.
+
+Capabilities:
+
+* Create and manage investigations
+* Associate entities, relationships and source records with cases
+* Write structured research notes and findings
+* Build evidence-backed timelines
+* Assemble tables and linked citations
+* Display preserved PDF documents when supported
+* Provide readable text alternatives where possible
+* Annotate methodological limitations and unresolved questions
+* Export research packages
+
+An investigation should connect the database, graph, evidence viewer and document archive without duplicating original source records.
+
+10. Module H — Data Exports and Portability
+
+Support:
+
+* Entities CSV
+* Relationships CSV
+* Sources CSV
+* Structured JSON
+* Gephi-compatible nodes and edges CSV
+* Cytoscape-compatible graph files
+* Complete ZIP research bundles
+* README and data dictionary
+* Machine-readable schema/manifest
+* SHA-256 checksum manifest
+
+Preserve stable IDs, provenance, original currencies, evidence status and explicit relationship direction.
+
+Apply appropriate licensing metadata without assuming imported records are licensed for redistribution.
+
+Exports must be independently usable and verifiable without requiring SourceWatch.
+
+11. Module I — Corrections, Auditing and Data Integrity
+
+Implement:
+
+* Proposed corrections
+* Evidence-linked correction requests
+* Review, acceptance and rejection states
+* Append-only audit events
+* Change provenance
+* Duplicate-entity review
+* Unresolved evidence flags
+* Import validation reports
+* Privacy-aware public exports
+
+Distinguish documented facts from allegations or researcher interpretations.
+
+Use record-based inclusion criteria, not protected identity, political affiliation alone, religion or unsupported guilt by association.
+
+Avoid exposing residential addresses, private contact information, identity documents or unnecessary personal data.
+
+12. User Interface Integration
+
+Create consistent navigation within SourceWatch, using its existing design system wherever practical.
+
+Suggested sections:
+
+* Dashboard
+* Sources and Monitoring
+* Evidence Archive
+* Entity Database
+* Network Explorer
+* Investigations
+* Imports / Exports
+* Corrections and Audit
+* Settings
+
+Do not duplicate modules that already exist.
+
+The user should be able to move from a monitored document to its evidence record, to a related entity, to its network connections, and back to the original source.
+
+13. Execution Sequence
+
+Phase 0 — Repository audit
+
+Inspect the project and establish its architecture and baseline tests. Produce a concise implementation map identifying reusable components and required additions.
+
+Phase 1 — Data foundation
+
+Implement the entity registry, relationship schema, provenance references, validation and safe database migrations.
+
+Phase 2 — Network engine
+
+Implement the functional graph, multi-board management, node/edge selection and evidence-linked navigation.
+
+Phase 3 — Database and investigation tools
+
+Implement search, filters, research case management and document-backed record displays.
+
+Phase 4 — Monitoring integration
+
+Connect verified record updates to the existing SourceWatch capture, history and change-detection system.
+
+Phase 5 — Interoperability
+
+Implement import/export compatibility, downloadable evidence packages, manifests and checksum verification.
+
+Phase 6 — Quality assurance
+
+Run unit tests, integration tests, performance benchmarks, regression tests, accessibility checks and relevant security checks.
+
+Use incremental commits with descriptive messages. Do not combine unrelated development phases into an unreviewable change.
+
+14. Acceptance Criteria
+
+The project is complete only when:
+
+* Existing SourceWatch capabilities still work.
+* A researcher can import a documented dataset.
+* Records become searchable entities and relationships.
+* Those relationships appear on an interactive graph.
+* Selecting a node or edge reveals its supporting evidence.
+* A monitored source change produces a reviewable update.
+* Multiple network boards can be navigated.
+* Investigations can organize and reference records.
+* Exports can reproduce graph relationships outside SourceWatch.
+* Data provenance and historical snapshots remain verifiable.
+* New automated tests pass, with baseline test failures separately documented.
+* The application includes a functional demonstration using synthetic public-record-style data.
+
+15. Final Deliverables
+
+Provide:
+
+1. Working implementation integrated into the SourceWatch project.
+2. Source code and any necessary migrations.
+3. Automated tests and results.
+4. Updated technical documentation.
+5. User guide for the new investigative features.
+6. Synthetic demonstration dataset.
+7. Architecture and data-flow documentation.
+8. Security and privacy considerations.
+9. Summary of changes and any unresolved limitations.
+10. Commit references and a pull request if a remote repository is configured and accessible.
+
+Final Instruction
+
+Do not replace SourceWatch. Evolve SourceWatch.
+
+Inspect the real codebase, select compatible technical solutions and execute the development phases.
+
+Preserve the original monitoring and evidence-preservation foundations while adding the investigative database and network intelligence capabilities.
+
+Begin with the repository audit, then proceed through implementation and testing. Report genuine blockers rather than fabricating functionality or completion.

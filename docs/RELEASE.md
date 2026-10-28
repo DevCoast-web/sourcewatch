@@ -60,3 +60,7 @@ gh release create v1.2.0 ../sourcewatch-v1.2.0.zip ../sourcewatch-v1.2.0.sha256 
 ```
 
 Verify the supplied checksum before uploading. Do not include local databases, personal captures, installed browsers, or node_modules in a release package. Publication commands are documented recovery steps; they have not been executed here.
+
+## Expansion alpha publication boundary
+
+The current 2.0.0-alpha.1 feature branch is a local preview, not a completed master expansion. Historical publishing commands above must not be run for it without explicit user authorization. No remote or public release exists. Review the workspace validation report, feature matrix, data/privacy implications and unfinished scope before deciding to release.

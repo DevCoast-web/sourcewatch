@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "question",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 220,
+      "text": "# Research question\nSynthetic example: what changed?"
+    },
+    {
+      "id": "checklist",
+      "type": "text",
+      "x": 440,
+      "y": 0,
+      "width": 320,
+      "height": 220,
+      "text": "# Evidence checklist\nCapture → compare → export → verify."
+    },
+    {
+      "id": "cluster",
+      "type": "group",
+      "x": -40,
+      "y": -70,
+      "width": 840,
+      "height": 340,
+      "label": "Research planning",
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "proposed",
+      "fromNode": "question",
+      "toNode": "checklist",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "Needs evidence review",
+      "color": "2",
+      "sourcewatch": {
+        "classification": "hypothesis",
+        "creator": "Example researcher",
+        "createdAt": "2026-10-28T00:00:00.000Z",
+        "explanation": "Synthetic planning connection, not a verified relationship"
+      }
+    }
+  ]
+}

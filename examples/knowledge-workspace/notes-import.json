@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "name": "Research question.md",
+      "content": "---\ntitle: Research question\ntags: [example, research]\naliases: [Working question]\n---\n# Research question\n\nThis is synthetic instructional material, not a factual investigation.\n\nWhat changed between two preserved observations? See [[Evidence checklist]].\n\n- [ ] Capture the public source\n- [ ] Compare revisions\n- [ ] Review the original evidence before drawing a conclusion\n"
+    },
+    {
+      "name": "Evidence checklist.md",
+      "content": "---\ntitle: Evidence checklist\ntags: [example]\n---\n# Evidence checklist\n\nReturn to [[Research question]].\n\nRecord the source URL, capture UUID, local observation time, and separately retained manifest fingerprint. Hashes do not establish authenticity or certified publication time.\n"
+    }
+  ]
+}

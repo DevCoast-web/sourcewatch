@@ -1,0 +1,750 @@
+{
+  "schemaVersion": 1,
+  "release": "2.0.0-alpha.1",
+  "source": "User master/network directives and Module J",
+  "fullParity": false,
+  "features": [
+    {
+      "id": "01",
+      "name": "Audio recorder",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/workspace-extras.tsx"
+      ],
+      "actualBehavior": "MediaRecorder user-initiated capture, playback, local attachment upload, bounded recording and track cleanup.",
+      "automatedCoverage": [
+        "tests/workspace-tools.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Chromium synthetic microphone recording/local saving passed; physical microphone and iPhone recording require manual validation.",
+      "outstandingDependencies": "Chromium synthetic microphone recording/local saving passed; physical microphone and iPhone recording require manual validation."
+    },
+    {
+      "id": "02",
+      "name": "Backlinks",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Resolved linked references, contextual backlinks, outgoing links and unlinked mentions.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Ambiguous names remain unresolved; name matches do not establish identity.",
+      "outstandingDependencies": "Ambiguous names remain unresolved; name matches do not establish identity."
+    },
+    {
+      "id": "03",
+      "name": "Bases",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/workspace-extras.ts",
+        "ui/workspace-extras.tsx"
+      ],
+      "actualBehavior": "Saved table/list/card/grouped-Kanban/offline coordinate views; filter, sort, bounded formulas.",
+      "automatedCoverage": [
+        "tests/workspace-tools.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No full .base syntax compatibility, rich formula engine, editable Kanban drag, or geographic basemap.",
+      "outstandingDependencies": "No full .base syntax compatibility, rich formula engine, editable Kanban drag, or geographic basemap."
+    },
+    {
+      "id": "04",
+      "name": "Bookmarks",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Persistent bookmarks referencing notes/records.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No complete bookmark folder ordering or every Obsidian bookmark target.",
+      "outstandingDependencies": "No complete bookmark folder ordering or every Obsidian bookmark target."
+    },
+    {
+      "id": "05",
+      "name": "Canvas",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/canvas.ts",
+        "ui/canvas.tsx"
+      ],
+      "actualBehavior": "Persistent JSON Canvas, cards, typed lines, groups, resize/drag/multiselect, alignment/distribution, snap, pan/zoom/touch, undo/redo, nested refs, read-only and image export. On-demand local PDF rendering uses bundled PDF.js; media attachments remain portable.",
+      "automatedCoverage": [
+        "tests/canvas.test.ts",
+        "tests/canvas-ui.test.ts",
+        "tests/workspace-media.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Foreign relative files retained as unresolved; embedded Markdown is a safe subset; bounded rendering and previews.",
+      "outstandingDependencies": "Foreign relative files retained as unresolved; embedded Markdown is a safe subset; bounded rendering and previews."
+    },
+    {
+      "id": "06",
+      "name": "Command palette",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/workspace.tsx"
+      ],
+      "actualBehavior": "Ctrl K/P command and record launcher, declarative extension navigation commands.",
+      "automatedCoverage": [],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "Not independently covered; manual acceptance pending.",
+      "knownDifferences": "No complete configurable shortcut registry or executable plugin commands.",
+      "outstandingDependencies": "No complete configurable shortcut registry or executable plugin commands."
+    },
+    {
+      "id": "07",
+      "name": "Daily notes",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Date-based notes with templates, vault/folder destination.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No arbitrary date-pattern engine.",
+      "outstandingDependencies": "No arbitrary date-pattern engine."
+    },
+    {
+      "id": "08",
+      "name": "File explorer",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Vault/folder note browsing, rename, import, logical move, soft delete/recovery.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No full OS filesystem watcher, arbitrary file context menus, or folder drag and drop.",
+      "outstandingDependencies": "No full OS filesystem watcher, arbitrary file context menus, or folder drag and drop."
+    },
+    {
+      "id": "09",
+      "name": "File recovery",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/workspace-store.ts",
+        "src/vault.ts"
+      ],
+      "actualBehavior": "Independent append-only snapshots, CAS conflicts, recoverable deletion, restore and session draft recovery.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Configurable retention and full backup restore are not yet implemented; backup is not sync.",
+      "outstandingDependencies": "Configurable retention and full backup restore are not yet implemented; backup is not sync."
+    },
+    {
+      "id": "10",
+      "name": "Footnotes view",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Safe Markdown footnote references and definitions.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Complex CommonMark footnote variants need broader fixtures.",
+      "outstandingDependencies": "Complex CommonMark footnote variants need broader fixtures."
+    },
+    {
+      "id": "11",
+      "name": "Graph view",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/intelligence.ts",
+        "ui/intelligence.tsx"
+      ],
+      "actualBehavior": "Global/local bounded graph with notes/records, pan/zoom, search, categories/status, paths, boards and SVG export.",
+      "automatedCoverage": [
+        "tests/intelligence.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Community detection, full display settings parity and all note-link/date filters are incomplete.",
+      "outstandingDependencies": "Community detection, full display settings parity and all note-link/date filters are incomplete."
+    },
+    {
+      "id": "12",
+      "name": "Note composer",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Atomic selected-text extraction and provenance-linked merging, preserving source notes/history and CAS.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Sources are retained rather than destructively merged away.",
+      "outstandingDependencies": "Sources are retained rather than destructively merged away."
+    },
+    {
+      "id": "13",
+      "name": "Outgoing links",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Internal, external, unresolved and ambiguous outgoing references.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Advanced transclusion remains partial.",
+      "outstandingDependencies": "Advanced transclusion remains partial."
+    },
+    {
+      "id": "14",
+      "name": "Outline",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Nested heading outline and editor navigation.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Imported unusual Markdown heading forms may differ.",
+      "outstandingDependencies": "Imported unusual Markdown heading forms may differ."
+    },
+    {
+      "id": "15",
+      "name": "Page preview",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/vault.tsx",
+        "ui/canvas.tsx"
+      ],
+      "actualBehavior": "Record inspection and linked note navigation/embedded previews.",
+      "automatedCoverage": [
+        "tests/vault.test.ts",
+        "tests/canvas.test.ts",
+        "tests/canvas-ui.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No universal hover-preview popover or full touch preview parity.",
+      "outstandingDependencies": "No universal hover-preview popover or full touch preview parity."
+    },
+    {
+      "id": "16",
+      "name": "Properties view",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Aliases, tags, scalar/array metadata, safe logical folders and property-based queries.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Advanced YAML retained with import warnings; no complete YAML type system/vault property browser.",
+      "outstandingDependencies": "Advanced YAML retained with import warnings; no complete YAML type system/vault property browser."
+    },
+    {
+      "id": "17",
+      "name": "Publish",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/workspace-extras.ts",
+        "ui/workspace-extras.tsx"
+      ],
+      "actualBehavior": "Explicitly selected notes produce a static searchable themed local website ZIP; private property blocks export.",
+      "automatedCoverage": [
+        "tests/workspace-tools.test.ts",
+        "tests/workspace.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No hosted service, remote unpublish, access-control hosting, custom domain provisioning or publication revision management.",
+      "outstandingDependencies": "No hosted service, remote unpublish, access-control hosting, custom domain provisioning or publication revision management."
+    },
+    {
+      "id": "18",
+      "name": "Quick switcher",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/workspace.tsx"
+      ],
+      "actualBehavior": "Search commands, notes, canvases and records quickly with keyboard launcher.",
+      "automatedCoverage": [],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "Not independently covered; manual acceptance pending.",
+      "knownDifferences": "Substring search, not full fuzzy matching or all create-from-switcher actions.",
+      "outstandingDependencies": "Substring search, not full fuzzy matching or all create-from-switcher actions."
+    },
+    {
+      "id": "19",
+      "name": "Random note",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Open a random existing note.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Uses active available note list.",
+      "outstandingDependencies": "Uses active available note list."
+    },
+    {
+      "id": "20",
+      "name": "Search",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "src/workspace-routes.ts"
+      ],
+      "actualBehavior": "Phrase/tag/folder/property operators, negation/alternatives and capture/workspace searches.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No complete saved/embedded search or unified permission-aware distributed index.",
+      "outstandingDependencies": "No complete saved/embedded search or unified permission-aware distributed index."
+    },
+    {
+      "id": "21",
+      "name": "Slash commands",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Insert heading/task/table/code/wikilink/templates through a slash-command menu.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No third-party editor command execution.",
+      "outstandingDependencies": "No third-party editor command execution."
+    },
+    {
+      "id": "22",
+      "name": "Slides",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Safe Markdown slides using separators with previous/next/keyboard navigation.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No PPTX export or full presentation theme/media parity.",
+      "outstandingDependencies": "No PPTX export or full presentation theme/media parity."
+    },
+    {
+      "id": "23",
+      "name": "Sync",
+      "status": "not_implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [],
+      "actualBehavior": "Local operation remains available without accounts.",
+      "automatedCoverage": [],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "Not independently covered; manual acceptance pending.",
+      "knownDifferences": "No authenticated cross-device remote synchronization, conflict transport, selective remote sync or independently verified E2EE.",
+      "outstandingDependencies": "No authenticated cross-device remote synchronization, conflict transport, selective remote sync or independently verified E2EE."
+    },
+    {
+      "id": "24",
+      "name": "Tags view",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Tags stored, searched and used in metadata/filtering.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No complete nested-tag management/count browser.",
+      "outstandingDependencies": "No complete nested-tag management/count browser."
+    },
+    {
+      "id": "25",
+      "name": "Templates",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Persist/reuse templates with daily note/title/date insertion.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Arbitrary templating scripts intentionally unsupported.",
+      "outstandingDependencies": "Arbitrary templating scripts intentionally unsupported."
+    },
+    {
+      "id": "26",
+      "name": "Unique note creator",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Timestamp and UUID-based collision-resistant note creation.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No arbitrary timestamp naming syntax yet.",
+      "outstandingDependencies": "No arbitrary timestamp naming syntax yet."
+    },
+    {
+      "id": "27",
+      "name": "Web viewer",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/canvas.tsx"
+      ],
+      "actualBehavior": "Safe URL cards and external opening; captured documents remain inspectable.",
+      "automatedCoverage": [
+        "tests/canvas.test.ts",
+        "tests/canvas-ui.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Active arbitrary remote iframes are intentionally blocked; no full browser-within-browser.",
+      "outstandingDependencies": "Active arbitrary remote iframes are intentionally blocked; no full browser-within-browser."
+    },
+    {
+      "id": "28",
+      "name": "Word count",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Live note word/character counts.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Selection counts may differ from reference segmentation.",
+      "outstandingDependencies": "Selection counts may differ from reference segmentation."
+    },
+    {
+      "id": "29",
+      "name": "Workspaces",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/workspace-routes.ts",
+        "ui/workspace.tsx"
+      ],
+      "actualBehavior": "Named view/reference layouts, durable canvas layouts, tabs and local theme.",
+      "automatedCoverage": [],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "Not independently covered; manual acceptance pending.",
+      "knownDifferences": "No arbitrary split-pane arrangements, pinned document tabs or full panel layout parity.",
+      "outstandingDependencies": "No arbitrary split-pane arrangements, pinned document tabs or full panel layout parity."
+    },
+    {
+      "id": "A",
+      "name": "Complete Markdown editing",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/vault.tsx"
+      ],
+      "actualBehavior": "Source, reading/split modes; headings, lists, tasks, tables, fenced code, links and safe footnote/callout rendering.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Rich Live Preview, syntax highlighting, mathematical expressions, Mermaid, complete embeds/block transclusion remain unfinished.",
+      "outstandingDependencies": "Rich Live Preview, syntax highlighting, mathematical expressions, Mermaid, complete embeds/block transclusion remain unfinished."
+    },
+    {
+      "id": "B",
+      "name": "Knowledge links",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts"
+      ],
+      "actualBehavior": "Stable UUID/title/alias links, backlinks, heading/block target parsing and unlinked mentions.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Full block navigation/transclusion/link repair across every imported format remains unfinished.",
+      "outstandingDependencies": "Full block navigation/transclusion/link repair across every imported format remains unfinished."
+    },
+    {
+      "id": "C",
+      "name": "Multiple vaults",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts"
+      ],
+      "actualBehavior": "Independent vault selection, folders, portable Markdown import/export and attachment references.",
+      "automatedCoverage": [
+        "tests/vault.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Full Obsidian vault filesystem migration and watcher/sync behavior remain incomplete.",
+      "outstandingDependencies": "Full Obsidian vault filesystem migration and watcher/sync behavior remain incomplete."
+    },
+    {
+      "id": "D",
+      "name": "Customization",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/workspace.tsx",
+        "ui/workspace.css"
+      ],
+      "actualBehavior": "Light/dark workspace themes and local preference persistence.",
+      "automatedCoverage": [],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "Not independently covered; manual acceptance pending.",
+      "knownDifferences": "No full accent/font/keyboard remapping, custom CSS or themes extension API.",
+      "outstandingDependencies": "No full accent/font/keyboard remapping, custom CSS or themes extension API."
+    },
+    {
+      "id": "E",
+      "name": "Browser clipper",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "extensions/clipper/manifest.json",
+        "src/workspace-extras.ts"
+      ],
+      "actualBehavior": "Active-tab companion exports selected/article text JSON; app imports labeled unarchived clips.",
+      "automatedCoverage": [
+        "tests/workspace-tools.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Companion installation manual; no direct service transfer or automatic preserved snapshot from clipping.",
+      "outstandingDependencies": "Companion installation manual; no direct service transfer or automatic preserved snapshot from clipping."
+    },
+    {
+      "id": "F",
+      "name": "Importer",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/vault.ts",
+        "src/canvas.ts",
+        "src/intelligence.ts"
+      ],
+      "actualBehavior": "Validated Markdown/limited frontmatter, JSON Canvas and CSV/JSON records with error reports.",
+      "automatedCoverage": [
+        "tests/vault.test.ts",
+        "tests/canvas.test.ts",
+        "tests/canvas-ui.test.ts",
+        "tests/intelligence.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Not a complete Obsidian migration; unsupported imports are reported rather than silently executed.",
+      "outstandingDependencies": "Not a complete Obsidian migration; unsupported imports are reported rather than silently executed."
+    },
+    {
+      "id": "G",
+      "name": "Maps",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/workspace-extras.tsx"
+      ],
+      "actualBehavior": "Offline latitude/longitude coordinate plot with record navigation.",
+      "automatedCoverage": [
+        "tests/workspace-tools.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No street/geographic basemap or location provider integration.",
+      "outstandingDependencies": "No street/geographic basemap or location provider integration."
+    },
+    {
+      "id": "H",
+      "name": "CLI",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "scripts/sourcewatch-cli.ts"
+      ],
+      "actualBehavior": "Machine-readable local HTTP CLI for notes, daily, links, search, canvases, records, imports, evidence and manual captures.",
+      "automatedCoverage": [
+        "tests/workspace-tools.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Requires running local service; not every workspace action is exposed.",
+      "outstandingDependencies": "Requires running local service; not every workspace action is exposed."
+    },
+    {
+      "id": "I",
+      "name": "Extensions",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/workspace-extras.ts"
+      ],
+      "actualBehavior": "Versioned declarative navigation manifests with no privileged permissions, enable/disable and command registration.",
+      "automatedCoverage": [
+        "tests/workspace-tools.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "No arbitrary executable plugins, editor/view lifecycle API or native Obsidian plugin compatibility.",
+      "outstandingDependencies": "No arbitrary executable plugins, editor/view lifecycle API or native Obsidian plugin compatibility."
+    },
+    {
+      "id": "J",
+      "name": "Mobile/offline",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/workspace.css"
+      ],
+      "actualBehavior": "Responsive touch-oriented web UI and local offline-capable backend operation.",
+      "automatedCoverage": [],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "Not independently covered; manual acceptance pending.",
+      "knownDifferences": "No service-worker offline iPhone application, device authentication or cross-device transport.",
+      "outstandingDependencies": "No service-worker offline iPhone application, device authentication or cross-device transport."
+    },
+    {
+      "id": "NET",
+      "name": "Intelligence modules A–I",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/intelligence.ts",
+        "src/intelligence-routes.ts"
+      ],
+      "actualBehavior": "Typed entities/relationships, financial metadata, explicit evidence review, corrections, imports, investigations, timeline fields, graph boards, exports and append-only audit.",
+      "automatedCoverage": [
+        "tests/intelligence.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Financial fields partly edited as JSON; no full reporting/reconciliation suite. Backend10k/12k benchmark is not full simultaneous browser rendering.",
+      "outstandingDependencies": "Financial fields partly edited as JSON; no full reporting/reconciliation suite. Backend10k/12k benchmark is not full simultaneous browser rendering."
+    },
+    {
+      "id": "MON",
+      "name": "Monitoring integration",
+      "status": "implemented",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "src/workspace-routes.ts",
+        "src/server.ts"
+      ],
+      "actualBehavior": "Changed captures create pending review events for referenced workspace objects without rewriting established relationships.",
+      "automatedCoverage": [
+        "tests/workspace.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Review events require researcher action; text changes do not infer verified facts.",
+      "outstandingDependencies": "Review events require researcher action; text changes do not infer verified facts."
+    },
+    {
+      "id": "J1-J6",
+      "name": "Module J integrated acceptance",
+      "status": "partial",
+      "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
+      "implementationFiles": [
+        "ui/workspace.tsx",
+        "src/workspace-bridge.ts"
+      ],
+      "actualBehavior": "Vault, manual canvas and automated graph share stable references; cards do not delete underlying records; hypothetical lines can enter evidence review. Integrated browser journey and real service restart pass.",
+      "automatedCoverage": [
+        "tests/canvas.test.ts",
+        "tests/canvas-ui.test.ts",
+        "tests/intelligence.test.ts",
+        "tests/workspace.test.ts",
+        "tests/workspace-journey.test.ts",
+        "tests/workspace-media.test.ts"
+      ],
+      "manualTest": "Follow docs/WORKSPACE_GUIDE.md; validate the named behavior, not only presence of a control.",
+      "result": "See WORKSPACE_VALIDATION.md: related regression tests pass; this does not establish full feature parity.",
+      "knownDifferences": "Full master directive and some Module J advanced graph/interop/preview behaviors remain incomplete; do not claim full parity.",
+      "outstandingDependencies": "Full master directive and some Module J advanced graph/interop/preview behaviors remain incomplete; do not claim full parity."
+    }
+  ],
+  "validationReport": "docs/WORKSPACE_VALIDATION.md"
+}

@@ -1,4 +1,10 @@
-# Next steps
+# Current expansion checkpoint — 2.0.0-alpha.1
+
+Work is isolated on the dedicated SourceWatch branch `feature/visual-knowledge-workspace`. The integrated workspace is a tested local alpha, not full master-directive completion. No remote, public release, hosting or private-data upload has been created. Publication requires a separate explicit instruction; the historical commands below are not authorization to publish this alpha.
+
+Read [workspace guide](docs/WORKSPACE_GUIDE.md), [validation](docs/WORKSPACE_VALIDATION.md), and the complete [feature matrix](docs/feature-parity.json). Next work prioritizes remaining advanced graph filters/community analysis, attachment interoperability and image exports, richer editor/Bases behavior, mobile acceptance, and recoverable backup imports. Sync and live publishing require separate privacy-preserving implementations and are not silently enabled.
+
+# Historical release notes
 
 SOURCEWATCH 1.2.0 is a locally implemented tested local candidate in its dedicated `sourcewatch` repository. Publication remains blocked: this session had no GitHub CLI, the authenticated connector lacked repository creation, and the browser required sign-in. No GitHub remote repository or public release was created. Do not reuse an unrelated repository.
 

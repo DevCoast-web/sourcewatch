@@ -1,0 +1,9 @@
+{
+  "title": "Research queue",
+  "view": "table",
+  "kind": "note",
+  "query": "example",
+  "sort": "title",
+  "groupBy": "status",
+  "formula": "wordCount"
+}

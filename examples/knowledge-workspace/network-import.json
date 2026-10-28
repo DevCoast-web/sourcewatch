@@ -1,0 +1,5 @@
+{
+  "kind": "entity",
+  "format": "json",
+  "content": "[{\"title\":\"Synthetic organization A\",\"type\":\"organization\",\"jurisdiction\":\"EXAMPLE\",\"classification\":\"annotation\"},{\"title\":\"Synthetic organization B\",\"type\":\"organization\",\"jurisdiction\":\"EXAMPLE\",\"classification\":\"annotation\"}]"
+}
