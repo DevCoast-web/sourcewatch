@@ -7,6 +7,7 @@ This is a local engineering audit and regression patch, not an independent secur
 Source inspection and new deterministic tests cover:
 
 - Capture identity under delayed/failed UI requests: old metadata is hidden while another capture loads, annotation-load failures cannot copy an earlier note, and saving is disabled until the selected annotation is available. Unsaved note state is visible.
+- Late history/search responses cannot silently replace the active selection; search opens the exact matching capture. Backend-version warnings help identify an outdated running service.
 - Text comparison failure does not prevent screenshot or HTML structure review.
 - Source PATCH validation happens before mutation; related updates use a transaction.
 - Shutdown stops scheduling, rejects new captures, and waits for an active capture before closing SQLite.
@@ -27,7 +28,7 @@ Chromium UI tests ran in the managed Windows environment. Firefox and Edge could
 
 ## Remaining gates
 
-Package/checksum the 1.1.1 source tree, and optionally repeat fresh-extraction setup for this patch. Complete GitHub publication and hosted CI only when authenticated repository-creation access is available. See [RELEASE.md](RELEASE.md).
+The 1.1.1 source ZIP and SHA-256 checksum were generated; archive entries were decompressed and checked for version and exclusion of runtime data, dependencies, browsers, and Git internals. Fresh-extraction setup for this patch remains optional and untested. Complete GitHub publication and hosted CI only when authenticated repository-creation access is available. See [RELEASE.md](RELEASE.md).
 
 
 ## Reproduce focused checks
