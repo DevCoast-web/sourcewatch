@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0-beta.1",
+  "portableLaunchPassed": true,
+  "packaged": true,
+  "rendererSandbox": true,
+  "contextIsolation": true,
+  "nodeIntegration": false,
+  "elapsedMs": 79808,
+  "isolatedData": true,
+  "gracefulShutdown": true
+}
