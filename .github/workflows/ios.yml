@@ -22,6 +22,17 @@ jobs:
         run: |
           DEVICE=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; print(next(d["udid"] for group in json.load(sys.stdin)["devices"].values() for d in group if "iPhone" in d["name"]))')
           xcodebuild -project ios/SourceWatch.xcodeproj -scheme SourceWatch -destination "platform=iOS Simulator,id=$DEVICE" -derivedDataPath work/ios-simulator -resultBundlePath work/ios-results CODE_SIGNING_ALLOWED=NO test
+      - name: Independently verify Swift-generated evidence
+        run: |
+          xcrun xcresulttool export attachments --path work/ios-results --output-path work/ios-attachments
+          python3 -m unittest discover -s ios/tests -v
+          python3 - <<'PY'
+          import pathlib, subprocess, zipfile
+          bundles = [p for p in pathlib.Path('work/ios-attachments').rglob('*') if p.is_file() and zipfile.is_zipfile(p)]
+          assert bundles, 'Missing Swift-generated evidence test artifact'
+          for bundle in bundles:
+              subprocess.run(['python3', 'scripts/verify-mobile.py', str(bundle)], check=True)
+          PY
       - name: Build unsigned device IPA
         run: |
           xcodebuild -project ios/SourceWatch.xcodeproj -scheme SourceWatch -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath work/ios-device CODE_SIGNING_ALLOWED=NO build
@@ -42,3 +53,8 @@ jobs:
         with:
           name: iphone-test-results
           path: work/ios-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iphone-screenshots-and-fixtures
+          path: work/ios-attachments

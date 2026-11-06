@@ -35,10 +35,19 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: SourceWatch
+  SourceWatchUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [SourceWatchUITests]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: SourceWatch
 schemes:
   SourceWatch:
     build:
       targets:
         SourceWatch: all
     test:
-      targets: [SourceWatchTests]
+      targets: [SourceWatchTests, SourceWatchUITests]

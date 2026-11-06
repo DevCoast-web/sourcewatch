@@ -15,6 +15,8 @@ final class EvidenceTests: XCTestCase {
         XCTAssertTrue(changes.contains { $0.kind == .added && $0.text == "New section" })
         let (zip, checksum) = try reopened.export(source)
         XCTAssertEqual(try Evidence.verify(EvidenceZIP.read(zip), expectedManifestHash: checksum), 2)
+        let fixture = XCTAttachment(data: zip, uniformTypeIdentifier: "public.zip-archive")
+        fixture.name = "mobile-evidence.zip"; fixture.lifetime = .keepAlways; add(fixture)
         if let output = ProcessInfo.processInfo.environment["SOURCEWATCH_IOS_FIXTURE_OUTPUT"] { try zip.write(to: URL(fileURLWithPath: output)) }
     }
     func testModifiedAndMissingFilesFail() throws {

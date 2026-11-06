@@ -97,7 +97,7 @@ enum EvidenceZIP {
     }
     static func read(_ archive: Data) throws -> [String: Data] {
         guard archive.count <= Evidence.maxBundle + 8 * 1024 * 1024 else { throw EvidenceError.invalid("ZIP exceeds size limit") }
-        var offset = 0, result: [String: Data] = [:]
+        var offset = 0, result: [String: Data] = [:], locations: [String: Int] = [:]
         while offset + 4 <= archive.count, try archive.u32(offset) == 0x04034b50 {
             let flags = try archive.u16(offset + 6), method = try archive.u16(offset + 8)
             let checksum = try archive.u32(offset + 14), size = Int(try archive.u32(offset + 18)), expanded = Int(try archive.u32(offset + 22))
@@ -109,16 +109,24 @@ enum EvidenceZIP {
             }
             let content = archive.subdata(in: start ..< start + size)
             guard crc(content) == checksum else { throw EvidenceError.invalid("ZIP checksum mismatch") }
-            result[name] = content; offset = start + size
+            result[name] = content; locations[name] = offset; offset = start + size
         }
         guard !result.isEmpty, offset + 4 <= archive.count, try archive.u32(offset) == 0x02014b50 else { throw EvidenceError.invalid("Invalid ZIP directory") }
         // Validate the archive's directory and end record too, rather than accepting a truncated payload.
         let centralStart = offset
         var count = 0
+        var seen = Set<String>()
         while offset + 46 <= archive.count, try archive.u32(offset) == 0x02014b50 {
             let nameLength = Int(try archive.u16(offset + 28)), extra = Int(try archive.u16(offset + 30)), comment = Int(try archive.u16(offset + 32))
             let next = offset + 46 + nameLength + extra + comment
-            guard next <= archive.count else { throw EvidenceError.invalid("Truncated ZIP directory") }
+            guard next <= archive.count,
+                  let name = String(data: archive.subdata(in: offset + 46 ..< offset + 46 + nameLength), encoding: .utf8),
+                  seen.insert(name).inserted, let content = result[name],
+                  Int(try archive.u32(offset + 42)) == locations[name],
+                  try archive.u16(offset + 8) == 0x800, try archive.u16(offset + 10) == 0,
+                  try archive.u32(offset + 16) == crc(content),
+                  Int(try archive.u32(offset + 20)) == content.count,
+                  Int(try archive.u32(offset + 24)) == content.count else { throw EvidenceError.invalid("Invalid ZIP directory entry") }
             count += 1; offset = next
         }
         guard offset + 22 == archive.count, try archive.u32(offset) == 0x06054b50,
