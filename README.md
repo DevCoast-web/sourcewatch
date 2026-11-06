@@ -16,6 +16,14 @@ The desktop research desk adds persistent navigation, a searchable cross-record 
 
 ## Run locally
 
+### Native iPhone preview
+
+A separate **native SwiftUI iOS 17+ implementation** lives in [`ios/`](ios/INSTALL.md). It runs independently on the phone and currently supports imported evidence, revision comparison, verifiable ZIP exports and linked Markdown notes. It is not the full desktop app: direct website capture, monitoring, Graph and Canvas remain unfinished on iOS. The [Native iPhone workflow](https://github.com/DevCoast-web/sourcewatch/actions/workflows/ios.yml) builds and tests using a hosted macOS runner and produces an **unsigned IPA** for personal signing. No Apple credentials are stored in the repository or requested by SourceWatch. See the [free Windows personal-signing route and renewal limitations](ios/INSTALL.md).
+
+Mobile evidence uses a distinct documented format; verify it with `python scripts/verify-mobile.py bundle.zip`. Desktop evidence continues to use its existing verifier.
+
+### Desktop/browser source setup
+
 Install **Node.js 24 or newer**, npm, and Git. Chromium requires supported operating-system libraries; on Linux use `npx playwright install --with-deps chromium` instead of the browser install command below.
 
 On Windows, double-click `setup-sourcewatch.cmd`, then `start-sourcewatch.cmd`. These scripts use npm.cmd/npx.cmd and do not change PowerShell execution policy. See [Windows instructions](docs/WINDOWS.md).

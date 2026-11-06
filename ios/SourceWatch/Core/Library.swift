@@ -55,6 +55,7 @@ enum TextComparison {
 }
 
 struct LocalLibrary {
+    private static let captureLock = NSLock()
     let root: URL
     init(root: URL? = nil) throws {
         self.root = try root ?? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("Evidence", isDirectory: true)
@@ -90,6 +91,7 @@ struct LocalLibrary {
         return bytes
     }
     @discardableResult func capture(sourceID: String, title: String, url: String, text: String, attachment: Data? = nil, extension ext: String? = nil) throws -> Receipt {
+        Self.captureLock.lock(); defer { Self.captureLock.unlock() }
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || attachment != nil,
               text.utf8.count <= 512 * 1024, (attachment?.count ?? 0) <= Evidence.maxFile else { throw EvidenceError.invalid("Enter text or import a file (text: 512 KiB, attachment: 32 MiB maximum)") }
         let existing = try history(sourceID)
