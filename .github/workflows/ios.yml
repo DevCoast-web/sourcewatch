@@ -1,0 +1,44 @@
+name: Native iPhone
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['ios/**', 'scripts/verify-mobile.py', '.github/workflows/ios.yml']
+  pull_request:
+    paths: ['ios/**', 'scripts/verify-mobile.py', '.github/workflows/ios.yml']
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate native Xcode project
+        run: |
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          cd ios && xcodegen generate
+      - name: Test on iPhone simulator
+        run: |
+          DEVICE=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; print(next(d["udid"] for group in json.load(sys.stdin)["devices"].values() for d in group if "iPhone" in d["name"]))')
+          xcodebuild -project ios/SourceWatch.xcodeproj -scheme SourceWatch -destination "platform=iOS Simulator,id=$DEVICE" -derivedDataPath work/ios-simulator -resultBundlePath work/ios-results CODE_SIGNING_ALLOWED=NO test
+      - name: Build unsigned device IPA
+        run: |
+          xcodebuild -project ios/SourceWatch.xcodeproj -scheme SourceWatch -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath work/ios-device CODE_SIGNING_ALLOWED=NO build
+          mkdir -p work/iphone/Payload
+          cp -R work/ios-device/Build/Products/Release-iphoneos/SourceWatch.app work/iphone/Payload/
+          cp ios/INSTALL.md work/iphone/
+          cd work/iphone && zip -qry SourceWatch-iPhone-0.1.0-unsigned.ipa Payload
+          shasum -a 256 SourceWatch-iPhone-0.1.0-unsigned.ipa > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sourcewatch-native-iphone-unsigned
+          path: |
+            work/iphone/*.ipa
+            work/iphone/INSTALL.md
+            work/iphone/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iphone-test-results
+          path: work/ios-results

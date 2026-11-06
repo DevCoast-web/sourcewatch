@@ -10,3 +10,7 @@ work/
 
 release/
 desktop/browser-build.json
+ios/*.xcodeproj/
+ios/**/xcuserdata/
+*.xcresult/
+__pycache__/

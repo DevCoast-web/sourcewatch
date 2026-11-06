@@ -1,0 +1,44 @@
+name: SourceWatch
+options:
+  bundleIdPrefix: org.sourcewatch
+  deploymentTarget:
+    iOS: '17.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    TARGETED_DEVICE_FAMILY: '1,2'
+    MARKETING_VERSION: '0.1.0'
+    CURRENT_PROJECT_VERSION: 1
+targets:
+  SourceWatch:
+    type: application
+    platform: iOS
+    sources: [SourceWatch]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.sourcewatch.mobile
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: SourceWatch
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIFileSharingEnabled: NO
+        INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace: YES
+    dependencies:
+      - sdk: SwiftData.framework
+      - sdk: CryptoKit.framework
+  SourceWatchTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [SourceWatchTests]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: SourceWatch
+schemes:
+  SourceWatch:
+    build:
+      targets:
+        SourceWatch: all
+    test:
+      targets: [SourceWatchTests]
