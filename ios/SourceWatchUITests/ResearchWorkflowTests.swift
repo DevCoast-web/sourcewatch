@@ -14,6 +14,7 @@ final class ResearchWorkflowTests: XCTestCase {
         app.staticTexts["Updated terms"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["Deleted section"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["New section"].exists)
+        XCTAssertTrue(app.staticTexts["Keep this"].exists, "Unchanged text must remain unchanged")
         let screenshot = XCTAttachment(screenshot: app.screenshot()); screenshot.name = "Native revision comparison"; screenshot.lifetime = .keepAlways; add(screenshot)
         app.terminate(); app.launch()
         XCTAssertTrue(app.staticTexts[sourceTitle].waitForExistence(timeout: 15))
@@ -29,6 +30,7 @@ final class ResearchWorkflowTests: XCTestCase {
         if let old = field.value as? String { field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: old.count)) }
         field.typeText(title)
         let editor = app.textViews["Revision text"]; editor.tap(); editor.typeText(text)
+        XCTAssertTrue(NSPredicate(format: "value == %@", text).evaluate(with: editor), "Editor must contain the exact supplied evidence text")
         app.buttons["Preserve"].tap()
         XCTAssertTrue(app.staticTexts[title].firstMatch.waitForExistence(timeout: 10))
     }

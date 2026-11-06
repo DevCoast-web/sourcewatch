@@ -38,7 +38,7 @@ struct NoteEditor: View {
     var body: some View {
         Form {
             TextField("Note title", text: $title)
-            Section("Markdown") { TextEditor(text: $bodyText).frame(minHeight: 280).accessibilityLabel("Markdown note editor") }
+            Section("Markdown") { TextEditor(text: $bodyText).autocorrectionDisabled().textInputAutocapitalization(.never).frame(minHeight: 280).accessibilityLabel("Markdown note editor") }
             Section("Outgoing links") { ForEach(outgoing) { target in NavigationLink(target.title) { NoteEditor(note: target) } }; if outgoing.isEmpty { Text("Use [[Note title]] to link notes.").foregroundStyle(.secondary) } }
             Section("Backlinks") { ForEach(backlinks) { target in NavigationLink(target.title) { NoteEditor(note: target) } }; if backlinks.isEmpty { Text("No other notes reference this title.").foregroundStyle(.secondary) } }
             Section {

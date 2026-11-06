@@ -145,7 +145,7 @@ struct CaptureRevision: View {
             Form {
                 Section("Revision") { TextField("Revision title", text: $title) }
                 Section("Readable text") {
-                    TextEditor(text: $text).frame(minHeight: 200).accessibilityLabel("Revision text")
+                    TextEditor(text: $text).autocorrectionDisabled().textInputAutocapitalization(.never).frame(minHeight: 200).accessibilityLabel("Revision text")
                     Text("Paste the page text here. For imported PDFs, selectable text is extracted on-device. HTML is preserved as a file; paste its readable text separately.").font(.caption).foregroundStyle(.secondary)
                 }
                 Section("Original file · optional") {
@@ -206,7 +206,7 @@ struct ReceiptDetail: View {
             VStack(alignment: .leading, spacing: 16) {
                 Label("Preserved on this device", systemImage: "checkmark.shield").font(.headline)
                 Text(receipt.observedAt).font(.caption).foregroundStyle(.secondary)
-                Text(receipt.originalURL).font(.caption).textSelection(.enabled)
+                if !receipt.originalURL.isEmpty { Text(receipt.originalURL).font(.caption).textSelection(.enabled) }
                 if previous != nil { Toggle("Compare with previous revision", isOn: $compare) }
                 if compare && previous != nil {
                     Text("+ added · − removed").font(.caption).foregroundStyle(.secondary)
