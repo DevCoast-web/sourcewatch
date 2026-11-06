@@ -13,7 +13,7 @@ if(!app.requestSingleInstanceLock()){app.quit();}else{
 app.on('second-instance',()=>{if(window){if(window.isMinimized())window.restore();window.show();window.focus();}});
 app.on('window-all-closed',()=>app.quit());
 app.on('before-quit',event=>{if(quitting)return;event.preventDefault();quitting=true;void stopBackend().finally(()=>app.quit());});
-app.whenReady().then(start).catch(error=>{dialog.showErrorBox('SourceWatch could not start',String(error.message||error));quitting=true;void stopBackend().finally(()=>app.quit());});
+app.whenReady().then(start).catch(error=>{if(testRoot)writeFileSync(join(testRoot,'desktop-error.json'),JSON.stringify({error:String(error.message||error)}));else dialog.showErrorBox('SourceWatch could not start',String(error.message||error));quitting=true;void stopBackend().finally(()=>app.quit());});
 }
 function preferences(){try{return JSON.parse(readFileSync(join(app.getPath('userData'),'desktop.json'),'utf8'));}catch{return {};}}
 async function stopBackend(){if(!backend||backend.exitCode!==null)return;await new Promise(resolve=>{const timer=setTimeout(()=>{backend.kill();resolve();},60000);backend.once('exit',()=>{clearTimeout(timer);resolve();});if(backend.connected)backend.send({type:'shutdown'});else backend.kill();});}

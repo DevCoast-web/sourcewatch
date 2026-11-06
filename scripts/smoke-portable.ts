@@ -25,6 +25,8 @@ child.on("error", (error) => {
 });
 let result: any;
 for (let i = 0; i < 1800; i++) {
+  if (existsSync(join(root, "desktop-error.json")))
+    throw Error(readFileSync(join(root, "desktop-error.json"), "utf8"));
   if (existsSync(join(root, "desktop-ready.json"))) {
     result = JSON.parse(readFileSync(join(root, "desktop-ready.json"), "utf8"));
     break;
