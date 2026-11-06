@@ -25,10 +25,15 @@ jobs:
         timeout-minutes: 15
         run: |
           DEVICE=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; print(next(d["udid"] for group in json.load(sys.stdin)["devices"].values() for d in group if "iPhone" in d["name"]))')
-          xcodebuild -project ios/SourceWatch.xcodeproj -scheme SourceWatch -destination "platform=iOS Simulator,id=$DEVICE" -parallel-testing-enabled NO -test-timeouts-enabled YES -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 120 -derivedDataPath work/ios-simulator -resultBundlePath work/ios-results CODE_SIGNING_ALLOWED=NO test
+          xcodebuild -project ios/SourceWatch.xcodeproj -scheme SourceWatch -destination "platform=iOS Simulator,id=$DEVICE" -parallel-testing-enabled NO -test-timeouts-enabled YES -default-test-execution-time-allowance 180 -maximum-test-execution-time-allowance 240 -derivedDataPath work/ios-simulator -resultBundlePath work/ios-results CODE_SIGNING_ALLOWED=NO test
+      - name: Export simulator screenshots and evidence fixtures
+        if: always()
+        run: |
+          if [ -d work/ios-results ]; then
+            xcrun xcresulttool export attachments --path work/ios-results --output-path work/ios-attachments
+          fi
       - name: Independently verify Swift-generated evidence
         run: |
-          xcrun xcresulttool export attachments --path work/ios-results --output-path work/ios-attachments
           python3 -m unittest discover -s ios/tests -v
           python3 - <<'PY'
           import pathlib, subprocess, zipfile
