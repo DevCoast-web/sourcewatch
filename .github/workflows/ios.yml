@@ -8,6 +8,9 @@ on:
     paths: ['ios/**', 'scripts/verify-mobile.py', '.github/workflows/ios.yml']
 permissions:
   contents: read
+concurrency:
+  group: native-iphone-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   native:
     runs-on: macos-15

@@ -240,7 +240,8 @@ struct ReceiptDetail: View {
                         let old = String(decoding: try library.artifact(previous, "text.txt"), as: UTF8.self)
                         // Bound diff work independently of the larger preserved text limit.
                         if old.utf8.count + text.utf8.count <= 128 * 1024 && old.components(separatedBy: "\n").count + text.components(separatedBy: "\n").count <= 4000 {
-                            lines = await Task.detached { TextComparison.compare(old, text) }.value
+                            let current = text
+                            lines = await Task.detached { TextComparison.compare(old, current) }.value
                         } else { compare = false; error = "Inline comparison is limited to 128 KiB / 4,000 combined lines. Both complete originals remain preserved." }
                     }
                 } catch { self.error = error.localizedDescription }

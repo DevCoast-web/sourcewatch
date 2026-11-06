@@ -1,7 +1,24 @@
 import XCTest
+import SwiftData
 @testable import SourceWatch
 
 final class EvidenceTests: XCTestCase {
+    @MainActor func testSQLiteResearchPersistence() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let schema = Schema([ResearchSource.self, ResearchNote.self])
+        let configuration = ModelConfiguration(schema: schema, url: root.appendingPathComponent("research.store"), cloudKitDatabase: .none)
+        let first = try ModelContainer(for: schema, configurations: [configuration])
+        let context = ModelContext(first)
+        context.insert(ResearchSource(title: "Stored source", url: "https://example.com", collection: "Research"))
+        context.insert(ResearchNote(title: "Stored note", body: "[[Other note]]"))
+        try context.save()
+        let reopened = try ModelContainer(for: schema, configurations: [configuration])
+        let second = ModelContext(reopened)
+        XCTAssertEqual(try second.fetch(FetchDescriptor<ResearchSource>()).first?.title, "Stored source")
+        XCTAssertEqual(try second.fetch(FetchDescriptor<ResearchNote>()).first?.body, "[[Other note]]")
+    }
     private func library() throws -> LocalLibrary { try LocalLibrary(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)) }
     func testCaptureCompareExportVerifyAndRestart() throws {
         let library = try library(); defer { try? FileManager.default.removeItem(at: library.root) }
