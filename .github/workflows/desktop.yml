@@ -26,8 +26,12 @@ jobs:
       - name: Test packaged app
         shell: pwsh
         run: |
-          $env:SOURCEWATCH_TEST_EXECUTABLE="$PWD\release\win-unpacked\SourceWatch.exe"
+          $isolated=Join-Path $env:RUNNER_TEMP 'sourcewatch-isolated'
+          Copy-Item release/win-unpacked $isolated -Recurse
+          $env:SOURCEWATCH_TEST_EXECUTABLE=Join-Path $isolated 'SourceWatch.exe'
           npx tsx scripts/smoke-desktop.ts
+      - name: Test portable extraction and startup
+        run: npx tsx scripts/smoke-portable.ts
       - uses: actions/upload-artifact@v4
         with:
           name: sourcewatch-windows
