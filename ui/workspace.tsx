@@ -1,3 +1,6 @@
+import { RecordPreview } from "./record-preview.js";
+import { ResearchOverview } from "./overview.js";
+import { VERSION } from "../src/version.js";
 import { GlobalGraph } from "./ecosystem.js";
 import React, { useEffect, useRef, useState } from "react";
 import { VaultView } from "./vault.js";
@@ -5,6 +8,7 @@ import { CanvasView } from "./canvas.js";
 import { IntelligenceView } from "./intelligence.js";
 import { BasesView, ToolsView } from "./workspace-extras.js";
 import "./workspace.css";
+import "./desktop-workspace.css";
 export function IntegratedWorkspace({
   onClose,
   onOpenSource,
@@ -14,6 +18,7 @@ export function IntegratedWorkspace({
   onClose: () => void;
   onOpenSource: (sourceId: string, captureId?: string) => void;
 }) {
+  const [previewRef, setPreviewRef] = useState("");
   const [view, setView] = useState(initialView),
     [activeRef, setActiveRef] = useState(""),
     [addRef, setAddRef] = useState(""),
@@ -27,6 +32,13 @@ export function IntegratedWorkspace({
     ),
     [error, setError] = useState(""),
     [extensions, setExtensions] = useState<any[]>([]);
+  useEffect(() => {
+    const old = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = old;
+    };
+  }, []);
   const dirty = useRef<Record<string, boolean>>({});
   useEffect(() => {
     const changed = (event: Event) => {
@@ -83,6 +95,10 @@ export function IntegratedWorkspace({
   }, [palette]);
   function open(ref: string) {
     const kind = ref.split(":")[0];
+    if (kind === "attachment" || kind === "node") {
+      setPreviewRef(ref);
+      return;
+    }
     setActiveRef(ref);
     if (["source", "capture"].includes(kind)) {
       fetch("/api/workspace/resolve?ref=" + encodeURIComponent(ref))
@@ -112,6 +128,7 @@ export function IntegratedWorkspace({
     setView("canvas");
   }
   const commands = [
+    { title: "Open research overview", action: "overview" },
     { title: "Open Global Graph", action: "graph" },
     { title: "Open Markdown vault", action: "vault" },
     { title: "Open visual canvas", action: "canvas" },
@@ -155,7 +172,9 @@ export function IntegratedWorkspace({
           </button>
         </header>
         <nav className="sw-nav" aria-label="Workspace sections">
+          <div className="sw-nav-label">RESEARCH WORKSPACE</div>
           {[
+            ["overview", "Overview"],
             ["graph", "Global Graph"],
             ["vault", "Notes & vault"],
             ["canvas", "Canvas"],
@@ -168,9 +187,31 @@ export function IntegratedWorkspace({
               aria-pressed={view === id}
               onClick={() => setView(id)}
             >
-              {title}
+              <span aria-hidden="true">
+                {
+                  {
+                    overview: "◫",
+                    graph: "⌘",
+                    vault: "▤",
+                    canvas: "◇",
+                    intelligence: "▦",
+                    bases: "▥",
+                    tools: "↓",
+                  }[id]
+                }
+              </span>
+              <span>{title}</span>
             </button>
           ))}
+          <div className="sw-nav-label">MONITOR & PRESERVE</div>
+          <button onClick={safeClose}>↙ Source monitor</button>
+          <div className="sw-nav-foot">
+            Local workspace
+            <br />
+            Your data stays on this device.
+            <br />
+            SourceWatch {VERSION}
+          </div>
         </nav>
         <div className="sw-layouts">
           <label>
@@ -222,8 +263,15 @@ export function IntegratedWorkspace({
         </div>
         {error && <p role="alert">{error}</p>}
         <main className="sw-content">
+          {view === "overview" && (
+            <ResearchOverview onOpen={open} onNavigate={setView} />
+          )}
           <div hidden={view !== "graph"}>
-            <GlobalGraph active={view === "graph"} onOpenReference={open} />
+            <GlobalGraph
+              active={view === "graph"}
+              onOpenReference={open}
+              appearance={theme}
+            />
           </div>
           <div hidden={view !== "vault"}>
             <VaultView
@@ -250,6 +298,12 @@ export function IntegratedWorkspace({
           {view === "bases" && <BasesView onOpenReference={open} />}{" "}
           {view === "tools" && <ToolsView onOpenReference={open} />}
         </main>
+        {previewRef && (
+          <RecordPreview
+            reference={previewRef}
+            onClose={() => setPreviewRef("")}
+          />
+        )}
         {palette && (
           <div className="sw-command-overlay">
             <section

@@ -1,0 +1,10 @@
+{
+  "name": "sourcewatch-desktop",
+  "productName": "SourceWatch",
+  "version": "2.0.0-beta.1",
+  "description": "Local-first website capture, evidence preservation and connected research workspace",
+  "author": "SourceWatch contributors",
+  "license": "MIT",
+  "main": "main.cjs",
+  "dependencies": {}
+}

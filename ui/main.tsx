@@ -102,11 +102,15 @@ function App() {
     [searchResults, setSearchResults] = useState<any[]>([]),
     [captureMatches, setCaptureMatches] = useState<Capture[] | null>(null);
   const [workspaceOpen, setWorkspaceOpen] = useState(
-    new URLSearchParams(location.search).get("workspace") === "graph",
+    ["graph", "overview"].includes(
+      new URLSearchParams(location.search).get("workspace") || "",
+    ),
   );
   const [workspaceView, setWorkspaceView] = useState(
-    new URLSearchParams(location.search).get("workspace") === "graph"
-      ? "graph"
+    ["graph", "overview"].includes(
+      new URLSearchParams(location.search).get("workspace") || "",
+    )
+      ? new URLSearchParams(location.search).get("workspace")!
       : "vault",
   );
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
@@ -424,6 +428,14 @@ function App() {
           }}
         >
           Global Graph
+        </button>
+        <button
+          onClick={() => {
+            setWorkspaceView("overview");
+            setWorkspaceOpen(true);
+          }}
+        >
+          Research directory
         </button>
         <button
           className="workspace-launcher"

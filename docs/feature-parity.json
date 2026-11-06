@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "release": "2.0.0-alpha.2",
+  "release": "2.0.0-beta.1",
   "source": "User master/network directives and Module J",
   "fullParity": false,
   "features": [
@@ -751,5 +751,17 @@
       "outstandingDependencies": "Full master directive and some Module J advanced graph/interop/preview behaviors remain incomplete; do not claim full parity."
     }
   ],
-  "validationReport": "docs/WORKSPACE_VALIDATION.md"
+  "validationReport": "docs/WORKSPACE_VALIDATION.md",
+  "desktop": {
+    "status": "implemented_windows_beta",
+    "files": [
+      "desktop/shell/main.cjs",
+      "desktop/bootstrap.mjs",
+      "scripts/prepare-desktop.mjs",
+      "desktop/builder.cjs"
+    ],
+    "behavior": "Windows installer and portable EXE; bundled Node/capture browser; private authenticated loopback engine; native evidence verification; persistent research directory.",
+    "validation": "docs/DESKTOP_VALIDATION.md",
+    "limits": "Unsigned Windows x64 beta; no auto-updater or native macOS/Linux distribution."
+  }
 }

@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { registerEcosystemRoutes } from "./ecosystem.js";
 import { registerWorkspaceBridge } from "./workspace-bridge.js";
 import { WorkspaceStore } from "./workspace-store.js";
@@ -33,6 +34,8 @@ export async function createApp(
     root?: string;
     captureOptions?: CaptureOptions;
     testMode?: boolean;
+    desktopToken?: string;
+    distRoot?: string;
   } = {},
 ) {
   const store = new Store(
@@ -46,6 +49,16 @@ export async function createApp(
   let closing = false;
   let captureDrained: Promise<void> | undefined;
   app.addHook("onRequest", async (req, reply) => {
+    if (options.desktopToken) {
+      const supplied = String(req.headers["x-sourcewatch-desktop-token"] || "");
+      const expected = Buffer.from(options.desktopToken);
+      const actual = Buffer.from(supplied);
+      if (
+        actual.length !== expected.length ||
+        !timingSafeEqual(actual, expected)
+      )
+        return reply.code(403).send({ error: "Desktop session required" });
+    }
     const host = req.headers.host || "";
     if (!/^(127\.0\.0\.1|localhost)(:\d+)?$/.test(host))
       return reply.code(403).send({ error: "Loopback Host required" });
@@ -489,7 +502,7 @@ export async function createApp(
   registerCanvasRoutes(app, store, workspace);
   registerIntelligenceRoutes(app, store, workspace);
   registerWorkspaceBridge(app, store, workspace);
-  const dist = resolve("dist");
+  const dist = resolve(options.distRoot || "dist");
   if (existsSync(dist)) await app.register(fastifyStatic, { root: dist });
   const runScheduled = async () => {
     if (busy || closing) return;

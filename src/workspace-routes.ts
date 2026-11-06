@@ -373,9 +373,15 @@ export function registerWorkspaceRoutes(
       typeof b?.title !== "string" ||
       !b.title.trim() ||
       b.title.length > 120 ||
-      !["graph", "vault", "canvas", "intelligence", "bases", "tools"].includes(
-        b.view,
-      )
+      ![
+        "overview",
+        "graph",
+        "vault",
+        "canvas",
+        "intelligence",
+        "bases",
+        "tools",
+      ].includes(b.view)
     )
       throw new Error("Invalid workspace layout");
     return workspace.put("layout", {

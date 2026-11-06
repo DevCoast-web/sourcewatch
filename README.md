@@ -8,6 +8,12 @@ A local-first research workstation for capturing public webpages, comparing revi
 
 SOURCEWATCH runs on your machine. It saves rendered HTML, comparison text, full-page PNG screenshots, page metadata, response headers, and a SHA-256-linked capture history in local storage.
 
+## Windows desktop beta
+
+Download the [Windows beta release](https://github.com/DevCoast-web/sourcewatch/releases/tag/v2.0.0-beta.1). Choose **portable EXE** to run without installation or **setup EXE** for a per-user installation. Both include Node and the capture browser; no terminal or separate runtime installation is needed. These are unsigned beta builds. See [desktop setup and existing-data instructions](docs/DESKTOP.md).
+
+The desktop research desk adds persistent navigation, a searchable cross-record directory, live record counts, document previews and a native evidence verifier. Existing capture, notes, Canvas and graph tools remain connected. Full expansion/Obsidian parity remains partial; see the feature matrix.
+
 ## Run locally
 
 Install **Node.js 24 or newer**, npm, and Git. Chromium requires supported operating-system libraries; on Linux use `npx playwright install --with-deps chromium` instead of the browser install command below.

@@ -7,3 +7,6 @@ test-results/
 .browsers/
 .test-data/
 work/
+
+release/
+desktop/browser-build.json

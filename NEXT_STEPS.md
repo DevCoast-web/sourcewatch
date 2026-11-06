@@ -1,4 +1,10 @@
-# Current expansion checkpoint — 2.0.0-alpha.1
+# Windows desktop rollout — 2.0.0-beta.1
+
+The Windows installer and portable application bundle the local engine and capture browser. See [desktop instructions](docs/DESKTOP.md) and [validation](docs/DESKTOP_VALIDATION.md). The research workspace now uses persistent sidebar navigation, a record directory and document inspection. Runtime data stays outside application files and is excluded from release artifacts.
+
+Repository/release destination: DevCoast-web/sourcewatch. The latest explicit user instruction authorizes this rollout and push; earlier no-publication checkpoints below are historical. This remains a beta, not full master-directive or Obsidian parity completion. Signing, automatic updates, native macOS/Linux packages and remaining feature-matrix gaps are still future work.
+
+## Historical expansion checkpoint — 2.0.0-alpha.1
 
 Work is isolated on the dedicated SourceWatch branch `feature/visual-knowledge-workspace`. The integrated workspace is a tested local alpha, not full master-directive completion. No remote, public release, hosting or private-data upload has been created. Publication requires a separate explicit instruction; the historical commands below are not authorization to publish this alpha.
 

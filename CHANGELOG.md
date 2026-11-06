@@ -34,3 +34,14 @@ This is a dedicated feature-branch preview. Full master expansion and Module J a
 ## 2.0.0-alpha.2 — Global Graph audit and implementation
 
 Added a derived live ecosystem index and discoverable Global Graph workspace, force-worker/Canvas renderer, category/hub styling, typed stored edges, global/local/investigation perspectives, cluster navigation, record inspector and revision-checked investigation layouts. Added a memory-only labeled 10k/12k demo and actual SQLite index/browser performance benchmarks. Retained the existing Network and editable Canvas. Audit and limits: docs/GLOBAL_GRAPH_AUDIT.md.
+
+## 2.0.0-beta.1 — Windows desktop research desk
+
+- Added Windows installer and portable EXE with bundled Node and capture browser.
+- Added a sandboxed desktop window and per-launch authenticated local service, graceful shutdown and single-instance behavior.
+- Added native data-folder selection and evidence verification without a separate Node installation.
+- Added a searchable record directory, current research metrics, investigation summaries, persistent workspace sidebar and document previews.
+- Preserved existing source monitoring, capture/comparison, linked notes, Canvas, Global Graph and evidence exports.
+- Patched dependency advisories and added desktop authentication/UI tests and an actual packaged-app smoke workflow.
+
+Unsigned Windows x64 beta. Complete master-expansion parity, native macOS/Linux packages, code signing and automatic updates remain unfinished.

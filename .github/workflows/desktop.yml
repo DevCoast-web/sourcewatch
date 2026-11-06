@@ -1,0 +1,34 @@
+name: Windows desktop
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: node node_modules/electron/install.js
+      - name: Install capture browser
+        shell: pwsh
+        run: |
+          $env:PLAYWRIGHT_BROWSERS_PATH="$PWD\.browsers"
+          npx playwright install chromium
+      - run: npm run desktop:build
+      - name: Test packaged app
+        shell: pwsh
+        run: |
+          $env:SOURCEWATCH_TEST_EXECUTABLE="$PWD\release\win-unpacked\SourceWatch.exe"
+          npx tsx scripts/smoke-desktop.ts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sourcewatch-windows
+          path: release/*.exe

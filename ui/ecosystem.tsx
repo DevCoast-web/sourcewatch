@@ -45,7 +45,9 @@ function readPrefs() {
 export function GlobalGraph({
   active,
   onOpenReference,
+  appearance = "light",
 }: {
+  appearance?: string;
   active: boolean;
   onOpenReference: (ref: string) => void;
 }) {
@@ -358,7 +360,7 @@ export function GlobalGraph({
       const ctx = el.getContext("2d");
       if (!ctx) return;
       ctx.scale(ratio, ratio);
-      ctx.fillStyle = "#f5f8f3";
+      ctx.fillStyle = appearance === "dark" ? "#18232b" : "#f5f8f3";
       ctx.fillRect(0, 0, bounds.width, bounds.height);
       ctx.translate(view.x, view.y);
       ctx.scale(view.z, view.z);
@@ -406,7 +408,7 @@ export function GlobalGraph({
           ctx.stroke();
         }
         if (view.z > 0.65 || n.ref === selected || n.kind === "cluster") {
-          ctx.fillStyle = "#243d30";
+          ctx.fillStyle = appearance === "dark" ? "#cfddd9" : "#243d30";
           ctx.font = `${11 / view.z}px system-ui`;
           ctx.fillText(n.title.slice(0, 40), p.x + radius + 3, p.y + 3);
         }
@@ -427,7 +429,17 @@ export function GlobalGraph({
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [active, displayed, points, view, selected, colors, scale, sizes]);
+  }, [
+    active,
+    displayed,
+    points,
+    view,
+    selected,
+    colors,
+    scale,
+    sizes,
+    appearance,
+  ]);
   useEffect(() => {
     const el = canvas.current;
     if (!el) return;
