@@ -48,8 +48,8 @@ jobs:
           mkdir -p work/iphone/Payload
           cp -R work/ios-device/Build/Products/Release-iphoneos/SourceWatch.app work/iphone/Payload/
           cp ios/INSTALL.md work/iphone/
-          cd work/iphone && zip -qry SourceWatch-iPhone-0.1.0-unsigned.ipa Payload
-          shasum -a 256 SourceWatch-iPhone-0.1.0-unsigned.ipa > SHA256SUMS.txt
+          cd work/iphone && zip -qry SourceWatch-iPhone-0.1.1-unsigned.ipa Payload
+          shasum -a 256 SourceWatch-iPhone-0.1.1-unsigned.ipa > SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
           name: sourcewatch-native-iphone-unsigned

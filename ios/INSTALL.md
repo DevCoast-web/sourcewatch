@@ -4,7 +4,7 @@ This is a native SwiftUI iOS 17+ application, not a website or Home Screen short
 
 ## Free personal installation from Windows
 
-The build produces **SourceWatch-iPhone-0.1.0-unsigned.ipa**. An unsigned IPA cannot install itself. Sign it for your own device using your own Apple ID with a compatible personal sideloading tool. SourceWatch never asks for your Apple password.
+The build produces **SourceWatch-iPhone-0.1.1-unsigned.ipa**. An unsigned IPA cannot install itself. Sign it for your own device using your own Apple ID with a compatible personal sideloading tool. SourceWatch never asks for your Apple password.
 
 One documented option is **AltStore Classic / AltServer for Windows**:
 

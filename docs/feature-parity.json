@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "release": "2.0.0-beta.1",
+  "release": "2.0.0-beta.2",
   "source": "User master/network directives and Module J",
   "fullParity": false,
   "features": [
@@ -693,7 +693,7 @@
     },
     {
       "id": "NET",
-      "name": "Intelligence modules A–I",
+      "name": "Intelligence modules A\u2013I",
       "status": "partial",
       "existingFunctionality": "1.2 source monitoring/evidence plus basic research graph where applicable",
       "implementationFiles": [

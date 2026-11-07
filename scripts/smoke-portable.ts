@@ -7,9 +7,10 @@ import {
   writeFileSync,
 } from "node:fs";
 import { resolve, join } from "node:path";
+import { VERSION } from "../src/version.js";
 mkdirSync(".test-data", { recursive: true });
 const root = mkdtempSync(join(resolve(".test-data"), "portable-launch-")),
-  exe = resolve("release/SourceWatch-2.0.0-beta.1-portable.exe");
+  exe = resolve(`release/SourceWatch-${VERSION}-portable.exe`);
 const started = performance.now();
 const child = spawn(exe, [], {
   windowsHide: true,

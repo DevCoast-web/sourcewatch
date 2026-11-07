@@ -10,7 +10,7 @@ SOURCEWATCH runs on your machine. It saves rendered HTML, comparison text, full-
 
 ## Windows desktop beta
 
-Download the [Windows beta release](https://github.com/DevCoast-web/sourcewatch/releases/tag/v2.0.0-beta.1). Choose **portable EXE** to run without installation or **setup EXE** for a per-user installation. Both include Node and the capture browser; no terminal or separate runtime installation is needed. These are unsigned beta builds. See [desktop setup and existing-data instructions](docs/DESKTOP.md).
+Download the [Windows beta release](https://github.com/DevCoast-web/sourcewatch/releases/tag/v2.0.0-beta.2). Choose **portable EXE** to run without installation or **setup EXE** for a per-user installation. Both include Node and the capture browser; no terminal or separate runtime installation is needed. These are unsigned beta builds. See [desktop setup and existing-data instructions](docs/DESKTOP.md).
 
 The desktop research desk adds persistent navigation, a searchable cross-record directory, live record counts, document previews and a native evidence verifier. Existing capture, notes, Canvas and graph tools remain connected. Full expansion/Obsidian parity remains partial; see the feature matrix.
 

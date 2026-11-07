@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.2 / iPhone 0.1.1 — Aperture Eye
+
+Rebuild Windows installer/portable and the native iPhone preview with the selected Aperture Eye logo. Apply the same vector master to the app headers, favicon, repository wordmark, Windows ICO and iOS app icon. Updated downloads retain unsigned beta/personal-signing limitations; no additional mobile feature parity is claimed.
+
 ## Native iPhone 0.1.0 — Offline preview
 
 Add a standalone SwiftUI iOS 17+ target with SQLite-backed sources/notes, imported artifacts and pasted-text receipts, linked revision histories, bounded added/deleted text comparison, stored-ZIP evidence export, on-phone verification, an independent Python verifier, note histories and title-based wikilinks/backlinks. The hosted macOS workflow builds an unsigned ARM64 IPA without signing secrets; personal signing is a separate installation step. Direct website capture, monitoring, Graph, Canvas and desktop database migration are not included in this preview. See `ios/INSTALL.md` and `docs/IOS_VALIDATION.md` for tested scope and free-signing renewal limits.
