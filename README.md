@@ -18,6 +18,8 @@ The desktop research desk adds persistent navigation, a searchable cross-record 
 
 ### Native iPhone preview
 
+[Download the unsigned iPhone 0.1.1 IPA](https://github.com/DevCoast-web/sourcewatch/releases/download/v2.0.0-beta.2/SourceWatch-iPhone-0.1.1-unsigned.ipa), then follow the [personal-signing instructions](ios/INSTALL.md). It is a native app and needs signing before installation; a WhatsApp attachment cannot install itself. The [Aperture Eye release](https://github.com/DevCoast-web/sourcewatch/releases/tag/v2.0.0-beta.2) includes Windows builds, the IPA, source and checksums.
+
 A separate **native SwiftUI iOS 17+ implementation** lives in [`ios/`](ios/INSTALL.md). It runs independently on the phone and currently supports imported evidence, revision comparison, verifiable ZIP exports and linked Markdown notes. It is not the full desktop app: direct website capture, monitoring, Graph and Canvas remain unfinished on iOS. The [Native iPhone workflow](https://github.com/DevCoast-web/sourcewatch/actions/workflows/ios.yml) builds and tests using a hosted macOS runner and produces an **unsigned IPA** for personal signing. No Apple credentials are stored in the repository or requested by SourceWatch. See the [free Windows personal-signing route and renewal limitations](ios/INSTALL.md).
 
 Mobile evidence uses a distinct documented format; verify it with `python scripts/verify-mobile.py bundle.zip`. Desktop evidence continues to use its existing verifier.
