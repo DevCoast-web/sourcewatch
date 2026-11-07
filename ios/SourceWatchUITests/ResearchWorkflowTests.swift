@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 
 final class ResearchWorkflowTests: XCTestCase {
     func testNativeResearchWorkflow() {
@@ -29,8 +30,15 @@ final class ResearchWorkflowTests: XCTestCase {
         XCTAssertTrue(field.waitForExistence(timeout: 5)); field.tap()
         if let old = field.value as? String { field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: old.count)) }
         field.typeText(title)
-        let editor = app.textViews["Revision text"]; editor.tap(); editor.typeText(text)
-        XCTAssertTrue(NSPredicate(format: "value == %@", text).evaluate(with: editor), "Editor must contain the exact supplied evidence text")
+        let editor = app.textViews["Revision text"]
+        UIPasteboard.general.string = text
+        editor.tap(); editor.press(forDuration: 1.2)
+        let menuPaste = app.menuItems["Paste"].firstMatch
+        let buttonPaste = app.buttons["Paste"].firstMatch
+        if menuPaste.waitForExistence(timeout: 3) { menuPaste.tap() }
+        else { XCTAssertTrue(buttonPaste.waitForExistence(timeout: 3)); buttonPaste.tap() }
+        let exact = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", text), object: editor)
+        XCTAssertEqual(XCTWaiter.wait(for: [exact], timeout: 5), .completed, "Editor value: \(String(describing: editor.value))")
         app.buttons["Preserve"].tap()
         XCTAssertTrue(app.staticTexts[title].firstMatch.waitForExistence(timeout: 10))
     }
