@@ -296,7 +296,7 @@ test("real intelligence UI creates entities and evidence-reviewed relationship, 
     await page.goto(
       "http://127.0.0.1:" + (app.app.server.address() as any).port,
     );
-    await page.getByRole("button", { name: "Workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Notes & vault", exact: true }).click();
     await page
       .getByRole("button", { name: "Database & network", exact: true })
       .click();
@@ -380,29 +380,11 @@ test("real intelligence UI creates entities and evidence-reviewed relationship, 
     await ui
       .getByLabel("Record title", { exact: true })
       .fill("Recoverable unsaved entity");
-    await page
-      .getByRole("button", { name: "Close research workspace", exact: true })
-      .click();
-    await page
-      .getByText(
-        "Wait for autosave, or recover/export the unsaved draft before closing the workspace.",
-        { exact: true },
-      )
-      .waitFor();
-    assert(
-      await page
-        .getByRole("dialog", { name: "Research workspace", exact: true })
-        .isVisible(),
-    );
-    await ui
-      .getByRole("button", { name: "Discard intelligence draft", exact: true })
-      .click();
-    await page
-      .getByRole("button", { name: "Close research workspace", exact: true })
-      .click();
-    await page
-      .getByRole("dialog", { name: "Research workspace", exact: true })
-      .waitFor({ state: "hidden" });
+    await page.getByRole("button", { name: "Sources & captures", exact: true }).click();
+    await page.getByRole("button", { name: "Database & network", exact: true }).click();
+    assert.equal(await ui.getByLabel("Record title", { exact: true }).inputValue(), "Recoverable unsaved entity", "Navigation preserves the unsaved editor instead of closing it");
+    await ui.getByRole("button", { name: "Discard intelligence draft", exact: true }).click();
+    await page.getByRole("button", { name: "Sources & captures", exact: true }).click();
     await page.setViewportSize({ width: 390, height: 844 });
     assert.equal(
       await page.evaluate(

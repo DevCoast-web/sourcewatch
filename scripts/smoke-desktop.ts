@@ -66,7 +66,7 @@ try {
   let nativeVerifierPassed = false,
     publicCapturePassed = false;
   if (process.env.SOURCEWATCH_DESKTOP_CAPTURE === "1") {
-    await page.getByRole("button", { name: /Source monitor/ }).click();
+    await page.getByRole("button", { name: "Sources & captures", exact: true }).click();
     await page
       .getByRole("button", { name: "+ Add source", exact: true })
       .click();
@@ -78,7 +78,7 @@ try {
       .getByRole("button", { name: "Capture first version", exact: true })
       .click();
     await page
-      .getByText("One receipt. A starting point.")
+      .getByText("First capture saved.", { exact: true })
       .waitFor({ timeout: 65000 });
     publicCapturePassed = true;
     const exported = await page.evaluate(async () => {
@@ -125,7 +125,7 @@ try {
     }
     if (!nativeVerifierPassed) throw Error("Native verifier did not complete");
     await page
-      .getByRole("button", { name: "Research directory", exact: true })
+      .getByRole("button", { name: "Overview", exact: true })
       .click();
     await page.evaluate(async () => {
       const ids: string[] = [];

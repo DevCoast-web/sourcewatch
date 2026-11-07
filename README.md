@@ -4,13 +4,15 @@
 
 **The internet changes. Keep the receipts.**
 
+> **Experimental beta:** beta.3 repairs the HTTP-redirect capture bug present in earlier Windows/browser builds and replaces the split first-use navigation with a guided capture workflow. Expanded research modules and the separate iPhone preview remain incomplete. Passing automated checks is not a claim of production readiness.
+
 A local-first research workstation for capturing public webpages, comparing revisions, and exporting independently verifiable evidence packages. No accounts, API keys, paid services, or cloud storage are required.
 
 SOURCEWATCH runs on your machine. It saves rendered HTML, comparison text, full-page PNG screenshots, page metadata, response headers, and a SHA-256-linked capture history in local storage.
 
 ## Windows desktop beta
 
-Download the [Windows beta release](https://github.com/DevCoast-web/sourcewatch/releases/tag/v2.0.0-beta.2). Choose **portable EXE** to run without installation or **setup EXE** for a per-user installation. Both include Node and the capture browser; no terminal or separate runtime installation is needed. These are unsigned beta builds. See [desktop setup and existing-data instructions](docs/DESKTOP.md).
+Download the [Windows beta release](https://github.com/DevCoast-web/sourcewatch/releases/tag/v2.0.0-beta.3). Choose **portable EXE** to run without installation or **setup EXE** for a per-user installation. Both include Node and the capture browser; no terminal or separate runtime installation is needed. These are unsigned beta builds. See [desktop setup and existing-data instructions](docs/DESKTOP.md).
 
 The desktop research desk adds persistent navigation, a searchable cross-record directory, live record counts, document previews and a native evidence verifier. Existing capture, notes, Canvas and graph tools remain connected. Full expansion/Obsidian parity remains partial; see the feature matrix.
 

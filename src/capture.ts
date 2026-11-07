@@ -111,11 +111,69 @@ export async function capture(
     rejectDeadline(new Error("Capture deadline exceeded; browser closed"));
   }, options.totalTimeoutMs ?? 45000);
   const work = async () => {
+    // Playwright intercepts only the first request in an HTTP redirect chain.
+    // Follow redirects through the DNS-pinned transport, never through Chromium's
+    // deny-all fallback proxy. Resolve the main URL before navigation so relative
+    // links and the recorded final URL retain the real destination origin.
+    const fetchRedirects = async (
+      input: string,
+      method: string,
+      headers: Record<string, string>,
+    ) => {
+      let target = input;
+      const visited = new Set<string>();
+      for (let hop = 0; hop <= 10; hop++) {
+        if (visited.has(target)) throw new Error("Website redirect loop detected");
+        visited.add(target);
+        if (++count > 150) throw new Error("150-request limit reached");
+        if (options.fixtureUrl) {
+          if (!target.startsWith(options.fixtureUrl))
+            throw new Error("Fixture origin blocked");
+        } else parsePublicUrl(target);
+        if (controller.signal.aborted) throw new Error("Capture closed");
+        const result = await fetcher(target, method, headers, undefined, budget);
+        bytes += result.body.length;
+        if (bytes > 32 * 1024 * 1024)
+          throw new Error("32 MiB total response limit reached");
+        if (![301, 302, 303, 307, 308].includes(result.status))
+          return { url: target, result };
+        if (!result.headers.location)
+          throw new Error("Website redirect has no destination");
+        if (hop === 10) throw new Error("Website exceeds 10 redirects");
+        target = new URL(result.headers.location, target).href;
+      }
+      throw new Error("Website exceeds 10 redirects");
+    };
+    let initialResponse: Awaited<ReturnType<typeof fetchRedirects>>;
+    const navigationStarted = Date.now();
+    const navigationLimit = options.navigationTimeoutMs ?? 25000;
+    let navigationTimer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      initialResponse = await Promise.race([
+        fetchRedirects(url, "GET", {}),
+        new Promise<never>((_resolve, reject) => {
+          navigationTimer = setTimeout(() => {
+            controller.abort();
+            reject(new Error(`Timeout ${navigationLimit}ms exceeded while loading the website`));
+          }, navigationLimit);
+        }),
+      ]);
+    } catch (e) {
+      throw new Error(`Navigation failed: ${(e as Error).message}`, { cause: e });
+    } finally {
+      if (navigationTimer) clearTimeout(navigationTimer);
+    }
+    let initialDocument = true;
+    let observedMainURL = initialResponse.url;
+    const withoutFragment = (value: string) => {
+      const address = new URL(value);
+      address.hash = "";
+      return address.href;
+    };
     await context.routeWebSocket("**/*", (socket) => socket.close());
     await context.route("**/*", async (route) => {
       const req = route.request();
       try {
-        if (++count > 150) throw new Error("150-request limit reached");
         if (!["GET", "HEAD"].includes(req.method()))
           throw new Error("Non-read request blocked");
         if (["media", "font"].includes(req.resourceType()))
@@ -123,27 +181,24 @@ export async function capture(
         if (options.fixtureUrl && !req.url().startsWith(options.fixtureUrl))
           throw new Error("Fixture origin blocked");
         await acquire();
-        let result: FetchResult;
+        let response: Awaited<ReturnType<typeof fetchRedirects>>;
         try {
-          if (controller.signal.aborted) throw new Error("Capture closed");
-          result = await fetcher(
-            req.url(),
-            req.method(),
-            req.headers(),
-            undefined,
-            budget,
-          );
+          if (initialDocument && req.isNavigationRequest() && req.url() === withoutFragment(initialResponse.url)) {
+            initialDocument = false;
+            response = initialResponse;
+          } else response = await fetchRedirects(req.url(), req.method(), req.headers());
         } finally {
           release();
         }
-        bytes += result.body.length;
-        if (bytes > 32 * 1024 * 1024)
-          throw new Error("32 MiB total response limit reached");
+        const { result } = response;
         if (
           req.isNavigationRequest() &&
           req.frame() === context.pages()[0]?.mainFrame()
         )
+        {
           main = result;
+          observedMainURL = response.url;
+        }
         await route.fulfill({
           status: result.status,
           headers: result.headers,
@@ -160,9 +215,9 @@ export async function capture(
       if (p !== page) void p.close();
     });
     try {
-      await page.goto(url, {
+      await page.goto(initialResponse.url, {
         waitUntil: "domcontentloaded",
-        timeout: options.navigationTimeoutMs ?? 25000,
+        timeout: Math.max(1, navigationLimit - (Date.now() - navigationStarted)),
       });
     } catch (e) {
       throw new Error(
@@ -182,6 +237,8 @@ export async function capture(
       throw new Error("Only HTML pages can be captured");
     if (!/^https?:/.test(page.url()))
       throw new Error("Final document must use HTTP(S)");
+    if (withoutFragment(page.url()) !== withoutFragment(observedMainURL))
+      throw new Error("The page changed its address during capture; retry using its final URL");
     const html = await page.content();
     if (Buffer.byteLength(html) > 16 * 1024 * 1024)
       throw new Error("Rendered HTML exceeds 16 MiB");

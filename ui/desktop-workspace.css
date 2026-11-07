@@ -8,7 +8,7 @@
   border-radius: 0;
   display: grid;
   grid-template-columns: 212px minmax(0, 1fr);
-  grid-template-rows: 70px 48px minmax(0, 1fr);
+  grid-template-rows: 76px auto minmax(0, 1fr);
   grid-template-areas: "head head" "nav layouts" "nav content";
   --sw-bg: #f3f5f5;
   --sw-card: #fff;

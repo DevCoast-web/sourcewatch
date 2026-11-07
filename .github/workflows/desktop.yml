@@ -29,6 +29,7 @@ jobs:
           $isolated=Join-Path $env:RUNNER_TEMP 'sourcewatch-isolated'
           Copy-Item release/win-unpacked $isolated -Recurse
           $env:SOURCEWATCH_TEST_EXECUTABLE=Join-Path $isolated 'SourceWatch.exe'
+          $env:SOURCEWATCH_DESKTOP_CAPTURE='1'
           npx tsx scripts/smoke-desktop.ts
       - name: Test portable extraction and startup
         run: npx tsx scripts/smoke-portable.ts

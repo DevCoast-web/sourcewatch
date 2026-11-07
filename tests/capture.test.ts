@@ -21,6 +21,63 @@ const options = (result: FetchResult): CaptureOptions => ({
   preserveTextOnScreenshotFailure: false,
 });
 
+test("HTTP-to-HTTPS redirects preserve the final document address without using the fallback proxy", async () => {
+  const seen: string[] = [];
+  const result = await capture("http://example.com/start", [], {
+    settleMs: 0,
+    fetcher: async (url) => {
+      seen.push(url);
+      if (url === "http://example.com/start")
+        return { status: 301, headers: { location: "https://example.com/final" }, body: Buffer.alloc(0) };
+      return html("<h1>Final secure page</h1><a href='./child'>Child</a>");
+    },
+  });
+  assert.equal(result.finalUrl, "https://example.com/final");
+  assert.match(result.text, /Final secure page/);
+  assert.equal(seen.filter((url) => url === "https://example.com/final").length, 1);
+});
+
+test("redirect destinations are checked before transport, and loops cannot run indefinitely", async () => {
+  let requests = 0;
+  await assert.rejects(capture("https://example.com/", [], {
+    settleMs: 0,
+    fetcher: async () => {
+      requests++;
+      return { status: 302, headers: { location: "http://127.0.0.1/secret" }, body: Buffer.alloc(0) };
+    },
+  }), /Private or reserved address blocked/);
+  assert.equal(requests, 1, "Private redirect target never reaches the transport");
+  await assert.rejects(capture(fixtureUrl, [], {
+    fixtureUrl,
+    settleMs: 0,
+    fetcher: async () => ({ status: 302, headers: { location: fixtureUrl }, body: Buffer.alloc(0) }),
+  }), /redirect loop/);
+});
+
+test("redirected scripts render through the same validated transport", async () => {
+  const result = await capture(fixtureUrl, [], {
+    fixtureUrl,
+    settleMs: 50,
+    fetcher: async (url) => {
+      if (url.endsWith("redirect.js")) return { status: 302, headers: { location: "./final.js" }, body: Buffer.alloc(0) };
+      if (url.endsWith("final.js")) return { status: 200, headers: { "content-type": "application/javascript" }, body: Buffer.from('document.body.insertAdjacentHTML("beforeend", "<p>Redirected script rendered</p>")') };
+      return html('<h1>Page</h1><script src="./redirect.js"></script>');
+    },
+  });
+  assert.match(result.text, /Redirected script rendered/);
+});
+
+test("an address containing a section fragment is captured once with its final address retained", async () => {
+  let requests = 0;
+  const result = await capture(fixtureUrl + "#section", [], {
+    fixtureUrl,
+    settleMs: 0,
+    fetcher: async () => { requests++; return html('<h1 id="section">Section</h1>'); },
+  });
+  assert.equal(result.finalUrl, fixtureUrl + "#section");
+  assert.equal(requests, 1);
+});
+
 test("real Chromium capture extracts rendered text, excludes hidden regions, and preserves DOM and screenshot", async () => {
   const result = await capture(
     fixtureUrl,

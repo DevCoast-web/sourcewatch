@@ -1,10 +1,13 @@
+import { captureFailureMessage } from "./capture-status.js";
 import React, { useEffect, useState } from "react";
 export function ResearchOverview({
   onOpen,
   onNavigate,
+  onAddSource,
 }: {
   onOpen: (ref: string) => void;
   onNavigate: (view: string) => void;
+  onAddSource: () => void;
 }) {
   const [data, setData] = useState<any>(null),
     [error, setError] = useState(""),
@@ -20,7 +23,7 @@ export function ResearchOverview({
             return r.json();
           }),
         );
-        if (live) setData({ graph: responses[0], sources: responses[1] });
+        if (live) { setData({ graph: responses[0], sources: responses[1] }); setError(""); }
       } catch (e) {
         if (live) setError((e as Error).message);
       }
@@ -32,10 +35,9 @@ export function ResearchOverview({
       clearInterval(timer);
     };
   }, []);
-  if (error) return <p role="alert">{error}</p>;
+  if (error && !data) return <section className="desk-empty"><h2>Your research could not load</h2><p role="alert">{error}</p><button onClick={() => onNavigate("monitor")}>Open sources & captures</button></section>;
   if (!data) return <p role="status">Loading your research index…</p>;
   const nodes = data.graph.nodes as any[],
-    edges = data.graph.edges as any[],
     matches = nodes.filter((n) =>
       [n.title, n.kind, ...n.tags]
         .join(" ")
@@ -46,29 +48,26 @@ export function ResearchOverview({
     investigations = nodes.filter((n) => n.kind === "investigation");
   return (
     <section className="research-overview" aria-label="Research overview">
-      <div className="desk-heading">
+      <div className="desk-heading task-hero">
         <div>
-          <span className="eyebrow">YOUR LOCAL RESEARCH INDEX</span>
-          <h2>Follow the record.</h2>
-          <p>
-            Preserve the source. Connect the context. Keep the evidence in
-            reach.
-          </p>
+          <span className="eyebrow">YOUR RESEARCH, ON THE RECORD</span>
+          <h2>Save what a website says.<br />See what changes.</h2>
+          <p>Start with a public webpage. Capture a version, compare it later, and keep the evidence on your computer.</p>
+          <div className="desk-actions"><button className="primary" onClick={onAddSource}>Add a website <span aria-hidden="true">↗</span></button><button onClick={() => onNavigate("monitor")}>Open sources & captures</button></div>
         </div>
-        <button className="primary" onClick={() => onNavigate("graph")}>
-          Explore the ecosystem →
-        </button>
+        <ol className="desk-steps" aria-label="How SourceWatch works">
+          <li><span>01</span><div><strong>Add a public website</strong><p>Give it a name and collection.</p></div></li>
+          <li><span>02</span><div><strong>Capture, then compare</strong><p>Save a version now. Capture again later to see additions and deletions.</p></div></li>
+          <li><span>03</span><div><strong>Export your evidence</strong><p>Open a source and choose Export evidence ZIP.</p></div></li>
+        </ol>
       </div>
+      {data.sources.some((s: any) => s.error) && <section className="desk-attention" aria-label="Captures needing attention"><div><span className="eyebrow">NEEDS ATTENTION</span><h3>A capture did not finish</h3><p>No new snapshot was saved. Open the source to see the error and retry.</p></div>{data.sources.filter((s: any) => s.error).map((s: any) => <button key={s.id} onClick={() => onOpen("source:" + s.id)}><strong>{s.name}</strong><span>{captureFailureMessage(s.error)}</span><small>Review failed capture →</small></button>)}</section>}
+      {error && <p role="alert">{error}</p>}
       <div className="desk-metrics">
         {[
-          ["Indexed records", nodes.length],
-          ["Preserved captures", count("evidence")],
-          ["Entities", count("entity")],
-          ["Documented links", edges.length],
-          [
-            "Reviewed associations",
-            edges.filter((e) => e.kind === "verified").length,
-          ],
+          ["Websites", data.sources.length],
+          ["Saved captures", count("evidence")],
+          ["Research records", nodes.length],
         ].map(([label, value]) => (
           <div key={label}>
             <span>{label}</span>
@@ -127,10 +126,9 @@ export function ResearchOverview({
             <div className="desk-empty">
               <h3>Your research starts with a source.</h3>
               <p>
-                Add a public page in the source monitor, create a note, or begin
-                an investigation. No demo records are added automatically.
+                Add a website above to save your first capture. Notes, connections and the graph grow from the records you add.
               </p>
-              <button onClick={() => onNavigate("vault")}>Open notes</button>
+              <button onClick={onAddSource}>Add your first website</button>
             </div>
           )}
           {matches.length > 50 && (

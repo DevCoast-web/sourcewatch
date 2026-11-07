@@ -73,7 +73,7 @@ test("local PDF attachment renders through the real bundled worker without exter
         external.push(r.url());
     });
     await page.goto(`http://127.0.0.1:${(app.server.address() as any).port}`);
-    await page.getByRole("button", { name: "Workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Notes & vault", exact: true }).click();
     await page.getByRole("button", { name: "Canvas", exact: true }).click();
     await page
       .getByRole("button", { name: "Load local PDF preview", exact: true })

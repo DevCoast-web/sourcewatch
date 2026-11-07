@@ -3,8 +3,8 @@
   "nodes": 10000,
   "edges": 12000,
   "renderer": "Canvas 2D; spatial-grid force worker",
-  "searchMs": 77,
-  "lastDrawMs": 13.2,
+  "searchMs": 234,
+  "lastDrawMs": 21.6,
   "databaseWrites": 0,
   "allNodesRendered": true,
   "fullBrowserWorkflowPassed": true

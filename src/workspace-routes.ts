@@ -375,6 +375,7 @@ export function registerWorkspaceRoutes(
       b.title.length > 120 ||
       ![
         "overview",
+        "monitor",
         "graph",
         "vault",
         "canvas",

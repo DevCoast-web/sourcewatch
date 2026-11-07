@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.3 — Capture redirects and first-use workflow repair
+
+Fix normal HTTP/HTTPS redirects by following them through the validated DNS-pinned transport before browser navigation; keep the deny-all fallback proxy, private-network checks, request/byte limits and timeouts. Add redirect, private-target, script and fragment regression coverage. Keep sources/capture/compare/export inside the persistent workspace, add a task-first start page, visible capture timing and recoverable errors, and open the first saved capture automatically. Preserve collection/archive filters, search, notes and canvas state while navigating. This remains an experimental beta; no full expansion parity is claimed.
+
 ## 2.0.0-beta.2 / iPhone 0.1.1 — Aperture Eye
 
 Rebuild Windows installer/portable and the native iPhone preview with the selected Aperture Eye logo. Apply the same vector master to the app headers, favicon, repository wordmark, Windows ICO and iOS app icon. Updated downloads retain unsigned beta/personal-signing limitations; no additional mobile feature parity is claimed.

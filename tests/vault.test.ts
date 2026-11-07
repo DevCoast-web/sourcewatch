@@ -375,11 +375,8 @@ test("vault browser workflow: edit, safe reading, wikilinks, backlinks, history,
       viewport: { width: 1440, height: 1000 },
     });
     await page.goto(address());
-    await page.getByRole("button", { name: "Workspace", exact: true }).click();
-    const workspace = page.getByRole("dialog", {
-      name: "Research workspace",
-      exact: true,
-    });
+    await page.getByRole("button", { name: "Notes & vault", exact: true }).click();
+    const workspace = page.locator(".sw-shell");
     await workspace
       .locator(".vault-notelist")
       .getByRole("button", { name: /Linked analysis/ })
@@ -506,7 +503,7 @@ test("vault browser workflow: edit, safe reading, wikilinks, backlinks, history,
     active = await createApp({ root: f.root, testMode: true });
     await active.app.listen({ host: "127.0.0.1", port: 0 });
     await page.goto(address());
-    await page.getByRole("button", { name: "Workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Notes & vault", exact: true }).click();
     await page
       .locator(".vault-notelist")
       .getByRole("button", { name: /Linked target/ })

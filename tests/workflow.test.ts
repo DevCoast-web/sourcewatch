@@ -185,7 +185,7 @@ test("complete browser workflow: real changing fixture → captures → compare 
       .getByRole("button", { name: "Capture first version", exact: true })
       .click();
     await page
-      .getByText("One receipt. A starting point.")
+      .getByText("First capture saved.", { exact: true })
       .waitFor({ timeout: 60000 });
     version = 2;
     await page

@@ -9,12 +9,29 @@ import { IntelligenceView } from "./intelligence.js";
 import { BasesView, ToolsView } from "./workspace-extras.js";
 import "./workspace.css";
 import "./desktop-workspace.css";
+import "./usability.css";
 export function IntegratedWorkspace({
   onClose,
   onOpenSource,
   initialView = "vault",
+  sourceMonitor,
+  onAddSource,
+  onSettings,
+  onLegacyConnections,
+  onViewChange,
+  onSearchCaptures,
+  onInbox,
+  unread = 0,
 }: {
   initialView?: string;
+  sourceMonitor?: React.ReactNode;
+  onAddSource?: () => void;
+  onSettings?: () => void;
+  onLegacyConnections?: () => void;
+  onViewChange?: (view: string) => void;
+  onSearchCaptures?: () => void;
+  onInbox?: () => void;
+  unread?: number;
   onClose: () => void;
   onOpenSource: (sourceId: string, captureId?: string) => void;
 }) {
@@ -39,6 +56,18 @@ export function IntegratedWorkspace({
       document.body.style.overflow = old;
     };
   }, []);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [visited, setVisited] = useState(() => new Set([initialView]));
+  useEffect(() => setView(initialView), [initialView]);
+  useEffect(() => {
+    setVisited((previous) => previous.has(view) ? previous : new Set([...previous, view]));
+    onViewChange?.(view);
+    const url = new URL(location.href);
+    url.searchParams.set("workspace", view);
+    window.history.replaceState(null, "", url);
+  }, [view, onViewChange]);
+  const names: Record<string, string> = { overview: "Research home", monitor: "Sources & captures", graph: "Global Graph", vault: "Notes & vault", canvas: "Canvas", intelligence: "Database & network", bases: "Property views", tools: "Tools & exports" };
+  function addSource() { setView("monitor"); onAddSource?.(); }
   const dirty = useRef<Record<string, boolean>>({});
   useEffect(() => {
     const changed = (event: Event) => {
@@ -109,6 +138,7 @@ export function IntegratedWorkspace({
             throw Error(
               "Save your workspace draft before opening the source archive.",
             );
+          if (sourceMonitor) setView("monitor");
           onOpenSource(r.sourceId, r.captureId);
         })
         .catch((e) => setError(e.message));
@@ -128,6 +158,7 @@ export function IntegratedWorkspace({
     setView("canvas");
   }
   const commands = [
+    { title: "Open sources and captures", action: "monitor" },
     { title: "Open research overview", action: "overview" },
     { title: "Open Global Graph", action: "graph" },
     { title: "Open Markdown vault", action: "vault" },
@@ -141,8 +172,8 @@ export function IntegratedWorkspace({
     <div className="sw-overlay">
       <section
         className={"sw-shell sw-theme-" + theme}
-        role="dialog"
-        aria-modal="true"
+        role={sourceMonitor ? "region" : "dialog"}
+        aria-modal={sourceMonitor ? undefined : true}
         aria-labelledby="sw-workspace-title"
       >
         <header className="sw-heading">
@@ -151,7 +182,7 @@ export function IntegratedWorkspace({
             <span className="eyebrow">
               SOURCEWATCH · CONNECT / RESEARCH / PRESERVE
             </span>
-            <h1 id="sw-workspace-title">Research workspace</h1>
+            <h1 id="sw-workspace-title">{names[view] || "Research workspace"}</h1>
           </div>
           <button
             onClick={() => setPalette(true)}
@@ -168,14 +199,17 @@ export function IntegratedWorkspace({
           >
             Switch {theme === "light" ? "dark" : "light"} theme
           </button>
-          <button onClick={safeClose} aria-label="Close research workspace">
-            ×
-          </button>
+          {sourceMonitor ? <>
+            <button onClick={() => setHelpOpen((open) => !open)} aria-expanded={helpOpen}>How to use</button>
+            <button onClick={onSettings} aria-label="Application settings">Settings</button>
+            <button className="primary" onClick={addSource}>+ Add source</button>
+          </> : <button onClick={safeClose} aria-label="Close research workspace">×</button>}
         </header>
         <nav className="sw-nav" aria-label="Workspace sections">
-          <div className="sw-nav-label">RESEARCH WORKSPACE</div>
+          <div className="sw-nav-label">YOUR RESEARCH</div>
           {[
             ["overview", "Overview"],
+            ...(sourceMonitor ? [["monitor", "Sources & captures"]] : []),
             ["graph", "Global Graph"],
             ["vault", "Notes & vault"],
             ["canvas", "Canvas"],
@@ -192,6 +226,7 @@ export function IntegratedWorkspace({
                 {
                   {
                     overview: "◫",
+                    monitor: "▣",
                     graph: "⌘",
                     vault: "▤",
                     canvas: "◇",
@@ -204,8 +239,10 @@ export function IntegratedWorkspace({
               <span>{title}</span>
             </button>
           ))}
-          <div className="sw-nav-label">MONITOR & PRESERVE</div>
-          <button onClick={safeClose}>↙ Source monitor</button>
+          {!sourceMonitor && <><div className="sw-nav-label">MONITOR & PRESERVE</div><button onClick={safeClose}>↙ Source monitor</button></>}
+          {onSearchCaptures && <button onClick={onSearchCaptures} aria-label="Search captures"><span aria-hidden="true">⌕</span><span>Search captures</span></button>}
+          {onInbox && <button onClick={onInbox} aria-label={`Change inbox (${unread} unread)`}><span aria-hidden="true">◷</span><span>Capture activity{unread ? ` (${unread})` : ""}</span></button>}
+          {onLegacyConnections && <details className="sw-advanced"><summary>Additional tools</summary><button onClick={onLegacyConnections}>Research connections</button></details>}
           <div className="sw-nav-foot">
             Local workspace
             <br />
@@ -214,7 +251,7 @@ export function IntegratedWorkspace({
             SourceWatch {VERSION}
           </div>
         </nav>
-        <div className="sw-layouts">
+        <div className="sw-layouts" hidden={!!sourceMonitor && ["overview", "monitor"].includes(view)}>
           <label>
             Workspace layout
             <select
@@ -264,38 +301,41 @@ export function IntegratedWorkspace({
         </div>
         {error && <p role="alert">{error}</p>}
         <main className="sw-content">
+          {new URLSearchParams(location.search).get("preview") === "1" && <p className="sw-preview-notice" role="status"><strong>Separate preview workspace.</strong> Your original research has not been moved here. New records are saved locally in a separate preview folder.</p>}
+          {helpOpen && <section className="sw-quick-start" aria-label="Quick start"><h2>From website to evidence</h2><ol><li><strong>Add a public website.</strong> Give it a name and collection.</li><li><strong>Capture a version.</strong> SourceWatch saves HTML, readable text and screenshots on this computer. Capture again later to compare.</li><li><strong>Export the evidence ZIP.</strong> Open a source to inspect its captures, export its history and find verification instructions.</li></ol><button onClick={addSource}>Add a website</button><button onClick={() => setHelpOpen(false)}>Got it</button></section>}
+          {sourceMonitor && <div hidden={view !== "monitor"} className="sw-monitor-panel">{sourceMonitor}</div>}
           {view === "overview" && (
-            <ResearchOverview onOpen={open} onNavigate={setView} />
+            <ResearchOverview onOpen={open} onNavigate={setView} onAddSource={addSource} />
           )}
-          <div hidden={view !== "graph"}>
+          {(view === "graph" || visited.has("graph")) && <div hidden={view !== "graph"}>
             <GlobalGraph
               active={view === "graph"}
               onOpenReference={open}
               appearance={theme}
             />
-          </div>
-          <div hidden={view !== "vault"}>
+          </div>}
+          {(view === "vault" || visited.has("vault")) && <div hidden={view !== "vault"}>
             <VaultView
               initialRef={activeRef}
               onOpenReference={open}
               onAddToCanvas={add}
             />
-          </div>
-          <div hidden={view !== "canvas"}>
+          </div>}
+          {(view === "canvas" || visited.has("canvas")) && <div hidden={view !== "canvas"}>
             <CanvasView
               initialRef={activeRef}
               addReference={addRef}
               onReferenceAdded={() => setAddRef("")}
               onOpenReference={open}
             />
-          </div>
-          <div hidden={view !== "intelligence"}>
+          </div>}
+          {(view === "intelligence" || visited.has("intelligence")) && <div hidden={view !== "intelligence"}>
             <IntelligenceView
               initialRef={activeRef}
               onOpenReference={open}
               onAddToCanvas={add}
             />
-          </div>
+          </div>}
           {view === "bases" && <BasesView onOpenReference={open} />}{" "}
           {view === "tools" && <ToolsView onOpenReference={open} />}
         </main>

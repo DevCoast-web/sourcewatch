@@ -139,7 +139,7 @@ test("browser audio recorder saves actual MediaRecorder bytes using a synthetic 
     await app.listen({ host: "127.0.0.1", port: 0 });
     const page = await browser.newPage();
     await page.goto(`http://127.0.0.1:${(app.server.address() as any).port}`);
-    await page.getByRole("button", { name: "Workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Notes & vault", exact: true }).click();
     await page
       .getByRole("button", { name: "Tools & exports", exact: true })
       .click();

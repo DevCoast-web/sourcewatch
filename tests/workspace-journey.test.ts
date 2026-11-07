@@ -54,7 +54,7 @@ test("integrated journey finds entity, explores network, annotates canvas, revie
     await page.goto(
       `http://127.0.0.1:${(service.app.server.address() as any).port}`,
     );
-    await page.getByRole("button", { name: "Workspace", exact: true }).click();
+    await page.getByRole("button", { name: "Notes & vault", exact: true }).click();
     await page
       .getByRole("button", { name: "Database & network", exact: true })
       .click();
@@ -175,7 +175,7 @@ test("integrated journey finds entity, explores network, annotates canvas, revie
       `http://127.0.0.1:${(service.app.server.address() as any).port}`,
     );
     await reopened
-      .getByRole("button", { name: "Workspace", exact: true })
+      .getByRole("button", { name: "Notes & vault", exact: true })
       .click();
     await reopened.getByRole("button", { name: "Canvas", exact: true }).click();
     await reopened.getByLabel("Canvas title", { exact: true }).waitFor();

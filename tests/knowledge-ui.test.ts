@@ -55,6 +55,7 @@ test("research connections workspace edits context, links capture evidence, expo
     await page.goto(
       `http://127.0.0.1:${(app.server.address() as { port: number }).port}`,
     );
+    if (!await page.getByRole("button", { name: "Research connections", exact: true }).isVisible()) await page.getByText("Additional tools", { exact: true }).click();
     await page
       .getByRole("button", { name: "Research connections", exact: true })
       .click();
@@ -192,6 +193,7 @@ test("research connections workspace edits context, links capture evidence, expo
       await page.getByText(first.chainHash, { exact: true }).count(),
       0,
     );
+    if (!await page.getByRole("button", { name: "Research connections", exact: true }).isVisible()) await page.getByText("Additional tools", { exact: true }).click();
     await page
       .getByRole("button", { name: "Research connections", exact: true })
       .click();

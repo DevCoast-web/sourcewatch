@@ -1,3 +1,4 @@
+import { captureFailureMessage } from "./capture-status.js";
 import { IntegratedWorkspace } from "./workspace.js";
 import { KnowledgeWorkspace } from "./knowledge.js";
 import { VERSION } from "../src/version.js";
@@ -101,18 +102,18 @@ function App() {
     [searchText, setSearchText] = useState(""),
     [searchResults, setSearchResults] = useState<any[]>([]),
     [captureMatches, setCaptureMatches] = useState<Capture[] | null>(null);
-  const [workspaceOpen, setWorkspaceOpen] = useState(
-    ["graph", "overview"].includes(
-      new URLSearchParams(location.search).get("workspace") || "",
-    ),
-  );
-  const [workspaceView, setWorkspaceView] = useState(
-    ["graph", "overview"].includes(
-      new URLSearchParams(location.search).get("workspace") || "",
-    )
-      ? new URLSearchParams(location.search).get("workspace")!
-      : "vault",
-  );
+  const [workspaceOpen, setWorkspaceOpen] = useState(true);
+  const [workspaceView, setWorkspaceView] = useState(() => {
+    const requested = new URLSearchParams(location.search).get("workspace") || "monitor";
+    return ["monitor", "graph", "overview", "vault", "canvas", "intelligence", "bases", "tools"].includes(requested) ? requested : "overview";
+  });
+  const [captureStarted, setCaptureStarted] = useState(0);
+  const [captureElapsed, setCaptureElapsed] = useState(0);
+  useEffect(() => {
+    if (!captureStarted) return;
+    const timer = setInterval(() => setCaptureElapsed(Math.floor((Date.now() - captureStarted) / 1000)), 1000);
+    return () => clearInterval(timer);
+  }, [captureStarted]);
   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false),
     [unread, setUnread] = useState(0),
@@ -125,6 +126,7 @@ function App() {
     setShowArchived(true);
     setSelected(event.sourceId);
     setResearchOpen(false);
+    setWorkspaceView("monitor");
     if (event.captureId)
       setFocusCapture({
         sourceId: event.sourceId,
@@ -320,6 +322,8 @@ function App() {
     if (!source) return;
     followLatest.current = source.id;
     setBusy(true);
+    setCaptureStarted(Date.now());
+    setCaptureElapsed(0);
     setError("");
     setNotice("Rendering the page and preserving artifacts…");
     try {
@@ -328,15 +332,18 @@ function App() {
       });
       await refresh();
       await refreshHistory(source.id, true);
+      setTab(history.length ? "changes" : "inspect");
       setNotice(
         captured.screenshotInfo && !captured.screenshotInfo.complete
           ? "HTML and text preserved. Visual capture is incomplete; inspect the coverage warning."
           : "Capture preserved. The receipt is in your local history.",
       );
     } catch (e) {
-      setError((e as Error).message);
+      setError(captureFailureMessage((e as Error).message));
       setNotice("");
+      await refresh().catch(() => {});
     } finally {
+      setCaptureStarted(0);
       if (followLatest.current === source.id) followLatest.current = null;
       setBusy(false);
     }
@@ -365,7 +372,7 @@ function App() {
       setSelected(s.id);
       setShowAdd(false);
       setEditing(false);
-      setNotice("Source saved. Capture its first receipt when ready.");
+      setNotice(editing ? "Source settings saved." : "Source added. Click Capture first version to save this page.");
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -399,9 +406,9 @@ function App() {
         .includes(query.toLowerCase()),
   );
   const filteredHistory = captureMatches || history;
-  return (
+  const monitor = (
     <>
-      <header className="top">
+      {!workspaceOpen && <header className="top">
         <a href="/" className="brand">
           <img className="mark" src="/favicon.svg" alt="" width="42" height="42" />
           <span>
@@ -476,8 +483,8 @@ function App() {
         >
           + Add source
         </button>
-      </header>
-      <div className="shell">
+      </header>}
+      <div className={workspaceOpen ? "shell embedded-monitor" : "shell"}>
         <aside className="sidebar">
           <div className="eyebrow">YOUR RESEARCH</div>
           <button
@@ -514,6 +521,7 @@ function App() {
           >
             ⚙ Application settings
           </button>
+          {!workspaceOpen && <>
           <label className="archive-toggle">
             <input
               type="checkbox"
@@ -522,6 +530,7 @@ function App() {
             />{" "}
             Show archived sources
           </label>
+          </>}
           <div className="sidebar-note">
             <span className="seal">✓</span>
             <strong>Evidence, with context.</strong>
@@ -542,14 +551,13 @@ function App() {
             </a>
           </div>
         </aside>
-        <main>
-          <div className="page-heading">
-            <div className="eyebrow">OBSERVE / COMPARE / PRESERVE</div>
+        <div className="monitor-main">
+          <div className="page-heading capture-heading">
+            <div><div className="eyebrow">CAPTURE → COMPARE → EXPORT</div>
             <h1>Your sources, on the record.</h1>
-            <p className="muted">
-              A durable history of the pages that matter to your research.
-            </p>
+            <p className="muted">Choose a website below, capture a version, then compare or export its history.</p></div>
           </div>
+          {captureStarted > 0 && <div role="status" className="capture-progress"><span className="capture-spinner" aria-hidden="true"/><div><strong>Capturing the page · {captureElapsed}s</strong><p>Rendering and saving HTML, text and screenshots. Large pages can take up to a minute; this attempt has an automatic time limit.</p></div></div>}
           <div className="stats">
             <div>
               <span>MONITORED SOURCES</span>
@@ -615,6 +623,7 @@ function App() {
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </label>
+              {workspaceOpen && <div className="source-filters"><label>Filter by collection<select aria-label="Filter source collection" value={collection} onChange={(e) => setCollection(e.target.value)}><option>All collections</option>{collections.map((name) => <option key={name}>{name}</option>)}</select></label><label className="archive-toggle"><input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} /> Show archived sources</label></div>}
               <div className="sources">
                 {visible.map((s) => (
                   <button
@@ -686,7 +695,7 @@ function App() {
                       disabled={busy || !!source.archived}
                       onClick={captureNow}
                     >
-                      {busy ? "Capturing…" : "+ Capture now"}
+                      {busy ? "Capturing…" : history.length === 1 ? "Capture another version" : "+ Capture now"}
                     </button>
                   </div>
                   <div className="detail-meta">
@@ -738,9 +747,11 @@ function App() {
                     </p>
                   )}
                   {source.error && (
-                    <p className="capture-error">
-                      Last capture failed: {source.error}
-                    </p>
+                    <div className="capture-error">
+                      <strong>No new capture was saved.</strong><br />
+                      {captureFailureMessage(source.error)}
+                      <details><summary>Technical details</summary><pre>{source.error}</pre></details>
+                    </div>
                   )}
                   {source.latest?.screenshotInfo &&
                     !source.latest.screenshotInfo.complete && (
@@ -749,6 +760,7 @@ function App() {
                         is incomplete. Inspect the capture for details.
                       </p>
                     )}
+                  {history.length === 1 && <div className="saved-capture-note" role="status"><strong>First capture saved.</strong><span>Inspect it below, or capture another version later to compare changes.</span></div>}
                   <div className="tabs">
                     <button
                       className={tab === "changes" ? "current" : ""}
@@ -776,8 +788,8 @@ function App() {
                           <span className="empty-symbol">◧</span>
                           <h3>
                             {history.length
-                              ? "One receipt. A starting point."
-                              : "Give this page a memory."}
+                              ? "A comparison needs two versions"
+                              : "No captures yet"}
                           </h3>
                           <p>
                             {history.length
@@ -787,10 +799,10 @@ function App() {
                           <button
                             className="primary"
                             disabled={busy}
-                            onClick={captureNow}
+                            onClick={history.length ? () => setTab("inspect") : captureNow}
                           >
                             {history.length
-                              ? "Capture another version"
+                              ? "View saved capture"
                               : "Capture first version"}
                           </button>
                         </div>
@@ -1156,8 +1168,30 @@ function App() {
             <span>Local observations. Portable evidence. Open source.</span>
             <span>v{serverVersion || VERSION}</span>
           </footer>
-        </main>
+        </div>
       </div>
+    </>
+  );
+  return (
+    <>
+      {workspaceOpen ? <IntegratedWorkspace
+        initialView={workspaceView}
+        sourceMonitor={monitor}
+        onViewChange={setWorkspaceView}
+        onSearchCaptures={() => setGlobalSearch(true)}
+        onInbox={() => setResearchOpen(true)}
+        unread={unread}
+        onAddSource={() => { setEditing(false); setError(""); setShowAdd(true); }}
+        onSettings={async () => { try { setSettings(await api("/settings")); } catch (e) { setError((e as Error).message); } }}
+        onLegacyConnections={() => setKnowledgeOpen(true)}
+        onClose={() => setWorkspaceView("monitor")}
+        onOpenSource={(sourceId, captureId) => {
+          setShowArchived(true);
+          setSelected(sourceId);
+          if (captureId) setFocusCapture({ sourceId, after: captureId, before: "" });
+          else setTab("changes");
+        }}
+      /> : monitor}
       {showAdd && (
         <div
           className="overlay"
@@ -1323,9 +1357,9 @@ function App() {
               records, artifacts, a checksum manifest, and a standalone
               verifier.
             </p>
-            <p>
-              Extract the ZIP, open a terminal in the extracted folder, and run:
-            </p>
+            <p>Save the ZIP and extract it to a folder first.</p>
+            <p><strong>Desktop app:</strong> choose File → Verify extracted evidence… and select that folder.</p>
+            <p><strong>Browser/source version:</strong> open a terminal in the extracted folder and run:</p>
             <pre>node verify.mjs .</pre>
             <p>Retain this manifest SHA-256 separately:</p>
             <pre className="hash">{exportHash}</pre>
@@ -1537,25 +1571,12 @@ function App() {
           </section>
         </div>
       )}
-      {workspaceOpen && (
-        <IntegratedWorkspace
-          initialView={workspaceView}
-          onClose={() => setWorkspaceOpen(false)}
-          onOpenSource={(sourceId, captureId) => {
-            setWorkspaceOpen(false);
-            setShowArchived(true);
-            setSelected(sourceId);
-            if (captureId)
-              setFocusCapture({ sourceId, after: captureId, before: "" });
-            else setTab("history");
-          }}
-        />
-      )}
       {knowledgeOpen && (
         <KnowledgeWorkspace
           onClose={() => setKnowledgeOpen(false)}
           onOpenSource={(sourceId, captureId) => {
             setKnowledgeOpen(false);
+            setWorkspaceView("monitor");
             setShowArchived(true);
             setSelected(sourceId);
             if (captureId)

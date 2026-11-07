@@ -61,8 +61,8 @@ test("canvas workspace persists real interactions, references, researcher lines,
     await page.goto(
       `http://127.0.0.1:${(app.server.address() as { port: number }).port}`,
     );
-    await page.getByRole("button", { name: "Workspace", exact: true }).click();
-    const shell = page.getByRole("dialog", { name: "Research workspace" });
+    await page.getByRole("button", { name: "Notes & vault", exact: true }).click();
+    const shell = page.locator(".sw-shell");
     await shell.getByRole("button", { name: "Canvas", exact: true }).click();
     const canvas = shell.getByRole("region", { name: "Canvas workspace" });
     await canvas
