@@ -1,6 +1,6 @@
 # Architecture
 
-SOURCEWATCH uses one local Node.js 24 process, a Fastify HTTP API, a Vite-built React interface, Playwright Chromium, and Node's built-in SQLite implementation. The compact `src/` and `ui/` layout replaces a multi-package monorepo because this release has one deployable application and no independent packages.
+SOURCEWATCH's desktop/browser engine uses one local Node.js 24 process, a Fastify HTTP API, a Vite-built React interface, Playwright Chromium, and Node's built-in SQLite implementation. The compact `src/` and `ui/` layout keeps that implementation together. The native iPhone preview in `ios/` has its own SwiftUI/SwiftData implementation and runs without the desktop service; its [architecture and distinct evidence format](../ios/ARCHITECTURE.md) document the current mobile scope.
 
 ## Module boundaries
 

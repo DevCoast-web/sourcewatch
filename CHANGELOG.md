@@ -1,5 +1,9 @@
 # Changelog
 
+## Native iPhone 0.1.0 — Offline preview
+
+Add a standalone SwiftUI iOS 17+ target with SQLite-backed sources/notes, imported artifacts and pasted-text receipts, linked revision histories, bounded added/deleted text comparison, stored-ZIP evidence export, on-phone verification, an independent Python verifier, note histories and title-based wikilinks/backlinks. The hosted macOS workflow builds an unsigned ARM64 IPA without signing secrets; personal signing is a separate installation step. Direct website capture, monitoring, Graph, Canvas and desktop database migration are not included in this preview. See `ios/INSTALL.md` and `docs/IOS_VALIDATION.md` for tested scope and free-signing renewal limits.
+
 ## 1.2.0 — Connections and tall-page candidate
 
 Typed research nodes, explicit labeled relationships, source/capture citations, exact evidence navigation, searchable graph/list views, backlinks, and separate JSON context export. Optional bounded tiled screenshots and default HTML/text fallback preserve usable observations when screenshots fail; incomplete/partial coverage is explicit and retained tiles are checksummed/exported/verifiable. Existing capture chains and single-image inspection remain compatible. A real 210,000px fixture produced 26 tiles. Full integration checks are underway; no fresh-install or public-release claim.
