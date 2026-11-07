@@ -82,21 +82,10 @@ a:hover {
   margin-top: 5px;
 }
 .mark {
-  height: 41px;
+  height: 42px;
   width: 42px;
-  border: 2px solid #315e4b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  font-family: Georgia, serif;
-  font-size: 26px;
-  letter-spacing: -7px;
-  padding-right: 5px;
-}
-.mark span {
-  font-size: 16px;
-  padding-top: 10px;
+  display: block;
+  flex-shrink: 0;
 }
 .primary {
   background: #275a46;

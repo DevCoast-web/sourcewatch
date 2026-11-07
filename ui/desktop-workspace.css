@@ -21,6 +21,10 @@
   background: var(--sw-card);
   gap: 12px;
 }
+.sw-brand-icon {
+  display: block;
+  flex-shrink: 0;
+}
 .sw-heading .eyebrow {
   font-size: 10px;
   letter-spacing: 2px;

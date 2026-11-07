@@ -403,9 +403,7 @@ function App() {
     <>
       <header className="top">
         <a href="/" className="brand">
-          <span className="mark">
-            S<span>W</span>
-          </span>
+          <img className="mark" src="/favicon.svg" alt="" width="42" height="42" />
           <span>
             SOURCEWATCH<small>The internet changes. Keep the receipts.</small>
           </span>

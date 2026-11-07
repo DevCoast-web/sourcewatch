@@ -146,6 +146,7 @@ export function IntegratedWorkspace({
         aria-labelledby="sw-workspace-title"
       >
         <header className="sw-heading">
+          <img className="sw-brand-icon" src="/favicon.svg" alt="" width="40" height="40" />
           <div>
             <span className="eyebrow">
               SOURCEWATCH · CONNECT / RESEARCH / PRESERVE
