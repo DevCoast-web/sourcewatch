@@ -5,6 +5,29 @@ import { join, resolve } from "node:path";
 import { chromium } from "playwright";
 import { createApp } from "../src/server.js";
 import type { CanvasData } from "../src/canvas.js";
+import { createCanvas } from "../src/canvas.js";
+
+test("a saved canvas stays in a loading state until its real document arrives", async () => {
+  mkdirSync(resolve(".test-data"), { recursive: true });
+  const root = mkdtempSync(join(resolve(".test-data"), "canvas-hydration-"));
+  const { app, store, workspace } = await createApp({ root, testMode: true });
+  const row = createCanvas(store, workspace).save({ title: "Saved research board", nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } });
+  await app.listen({ host: "127.0.0.1", port: 0 });
+  const browser = await chromium.launch(), page = await browser.newPage();
+  let release: () => void = () => {};
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  await page.route("**/api/canvases/" + row.id, async (route) => { await gate; await route.continue(); });
+  try {
+    await page.goto(`http://127.0.0.1:${(app.server.address() as any).port}/?workspace=canvas`);
+    await page.getByText("Loading saved canvases…", { exact: true }).waitFor();
+    assert.equal(await page.getByLabel("Canvas title", { exact: true }).count(), 0, "No placeholder editor is exposed during hydration");
+    release();
+    const title = page.getByLabel("Canvas title", { exact: true });
+    await title.waitFor();
+    assert.equal(await title.inputValue(), "Saved research board");
+    assert.equal(workspace.list("canvas").length, 1);
+  } finally { release(); await browser.close(); await app.close(); assert(root.startsWith(resolve(".test-data"))); rmSync(root, { recursive: true, force: true }); }
+});
 
 test("canvas workspace persists real interactions, references, researcher lines, exports, conflicts and mobile layout", async () => {
   mkdirSync(resolve(".test-data"), { recursive: true });

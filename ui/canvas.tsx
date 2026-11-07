@@ -205,6 +205,7 @@ export function CanvasView({
   onOpenReference,
 }: Props) {
   const [ready, setReady] = useState(false);
+  const [loading, setLoading] = useState(true);
   const autoCreating = useRef(false);
   const [list, setList] = useState<CanvasObject[]>([]),
     [current, setCurrent] = useState<CanvasObject | null>(null),
@@ -356,6 +357,7 @@ export function CanvasView({
       return;
     }
     const request = ++token.current;
+    setLoading(true);
     try {
       const row = await api("/api/canvases/" + id);
       if (!live.current || request !== token.current) return;
@@ -377,31 +379,37 @@ export function CanvasView({
       setStatus("Canvas loaded.");
     } catch (e) {
       setError((e as Error).message);
+    } finally {
+      if (live.current && request === token.current) setLoading(false);
     }
   }
   async function create() {
     try {
       await save();
       if (dirty.current) return;
+      setLoading(true);
       const row = await api("/api/canvases", "POST", { data: blank() });
       await refresh();
       await open(row.id);
     } catch (e) {
       setError((e as Error).message);
+    } finally {
+      if (live.current) setLoading(false);
     }
   }
   useEffect(() => {
     live.current = true;
     Promise.all([api("/api/canvases"), api("/api/workspace/catalog")])
-      .then(([rows, refs]) => {
+      .then(async ([rows, refs]) => {
         if (!live.current) return;
         setList(rows);
         setCatalog(refs.items || []);
-        setReady(true);
-        if (initialRef?.startsWith("canvas:")) void open(initialRef.slice(7));
-        else if (rows[0]) void open(rows[0].id);
+        if (initialRef?.startsWith("canvas:")) await open(initialRef.slice(7));
+        else if (rows[0]) await open(rows[0].id);
+        else setLoading(false);
+        if (live.current) setReady(true);
       })
-      .catch((e) => setError(e.message));
+      .catch((e) => { if (live.current) { setError(e.message); setLoading(false); } });
     return () => {
       live.current = false;
       token.current++;
@@ -487,7 +495,7 @@ export function CanvasView({
       observer.disconnect();
       el.removeEventListener("wheel", wheel);
     };
-  }, [current?.id]);
+  }, [current?.id, loading]);
   function add(type: CanvasNode["type"], ref?: string) {
     const v = docRef.current.viewport,
       node: CanvasNode = {
@@ -538,13 +546,13 @@ export function CanvasView({
       added.current = "";
       return;
     }
-    if (ready && !current && !readonly && !autoCreating.current) {
+    if (ready && !current && list.length === 0 && !readonly && !autoCreating.current) {
       autoCreating.current = true;
       void create().finally(() => {
         autoCreating.current = false;
       });
     }
-  }, [addReference, ready, current?.id, readonly]);
+  }, [addReference, ready, current?.id, readonly, list.length]);
   function remove() {
     const ids = new Set(selected);
     commit({
@@ -1036,6 +1044,7 @@ export function CanvasView({
       </div>
     );
   }
+  if (loading) return <section className="canvas-workspace" aria-label="Canvas workspace" aria-busy="true"><h2>Canvas</h2><p role="status">Loading saved canvases…</p></section>;
   return (
     <section
       className="canvas-workspace"
